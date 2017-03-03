@@ -1,0 +1,25 @@
+{
+  "name": "AutomationIOSTesting",
+  "version": "1.0.0",
+  "description": "",
+  "main": "sample.js",
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "*",
+    "chai-as-promised": "*",
+    "colors": "*",
+    "mocha": "*",
+    "node-cmd": "*",
+    "q": "*",
+    "underscore": "*",
+    "wd": "*",
+    "yiewd": "*"
+  },
+  "dependencies": {
+    "fs-extra": "^1.0.0",
+    "image-size": "^0.5.1",
+    "moment-timezone": "^0.5.11",
+    "resize-img": "^1.1.2"
+  }
+}

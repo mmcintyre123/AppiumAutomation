@@ -1,0 +1,45 @@
+// To do:
+
+// file a bug - walkbook list ordering is different in Android - not ordered ascending by Walkbook number.
+
+// test running current tests on iOS and Android - make compatible
+
+// Break up tests - like Mike's
+
+// test running with run.js -- update file
+
+
+
+// idea: what about this?
+
+		Retrieve an element avoiding not found exception and returning null instead:
+		elementOrNull(using, value, cb) -> cb(err, element)
+		TRY THIS IN fullLogin instead of the nested functions to check if rememberMe is checked.
+
+//longer term:
+	// For areas where we have to differentiate between Android and iOS:
+		instead of building logic into the tests, simply keep two elements files.  They will be the same except in certain cases.
+
+	// Split up tests, then create separate files like Mike's.
+
+
+
+
+
+ 
+// Miscelaneous
+
+	// try these for finding elements by a part of their id:
+
+	  .elementByXPath( '//*[(contains(id()\'prim_btnRemaining\')],600000)
+	  .elementByXPath( '//*[ contains( @id, \'cellHouse_8\' ) ]' )
+	  .elementByXPath( '//*[ contains( @text, \'cellHouse_8\' ) ]' )
+	  .elementByXPath( '//*[ contains( @checked, \'false\' ) ]' )
+
+	// wait for an element by one of two things:
+	  .waitForElementByXPath( '//UIAApplication[1]/UIAWindow[1]/UIAElement[2] | //*[ @text=\'View Later\' ]', 600000 )
+
+
+	// Might try this at some point -
+		'sudo xcode-select --switch /Applications/xCode7.3.1/Xcode.app'
+	to switch to previous version of XCode.  However, don't know if this will work with the new app.
