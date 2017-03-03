@@ -312,5 +312,3 @@ describe("Visiting all pages in Walk", function() {
 			//Select survey in regular view (no filter)
 	});
 });
-
-// test change
