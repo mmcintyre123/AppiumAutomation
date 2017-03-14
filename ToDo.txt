@@ -1,5 +1,7 @@
 // To do:
 
+// complete a walkbook and inspect the close/leave open dialogue.  Compare Android and iOS & add to elements file.
+
 // file a bug - walkbook list ordering is different in Android - not ordered ascending by Walkbook number.
 
 // test running current tests on iOS and Android - make compatible
