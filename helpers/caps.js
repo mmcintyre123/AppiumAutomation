@@ -21,7 +21,8 @@ exports.iosBitBar1 = {
 	'testdroid_target'  : 'iOS',
 	'testdroid_project' : 'iOSWalk',
 	'testdroid_testrun' : 'iOS Test Run',
-	'testdroid_device'  : 'Apple iPad Air A1474 10.2'
+	'testdroid_device'  : 'Apple iPad Air A1474 10.2',
+	// 'bundle-id'         : 'com.bitbar.testdroid.BitbarIOSSample'
 };
 
 //ios Simulator #2
