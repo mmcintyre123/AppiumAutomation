@@ -93,12 +93,12 @@ describe("Visiting all pages in Walk", function() {
 	commons.afterAll()
 	commons.afterEach()
 
-	it('Full Login', function () {
+	it.only('Full Login', function () {
 		return driver
 			.fullLogin()
 	});
 
-	it.only('Quick Login', function () {
+	it('Quick Login', function () {
 		return driver
 			.loginQuick()
 	});
@@ -122,6 +122,9 @@ describe("Visiting all pages in Walk", function() {
 	it.only('Should fail to take a survey', function () {
 		console.log('SHOULD FAIL TO TAKE A SURVEY'.green.bold.underline);
 		return driver
+			.elementById('SHIELD')
+			.click()
+			.waitForElementById(elements.homeScreen.walkbooks, 10000).should.eventually.exist
 			.startTime('Home Page to Household')
 			.elementById(elements.homeScreen.walkbooks)
 			.click()
@@ -142,7 +145,7 @@ describe("Visiting all pages in Walk", function() {
 				} else {
 					return config.driver
 								 //todo update elements.js with new walkbook ids
-								 .waitForElementById('cellWalkbook_2_walkbook_inprogress_blank', 10000).should.eventually.exist
+								 .waitForElementById('cellWalkbook_0_walkbook_notstarted', 10000).should.eventually.exist
 								 .endTotalAndLogTime('Load Survey')
 				}
 			})
@@ -159,7 +162,7 @@ describe("Visiting all pages in Walk", function() {
 								 .click()
 				} else {
 					return config.driver
-								 .elementById('cellWalkbook_2_walkbook_inprogress_blank')
+								 .elementById('cellWalkbook_0_walkbook_notstarted')
 								 .getLocation()
 								 .then(function(loc){
 								 	 return driver
@@ -173,7 +176,7 @@ describe("Visiting all pages in Walk", function() {
 					})
 				}
 			})
-			.elementById('cellWalkbook_2_walkbook_inprogress_blank')
+			.elementById('cellWalkbook_0_walkbook_notstarted')
 			.click()
 			.then(function () {
 				if (config.desired.platformName == 'Android') {

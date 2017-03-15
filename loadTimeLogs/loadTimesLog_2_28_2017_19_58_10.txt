@@ -1,3 +1,0 @@
-Log In: 0 hours, 0 minutes, 2.601 seconds.
-Load Survey List: 0 hours, 0 minutes, 1.311 seconds.
-Load Survey: 0 hours, 0 minutes, 1.773 seconds.

@@ -37,10 +37,9 @@ exports.iosSim2 = {
 
 //ios Simulator #3
 exports.iosSim3 = {
-	'appium-version'  : '1.6.3',
 	'platformName'    : 'iOS',
 	'platformVersion' : '10.2',
-	'deviceName'      : 'iPhone 7 Plus',
+	'deviceName'      : 'iPhone 5',
 	'port'            : 4723
 	// 'UDID' 	 		  : 'C12C70ED-2DE7-47CB-AA4F-61FB0B558E8D'
 };
