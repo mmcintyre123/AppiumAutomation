@@ -14,14 +14,14 @@ exports.iosDevice2 = {
 	'UDID'            : 'f81b68e2f1689371c31cee1048d3baf597f4446b'
 };
 
-//ios Simulator #1
-exports.iosSim1 = {
-	'appium-version'  : '1.6.3',
-	'platformName'    : 'iOS',
-	'platformVersion' : '9.2',
-	'deviceName'      : 'iPhone 6 Plus',
-	'port'            : 4723
-	// 'UDID' 	 		  : '816AE1C8-B4D5-492C-B895-C17F65996FC4'
+//BitBar Device #1
+exports.iosBitBar1 = {
+	'platformName'      : 'iOS',
+	'deviceName'        : 'iPad Air',
+	'testdroid_target'  : 'iOS',
+	'testdroid_project' : 'iOSWalk',
+	'testdroid_testrun' : 'iOS Test Run',
+	'testdroid_device'  : 'Apple iPad Air A1474 10.2'
 };
 
 //ios Simulator #2
