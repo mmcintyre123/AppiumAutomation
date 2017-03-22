@@ -111,7 +111,8 @@ describe( 'Automation Test in Progress!'.green, function () {
 			let devlopeApp = true; //todo figure out what this is for
 
 			let run = require( './TestFiles.js' );
-				run.sampleTests( 'sample' );
+				// run.sampleTests( 'sample' );
+				run.sampleTests( 'icon_colors' );
 
 		} );
 	} );

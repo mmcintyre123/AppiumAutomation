@@ -3,28 +3,42 @@
 module.exports = function () {
 	
 	require('colors');
-	let wd            = require("wd"),
-	    assert  	  = require('assert'),
-		_             = require('underscore'),
-		Q             = require('q'),
-		fsExtra       = require('fs-extra'),
-		fs            = require('fs'),
-		_p            = require('../helpers/promise-utils'),
-		elements      = require('../helpers/elements'),
-		actions       = require('../helpers/actions'),
-		pry  		  = require('pryjs'),
-		config 		  = require('../helpers/config'),
-		serverConfigs = require('../helpers/appium-servers'),
-		serverConfig  = process.env.SAUCE ? serverConfigs.sauce : serverConfigs.local,
-		args  		  = process.argv.slice( 2 ),
-		simulator     = false,
-		desired;
+	let wd            = require("wd");
+	let    assert  	  = require('assert');
+	let	_             = require('underscore');
+	let	Q             = require('q');
+	let	fsExtra       = require('fs-extra');
+	let	fs            = require('fs');
+	let	_p            = require('../helpers/promise-utils');
+	let	elements      = require('../helpers/elements');
+	let	actions       = require('../helpers/actions');
+	let	pry  		  = require('pryjs');
+	let	config 		  = require('../helpers/config');
+	let	serverConfigs = require('../helpers/appium-servers');
+	let	serverConfig  = process.env.SAUCE ? serverConfigs.sauce : serverConfigs.local;
+	let	args  		  = process.argv.slice( 2 );
+	let	simulator     = false;
+	let	desired;
 	let driver = config.driver;
 	let	commons = require('../helpers/commons'); // this must be after the desired and driver are set
 
 	describe("Visiting all pages in Walk", function() {
+
 		this.timeout(3000000);
 		let allPassed = true;
+
+		function clickMenuItem(name) {
+		  return driver
+		    .elementByName(name)
+		    .catch(function () {
+		      return driver
+		        .elementByClassName('XCUIElementTypeTable')
+		        .elementsByClassName('>','XCUIElementTypeCell')
+		        .then(_p.filterWithName(name)).first();
+		    }).click();
+		}
+
+		console.log('THIS IS sample.js, A SANDBOX TEST SCRIPT FOR EXPERIMENTATION AND DEMONSTRATION'.green.bold.underline)
 
 		it('Full Login', function () {
 			return driver
@@ -36,16 +50,8 @@ module.exports = function () {
 				.loginQuick()
 		});
 
-		//todo figure this out
-		it('Should find element by part of the id and click', function () {
-			return driver
-				.elementByClassName('XCUIElementTypeTable')
-				.elementsByClassName('>','XCUIElementTypeCell')
-				.then(_p.clickWithIdPart('btnWalk'))
-		});
-
 		//tested and works
-		it.only("should print every menu item", function () {
+		it("should print every menu item", function () {
 		  return driver
 		    .elementByClassName('XCUIElementTypeTable')
 		    .elementsByClassName('>','XCUIElementTypeCell')

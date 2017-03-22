@@ -29,14 +29,13 @@ for (var i in args ) {
 				'--session-override',
 				'--log-level', 'debug',
 				'--debug-log-spacing',
-				'--log', '/tmp/appium.log',
+				'--log', '/Users/mliedtka/appium_logs/appium.log',
 				'--address', "localhost",
 				'--command-timeout', '7200',
-				'--pre-launch',
 				'--launch-timeout', '90000',
 				'--default-capabilities', '{ \
 						"app":"/Users/mliedtka/Library/Developer/Xcode/DerivedData/i360_Canvass-byzgucvkbseaivggszvazdzohhjo/Build/Products/Debug-iphonesimulator/i360 Canvass.app", \
-						"showIOSLog":"true", \
+						"showIOSLog":"false", \
 						"nativeInstrumentsLib":"true", \
 						"platformName":"iOS", \
 						"platformVersion":"10.2", \
