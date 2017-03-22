@@ -1,6 +1,12 @@
 // To do:
 
-// figure out a way to access an element by part of its id.  Figure out promise-utils file.
+// when running with run.js - fix after all - 
+	 1) Automation Test in Progress! "after all" hook:
+     Error: [quit()] Error response status: 6 Selenium error: A session is either terminated or not started
+   and fix duplicated command line output.
+
+
+// figure out a way to access an element by part of its id - see todo comments.  Figure out promise-utils file.
 
 // complete a walkbook and inspect the close/leave open dialogue.  Compare Android and iOS & add to elements file.
 
@@ -16,6 +22,13 @@
 		Retrieve an element avoiding not found exception and returning null instead:
 		elementOrNull(using, value, cb) -> cb(err, element)
 		TRY THIS IN fullLogin instead of the nested functions to check if rememberMe is checked.
+
+	Questions for Bruce: 
+		Understanding Promise Utils functions
+
+
+
+
 
 // Miscelaneous
 

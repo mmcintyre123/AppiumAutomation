@@ -49,7 +49,6 @@ let wd            = require("wd"),
 
 			case '-reset' : {
 				if ( args[ i + 1 ] !== undefined ) {
-
 					config.set( {
 						'reset' : true
 					} );
@@ -93,14 +92,41 @@ describe("Visiting all pages in Walk", function() {
 	commons.afterAll()
 	commons.afterEach()
 
-	it.only('Full Login', function () {
+	function clickMenuItem(name) {
+	  return driver
+	    .elementByName(name)
+	    .catch(function () {
+	      return driver
+	        .elementByClassName('XCUIElementTypeTable')
+	        .elementsByClassName('>','XCUIElementTypeCell')
+	        .then(_p.filterWithName(name)).first();
+	    }).click();
+	}
+
+	it('Full Login', function () {
 		return driver
 			.fullLogin()
 	});
 
-	it('Quick Login', function () {
+	it.only('Quick Login', function () {
 		return driver
 			.loginQuick()
+	});
+
+	//todo figure this out
+	it.only('Should find element by part of the id and click', function () {
+		return driver
+			.elementByClassName('XCUIElementTypeTable')
+			.elementsByClassName('>','XCUIElementTypeCell')
+			.then(_p.clickWithIdPart('btnWalk'))
+	});
+
+	//tested and works
+	it("should print every menu item", function () {
+	  return driver
+	    .elementByClassName('XCUIElementTypeTable')
+	    .elementsByClassName('>','XCUIElementTypeCell')
+	    .then(_p.printNames);
 	});
 
 	it('Should click home screen links', function() {
@@ -119,11 +145,9 @@ describe("Visiting all pages in Walk", function() {
 			.fullLogin()
 	});
 
-	it.only('Should fail to take a survey', function () {
+	it('Should fail to take a survey', function () {
 		console.log('SHOULD FAIL TO TAKE A SURVEY'.green.bold.underline);
 		return driver
-			.elementById('SHIELD')
-			.click()
 			.waitForElementById(elements.homeScreen.walkbooks, 10000).should.eventually.exist
 			.startTime('Home Page to Household')
 			.elementById(elements.homeScreen.walkbooks)
@@ -145,7 +169,7 @@ describe("Visiting all pages in Walk", function() {
 				} else {
 					return config.driver
 								 //todo update elements.js with new walkbook ids
-								 .waitForElementById('cellWalkbook_0_walkbook_notstarted', 10000).should.eventually.exist
+								 .waitForElementById(elements.survey.walkbook1, 10000).should.eventually.exist
 								 .endTotalAndLogTime('Load Survey')
 				}
 			})
@@ -162,7 +186,7 @@ describe("Visiting all pages in Walk", function() {
 								 .click()
 				} else {
 					return config.driver
-								 .elementById('cellWalkbook_0_walkbook_notstarted')
+								 .elementById(elements.survey.walkbook1)
 								 .getLocation()
 								 .then(function(loc){
 								 	 return driver
@@ -176,10 +200,10 @@ describe("Visiting all pages in Walk", function() {
 					})
 				}
 			})
-			.elementById('cellWalkbook_0_walkbook_notstarted')
+			.elementById(elements.survey.walkbook1)
 			.click()
 			.then(function () {
-				if (config.desired.platformName == 'Android') {
+				if (config.desi1red.platformName == 'Android') {
 					return config.driver
 								 .waitForElementById(elements.walkbook.list,10000).should.eventually.exist
 								 .elementById(elements.walkbook.list)
@@ -193,9 +217,9 @@ describe("Visiting all pages in Walk", function() {
 				}
 			})
 			//todo update elements.js with new household ids
-			.waitForElementById('cellHouse_0_sfh_partial', 10000).should.eventually.exist
+			.waitForElementById(elements.walkbook.household1, 10000).should.eventually.exist
 			.endTotalAndLogTime('Load Walkbook')
-			.elementById('cellHouse_0_sfh_partial')
+			.elementById(elements.walkbook.household1)
 			.click()
 			.then(function () {
 				if (config.desired.platformName == 'Android') {

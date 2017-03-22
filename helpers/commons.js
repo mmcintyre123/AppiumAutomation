@@ -238,7 +238,8 @@ Commons.prototype.fullLogin = function(){
 		.elementById('btnLogin') // LogIn Button
 		.click()
 		.startTime('Log In')
-		.waitForElementById(elements.actionBar.hamburgerMenu, 10000).should.eventually.exist
+		// will be different depending on whether the user has multiple orgs:
+		.waitForElementById(elements.homeScreen.walkbooks, 10000).should.eventually.exist
 		.endTotalAndLogTime('Log In')
 };
 

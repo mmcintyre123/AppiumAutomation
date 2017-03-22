@@ -48,3 +48,21 @@ exports.filterWithName = function (name) {
   });
 };
 
+
+
+
+//todo figure this out 
+exports.clickWithIdPart = function (idpart, els) {
+  // should take part of id, search array of els passed in, and return the one that matches.
+  els.forEach( function(el, i) {
+    if (el.match(idpart)) {
+      return el;
+    }
+  return driver
+    .click()
+  });
+};
+
+
+
+

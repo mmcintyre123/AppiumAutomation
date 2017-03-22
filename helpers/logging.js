@@ -3,7 +3,6 @@ let config = require('./config');
 
 // from built.io:
 exports.configure = function (driver) {
-  // eval(pry.it)
   driver.on('status', function (info) {
     console.log(info.cyan);
   });
