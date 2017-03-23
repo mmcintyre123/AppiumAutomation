@@ -27,10 +27,24 @@ module.exports = function () {
 	
 			this.timeout(3000000);
 			let allPassed = true;
-			console.log(('RUNNING ' + __filename.slice(__dirname.length + 1)).green.bold.underline)
+			console.log(('RUNNING ' + __filename.slice(__dirname.length + 1)).green.bold.underline);
 
 
-		it('should do what...', function () {
+		it('Should turn the house blue', function () {
+			console.log('Should turn the house blue'.green.bold.underline);
+
+			// Not home household
+			// Not home 1+ primary targets				
+			// use survey DO NOT USE: Mobile Automation Survey 1.0
+
+			return driver
+			
+
+
+
+
+
+
 			
 		});
 

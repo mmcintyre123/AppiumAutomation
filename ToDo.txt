@@ -1,21 +1,19 @@
 // To do:
 
-// when running with run.js - fix after all - 
-	 1) Automation Test in Progress! "after all" hook:
-     Error: [quit()] Error response status: 6 Selenium error: A session is either terminated or not started
-   and fix duplicated command line output.
+// make fullLogin method take parameters for username and password
 
-
-// figure out a way to access an element by part of its id - see todo comments.  Figure out promise-utils file.
+// create a credentials file?  Test creds shouldn't be sensitive.  Place sensitive credentials in file and add to .gitignore.
 
 // complete a walkbook and inspect the close/leave open dialogue.  Compare Android and iOS & add to elements file.
 
-// file a bug - walkbook list ordering is different in Android - not ordered ascending by Walkbook number.
+// investigate - walkbook list ordering is different in Android - could be due to location?  Figure out how to programmatically simulate location if possible.
+
+
+
 
 
 	Later:
-	// Break up tests into folder and subfolders - like Mike's
-	// ounce test suite is built out, test running with run.js -- update file
+	// if possible figure out a way to access an element by part of its id - see todo comments in code.  Figure out promise-utils file.
 
 	// elementOrNull command - utilize in fullLogin method:
 
@@ -23,11 +21,11 @@
 		elementOrNull(using, value, cb) -> cb(err, element)
 		TRY THIS IN fullLogin instead of the nested functions to check if rememberMe is checked.
 
+	Ongoing:
+	// Break up tests into folder and subfolders
+
 	Questions for Bruce: 
 		Understanding Promise Utils functions
-
-
-
 
 
 // Miscelaneous
@@ -41,8 +39,3 @@
 
 	// wait for an element by one of two things:
 	  .waitForElementByXPath( '//UIAApplication[1]/UIAWindow[1]/UIAElement[2] | //*[ @text=\'View Later\' ]', 600000 )
-
-
-	// Might try this at some point -
-		'sudo xcode-select --switch /Applications/xCode7.3.1/Xcode.app'
-	to switch to previous version of XCode.  However, don't know if this will work with the new app.

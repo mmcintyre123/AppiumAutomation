@@ -1,5 +1,8 @@
 "use strict";
 
+// THIS FILE IS OLD - MOVED TO SEPARATE FILE.  CAN BE RUN WITHOUT MOCHA.JS, TESTFILES.JS OR RUN.JS.
+
+
 let wd            = require("wd"),
     assert  	  = require('assert'),
 	_             = require('underscore'),

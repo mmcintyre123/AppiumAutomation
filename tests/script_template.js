@@ -23,17 +23,26 @@ module.exports = function () {
 	let	commons = require('../helpers/commons'); // this must be after the desired and driver are set
 
 
-	describe("Describe the test category...", function() {
-	
+	describe("Describe the test category...defines the group of tests specified below", function() {
+
 			this.timeout(3000000);
 			let allPassed = true;
 			console.log(('RUNNING ' + __filename.slice(__dirname.length + 1)).green.bold.underline)
 
-
-		it('should do what...', function () {
-			
+		it('Full Login', function () {
+			return driver
+				.fullLogin()
 		});
 
+		it('Should do what...', function () {
+			console.log('Describe the test...'.green.bold.underline);
+
+			return driver
+
+
+
+
+		});
 
 
 
