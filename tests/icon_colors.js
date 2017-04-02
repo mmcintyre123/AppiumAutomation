@@ -27,8 +27,13 @@ module.exports = function () {
 	
 			this.timeout(3000000);
 			let allPassed = true;
-			console.log(('RUNNING ' + __filename.slice(__dirname.length + 1)).green.bold.underline);
+			console.log(('RUNNING ' + __filename.slice(__dirname.length + 1) + ' for iOS').green.bold.underline);
 
+
+		it('Should perform a full login', function () {
+			return driver
+				.fullLogin()
+		});
 
 		it('Should turn the house blue', function () {
 			console.log('Should turn the house blue'.green.bold.underline);
@@ -38,8 +43,26 @@ module.exports = function () {
 			// use survey DO NOT USE: Mobile Automation Survey 1.0
 
 			return driver
-			
-
+				.startTime('Home Page to Household')
+				.elementById(elements.homeScreen.walkbooks)
+				.click()
+				.startTime('Load Survey List')
+				.waitForElementById(elements.surveys.survey1, 10000).should.eventually.exist
+				.endTotalAndLogTime('Load Survey List')
+				.elementById('DO NOT USE: Mobile Automation Survey 1.0')
+				.click()
+				.waitForElementById(elements.survey.start, 10000).should.eventually.exist
+				.elementById(elements.survey.start)
+				.click()
+				.startTime('Load Survey')
+				.waitForElementById(elements.survey.walkbook1, 10000).should.eventually.exist
+			    .endTotalAndLogTime('Load Survey')
+			    .elementById(elements.survey.walkbook1)
+			    .click()
+			    .waitForElementById(elements.survey.popoverOpenBook, 10000).should.eventually.exist
+			    .elementById(elements.survey.popoverOpenBook)
+			    .click()
+			    .startTime('Load Walkbook')
 
 
 
