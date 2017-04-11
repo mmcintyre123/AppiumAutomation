@@ -52,19 +52,28 @@ module.exports = function () {
 				.elementById('DO NOT USE: Mobile Automation Survey 1.0')
 				.click()
 				.waitForElementById(elements.survey.start, 10000).should.eventually.exist
-				.elementById(elements.survey.start)
 				.click()
 				.startTime('Load Survey')
-				.waitForElementById(elements.survey.walkbook1, 10000).should.eventually.exist
+				.waitForElementById('Select Walkbook', 10000) // trying this
 			    .endTotalAndLogTime('Load Survey')
-			    .elementById(elements.survey.walkbook1)
+			    .elementByXPath(elements.survey.walkbook1)
 			    .click()
-			    .waitForElementById(elements.survey.popoverOpenBook, 10000).should.eventually.exist
+			    .waitForElementById(elements.survey.popoverOpenBook, 10000)
 			    .elementById(elements.survey.popoverOpenBook)
 			    .click()
 			    .startTime('Load Walkbook')
-
-
+			    .waitForElementByXPath(elements.walkbook.houseHold1)
+			    // .elementById(elements.walkbook.household1)
+			    .click()
+				.waitForElementById(elements.walkbook.popoverOpenHouse, 10000).should.eventually.exist
+				.elementById(elements.walkbook.popoverOpenHouse)
+				.click()
+				.waitForElementById(elements.houseHold.notHome, 10000).should.eventually.exist
+				.endTotalAndLogTime('Home Page to Household')
+				.elementById(elements.houseHold.primTarget1)
+				.click()
+				.waitForElementById(elements.target.takeSurvey).should.eventually.exist
+				// ON THE HOUSEHOLD SCREEN - NOW FIGURE OUT HOW TO DO TEST CASE.
 
 
 

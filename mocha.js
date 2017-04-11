@@ -91,7 +91,7 @@ describe( 'Automation Test in Progress!'.green, function () {
 	commons.afterAll();
 	commons.afterEach();
 
-	describe( 'Running automation, please wait for all tests to complete!'.red, function () {
+	describe( 'Running automation, please wait for all tests to complete!'.green, function () {
 /*
 		describe( 'Running "SourceCode Check and SourceCode updates" Test.'.red, function () {
 
@@ -106,7 +106,7 @@ describe( 'Automation Test in Progress!'.green, function () {
 				run.logins( 'loginSanboxSmokeTest' );
 		} );
 */
-		describe( 'Run sample test file'.red, function () {
+		describe( 'Run icon color tests'.green, function () {
 
 			let devlopeApp = true; //todo figure out what this is for
 

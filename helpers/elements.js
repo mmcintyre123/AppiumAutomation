@@ -68,7 +68,7 @@ let apps = require('./apps.js');
 		'map' 				 :  'walkbook_map', //in iOS effectively, label "dismiss popup"
 		'mapSettings'		 :  'i ipad', // in Android this is in the mnOverflow - text = "Icon Legend"
 		'list' 				 :  'walkbook_list', // in iOS effectively, label 'menuButton', if on map view
-		'walkbook1'     	 :  '//*[contains(@content-desc,\'cellWalkbook_0\')]|//*[contains(@label,\'cellWalkbook_0\')]',
+		'walkbook1'     	 :  "//*[contains(@content-desc,'cellWalkbook_0')]|//*[contains(@label,'cellWalkbook_0')]",
 		'walkbook2'     	 :  '//*[contains(@content-desc,\'cellWalkbook_1\')]|//*[contains(@label,\'cellWalkbook_1\')]',
 		'walkbook3'     	 :  '//*[contains(@content-desc,\'cellWalkbook_2\')]|//*[contains(@label,\'cellWalkbook_2\')]',
 		'walkbook4'     	 :  '//*[contains(@content-desc,\'cellWalkbook_3\')]|//*[contains(@label,\'cellWalkbook_3\')]',
@@ -82,7 +82,7 @@ let apps = require('./apps.js');
 
 	//test - especially books off page
 	exports.walkbook = {
-		'houseHold1'   :  'cellHouse_0',
+		'houseHold1'   :  "//*[contains(@content-desc,'cellHouse_0')]|//*[contains(@label,'cellHouse_0')]",
 		'houseHold2'   :  'cellHouse_1',
 		'houseHold3'   :  'cellHouse_2',
 		'houseHold4'   :  'cellHouse_3',
