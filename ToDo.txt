@@ -1,8 +1,12 @@
 // To do:
 
-// make fullLogin method take parameters for username and password
+// write a function that finds the first house in a list which is not started.  Use in the icon_colors.js test case.
 
-// create a credentials file?  Test creds shouldn't be sensitive.  Place sensitive credentials in file and add to .gitignore.
+// determine a way to return element IDs of all people in a house, step through the array, and act accordingly depending on the test case - proceed? Or exit and try another house?
+
+// need to determine how many primary targets there are in the selected household
+
+// make fullLogin method take parameters for username and password - i.e. so you can log in with whoever you want in the test.
 
 // complete a walkbook and inspect the close/leave open dialogue.  Compare Android and iOS & add to elements file.
 
@@ -11,8 +15,9 @@
 
 
 
-
 	Later:
+	// create a credentials file?  Test creds shouldn't be sensitive.  Place sensitive credentials in file and add to .gitignore.
+
 	// if possible figure out a way to access an element by part of its id - see todo comments in code.  Figure out promise-utils file.
 
 	// elementOrNull command - utilize in fullLogin method:

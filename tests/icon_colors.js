@@ -35,26 +35,28 @@ module.exports = function () {
 				.fullLogin()
 		});
 
-		it('Should turn the house blue', function () {
-			console.log('Should turn the house blue'.green.bold.underline);
+		it('Should turn the house blue: one primary target not home', function () {
+			console.log('Should turn the house blue: one primary target not home'.green.bold.underline);
 
-			// Not home household
-			// Not home 1+ primary targets				
-			// use survey DO NOT USE: Mobile Automation Survey 1.0
+			// Not home 1 primary target turns house blue
+			// Survey: DO NOT USE: Mobile Automation Survey 1.0
 
+			//to do: modify this to select the first house that is "not started", and use that.
+			//once house is chosen, need to store household element ID for validation of icon later.
 			return driver
 				.startTime('Home Page to Household')
 				.elementById(elements.homeScreen.walkbooks)
 				.click()
 				.startTime('Load Survey List')
-				.waitForElementById(elements.surveys.survey1, 10000).should.eventually.exist
+				.waitForElementById(elements.surveys.survey1, 10000)
 				.endTotalAndLogTime('Load Survey List')
 				.elementById('DO NOT USE: Mobile Automation Survey 1.0')
 				.click()
-				.waitForElementById(elements.survey.start, 10000).should.eventually.exist
+				.waitForElementById(elements.survey.start, 10000)
+				.elementById(elements.survey.start)
 				.click()
 				.startTime('Load Survey')
-				.waitForElementById('Select Walkbook', 10000) // trying this
+				.waitForElementById('Select Walkbook', 10000)
 			    .endTotalAndLogTime('Load Survey')
 			    .elementByXPath(elements.survey.walkbook1)
 			    .click()
@@ -62,25 +64,65 @@ module.exports = function () {
 			    .elementById(elements.survey.popoverOpenBook)
 			    .click()
 			    .startTime('Load Walkbook')
-			    .waitForElementByXPath(elements.walkbook.houseHold1)
-			    // .elementById(elements.walkbook.household1)
+			    .waitForElementByXPath(elements.walkbook.houseHold1, 10000)
 			    .click()
-				.waitForElementById(elements.walkbook.popoverOpenHouse, 10000).should.eventually.exist
+				.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
 				.elementById(elements.walkbook.popoverOpenHouse)
 				.click()
-				.waitForElementById(elements.houseHold.notHome, 10000).should.eventually.exist
+				.waitForElementById(elements.houseHold.notHome, 10000)
 				.endTotalAndLogTime('Home Page to Household')
 				.elementById(elements.houseHold.primTarget1)
 				.click()
-				.waitForElementById(elements.target.takeSurvey).should.eventually.exist
-				// ON THE HOUSEHOLD SCREEN - NOW FIGURE OUT HOW TO DO TEST CASE.
-
-
-
-			
+				.waitForElementById(elements.target.takeSurvey, 10000)
+				.elementById(elements.target.notHome)
+				.click()
+				.waitForElementById(elements.houseHold.finished)
+				.click()
+				.waitForElementById('cellHouse_0_sfh_attempted')
 		});
 
 
+
+//		it('Should turn the house blue: xxxxxxxxxxx', function () {
+//			console.log('Should turn the house blue: xxxxxxxxxxx'.green.bold.underline);
+//
+//			// xxxxxxxxx turns house blue
+//			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+//
+//			return driver
+//
+//			
+//		});
+//		it('Should turn the house blue: xxxxxxxxxxx', function () {
+//			console.log('Should turn the house blue: xxxxxxxxxxx'.green.bold.underline);
+//
+//			// xxxxxxxxx turns house blue
+//			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+//
+//			return driver
+//
+//			
+//		});
+//		it('Should turn the house blue: xxxxxxxxxxx', function () {
+//			console.log('Should turn the house blue: xxxxxxxxxxx'.green.bold.underline);
+//
+//			// xxxxxxxxx turns house blue
+//			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+//
+//			return driver
+//
+//			
+//		});
+//		it('Should turn the house blue: xxxxxxxxxxx', function () {
+//			console.log('Should turn the house blue: xxxxxxxxxxx'.green.bold.underline);
+//
+//			// xxxxxxxxx turns house blue
+//			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+//
+//			return driver
+//
+//			
+//		});
 
 
 	});

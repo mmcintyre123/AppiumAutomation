@@ -193,13 +193,13 @@ Commons.prototype.fullLogin = function(){
 	return config.driver
 		.sleep(2000)
 		.then(function () {
-			if (typeof config.driver.elementByClassNameIfExists('XCUIElementTypeAlert')[0] != 'undefined') {
+			if (config.driver.elementByClassNameIfExists('XCUIElementTypeAlert')) {
 				config.driver.acceptAlert()
 			} else {
 				return config.driver
 			}
 		})
-		.elementById('etLoginUsername') // UserName
+		.waitForElementById('etLoginUsername') // UserName
 			.clear()
 			.sendKeys('test_1654wseward')
 		.hideKeyboard()

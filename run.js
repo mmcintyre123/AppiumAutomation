@@ -26,16 +26,23 @@ for (var i in args ) {
 	switch ( arg ) {
 		case '-sim' : {
 			appium = childProcess.spawn( 'appium', [
+				'-p','4725', //non-default args
+				'-cp','4725', //non-default args
+				'-bp','4726', //non-default args
+				'--selendroid-port', '8081', //non-default args
+				'--chromedriver-port', '9516', //non-default args
+				'--webkit-debug-proxy-port', '27754', //non-default args
 				'--session-override',
 				'--log-level', 'debug',
 				'--debug-log-spacing',
-				'--log', '/Users/mliedtka/appium_logs/appium.log',
+				'--log', '/Users/mliedtka/appium_logs2/appium.log',
 				'--address', "localhost",
 				'--command-timeout', '7200',
 				'--launch-timeout', '90000',
 				'--default-capabilities', '{ \
 						"app":"/Users/mliedtka/Library/Developer/Xcode/DerivedData/i360_Canvass-byzgucvkbseaivggszvazdzohhjo/Build/Products/Debug-iphonesimulator/i360 Canvass.app", \
 						"showIOSLog":"false", \
+						"autoAcceptAlerts":"true", \
 						"nativeInstrumentsLib":"true", \
 						"platformName":"iOS", \
 						"platformVersion":"10.2", \
