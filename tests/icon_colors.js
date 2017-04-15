@@ -73,41 +73,41 @@ module.exports = function () {
 			    .startTime('Load Walkbook')
 			    .waitForElementByClassName('XCUIElementTypeTable', 13000)
 
-			    //save household IDs
+			    // save household IDs
 			    .elementByClassName('XCUIElementTypeTable')
 			    .elementsByClassName('>','XCUIElementTypeCell')
 			    .then(_p.saveHouseNames)
 
-			    //pick the first notstarted household
+			    // pick the first notstarted household then continue
 			    .then(function () {
 			    	var houseHolds = store.get('houseHolds');
 			    	for (var key in houseHolds){
 			    		var regexp = /.*notstarted.*/i;
 			    		var this_value = houseHolds[key];
 			    		if (regexp.test(this_value) === true) {
-			    			console.log('Using ' + houseHolds[key])
-			    			config.thisHousehold = this_value
+			    			console.log('Using ' + houseHolds[key]);
+			    			config.thisHousehold = this_value;
+			    			config.thisHouseholdAfter = this_value.replace('notstarted','attempted');
 					    	return driver
 						    	.elementById(config.thisHousehold)
 						    	.click()
+								.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
+								.elementById(elements.walkbook.popoverOpenHouse)
+								.click()
+								.waitForElementById(elements.houseHold.notHome, 10000)
+								.endTotalAndLogTime('Home Page to Household')
+								.elementById(elements.houseHold.primTarget1)
+								.click()
+								.waitForElementById(elements.target.takeSurvey, 10000)
+								.elementById(elements.target.notHome)
+								.click()
+								.waitForElementById(elements.houseHold.finished)
+								.click()
+								.waitForElementById(config.thisHouseholdAfter)
 			    			break;
 			    		}
 			    	}
 			    })
-
-				.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
-				.elementById(elements.walkbook.popoverOpenHouse)
-				.click()
-				.waitForElementById(elements.houseHold.notHome, 10000)
-				.endTotalAndLogTime('Home Page to Household')
-				.elementById(elements.houseHold.primTarget1)
-				.click()
-				.waitForElementById(elements.target.takeSurvey, 10000)
-				.elementById(elements.target.notHome)
-				.click()
-				.waitForElementById(elements.houseHold.finished)
-				.click()
-				.waitForElementById('cellHouse_0_sfh_attempted')
 		});
 
 
