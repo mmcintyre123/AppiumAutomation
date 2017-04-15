@@ -1,10 +1,10 @@
 "use strict";
 
 module.exports = function () {
-	
+
 	require('colors');
 	let wd            = require("wd");
-	let    assert  	  = require('assert');
+	let assert  	  = require('assert');
 	let	_             = require('underscore');
 	let	Q             = require('q');
 	let	fsExtra       = require('fs-extra');
@@ -12,6 +12,7 @@ module.exports = function () {
 	let	_p            = require('../helpers/promise-utils');
 	let	elements      = require('../helpers/elements');
 	let	actions       = require('../helpers/actions');
+	let store    	  = require('../helpers/store');
 	let	pry  		  = require('pryjs');
 	let	config 		  = require('../helpers/config');
 	let	serverConfigs = require('../helpers/appium-servers');
@@ -24,7 +25,7 @@ module.exports = function () {
 
 
 	describe("Test all icon colors", function() {
-	
+
 			this.timeout(3000000);
 			let allPassed = true;
 			console.log(('RUNNING ' + __filename.slice(__dirname.length + 1) + ' for iOS').green.bold.underline);
@@ -35,9 +36,14 @@ module.exports = function () {
 				.fullLogin()
 		});
 
-		it('Should turn the house blue: one primary target not home', function () {
-			console.log('Should turn the house blue: one primary target not home'.green.bold.underline);
+		it.only('Should login quick', function () {
+			return driver
+				.loginQuick()
+		});
 
+		it.only('Should turn the house blue: one primary target not home', function () {
+			console.log('Should turn the house blue: one primary target not home'.green.bold.underline);
+			store.set('houseHolds', {})
 			// Not home 1 primary target turns house blue
 			// Survey: DO NOT USE: Mobile Automation Survey 1.0
 
@@ -53,19 +59,42 @@ module.exports = function () {
 				.elementById('DO NOT USE: Mobile Automation Survey 1.0')
 				.click()
 				.waitForElementById(elements.survey.start, 10000)
+				.sleep(1000)
 				.elementById(elements.survey.start)
 				.click()
 				.startTime('Load Survey')
-				.waitForElementById('Select Walkbook', 10000)
+				.waitForElementById('Select Walkbook', 13000)
 			    .endTotalAndLogTime('Load Survey')
 			    .elementByXPath(elements.survey.walkbook1)
 			    .click()
-			    .waitForElementById(elements.survey.popoverOpenBook, 10000)
+			    .waitForElementById(elements.survey.popoverOpenBook, 13000)
 			    .elementById(elements.survey.popoverOpenBook)
 			    .click()
 			    .startTime('Load Walkbook')
-			    .waitForElementByXPath(elements.walkbook.houseHold1, 10000)
-			    .click()
+			    .waitForElementByClassName('XCUIElementTypeTable', 13000)
+
+			    //save household IDs
+			    .elementByClassName('XCUIElementTypeTable')
+			    .elementsByClassName('>','XCUIElementTypeCell')
+			    .then(_p.saveHouseNames)
+
+			    //pick the first notstarted household
+			    .then(function () {
+			    	var houseHolds = store.get('houseHolds');
+			    	for (var key in houseHolds){
+			    		var regexp = /.*notstarted.*/i;
+			    		var this_value = houseHolds[key];
+			    		if (regexp.test(this_value) === true) {
+			    			console.log('Using ' + houseHolds[key])
+			    			config.thisHousehold = this_value
+					    	return driver
+						    	.elementById(config.thisHousehold)
+						    	.click()
+			    			break;
+			    		}
+			    	}
+			    })
+
 				.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
 				.elementById(elements.walkbook.popoverOpenHouse)
 				.click()
@@ -91,7 +120,7 @@ module.exports = function () {
 //
 //			return driver
 //
-//			
+//
 //		});
 //		it('Should turn the house blue: xxxxxxxxxxx', function () {
 //			console.log('Should turn the house blue: xxxxxxxxxxx'.green.bold.underline);
@@ -101,7 +130,7 @@ module.exports = function () {
 //
 //			return driver
 //
-//			
+//
 //		});
 //		it('Should turn the house blue: xxxxxxxxxxx', function () {
 //			console.log('Should turn the house blue: xxxxxxxxxxx'.green.bold.underline);
@@ -111,7 +140,7 @@ module.exports = function () {
 //
 //			return driver
 //
-//			
+//
 //		});
 //		it('Should turn the house blue: xxxxxxxxxxx', function () {
 //			console.log('Should turn the house blue: xxxxxxxxxxx'.green.bold.underline);
@@ -121,7 +150,7 @@ module.exports = function () {
 //
 //			return driver
 //
-//			
+//
 //		});
 
 

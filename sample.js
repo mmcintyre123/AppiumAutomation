@@ -125,7 +125,7 @@ describe("Visiting all pages in Walk", function() {
 	});
 
 	//tested and works
-	it("should print every menu item", function () {
+	it.only("should print every menu item", function () {
 	  return driver
 	    .elementByClassName('XCUIElementTypeTable')
 	    .elementsByClassName('>','XCUIElementTypeCell')

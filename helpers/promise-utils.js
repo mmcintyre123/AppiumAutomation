@@ -1,7 +1,9 @@
 "use strict";
 
-let Q = require('q'),
-    _ = require('underscore');
+let Q = require('q');
+let _ = require('underscore');
+let store = require('../helpers/store');
+
 
 exports.each = function (fn) {
   return function (els) {
@@ -32,9 +34,41 @@ exports.filter = function (fn) {
   };
 };
 
+
+
+
+
+
 exports.printNames = exports.each(function (el, i) {
   return el.getAttribute('name').print(i + "--> ");
 });
+
+exports.saveHouseNames = exports.each(function(el, i) {
+  return el.getAttribute('name').then(function (attr) {
+    var this_key = 'houseHold_' + i;
+    var this_value = attr;
+    store.get('houseHolds')[this_key] = this_value;
+  })
+});
+
+// creating a function to pick the first "not started" household without saving the whole list.
+// exports.pickFirstNotStarted = exports.each(function (el, i) {
+//   return driver
+//     .elementByClassName('XCUIElementTypeTable')
+//     .elementsByClassName('>','XCUIElementTypeCell')
+//     .then(function () {
+//       return exports.each(function (el, i) {
+//         return el.getAttribute('name').then(function (attr) {
+//           var this_key = 'houseHold_' + i;
+//           var this_value = attr;
+//           store.get('houseHolds')[this_key] = this_value;    
+//       })
+//     })
+// })
+
+
+
+
 
 exports.filterDisplayed = exports.filter(function (el) {
   return el.isDisplayed();

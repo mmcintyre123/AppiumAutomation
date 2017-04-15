@@ -26,12 +26,12 @@ for (var i in args ) {
 	switch ( arg ) {
 		case '-sim' : {
 			appium = childProcess.spawn( 'appium', [
-				'-p','4725', //non-default args
-				'-cp','4725', //non-default args
-				'-bp','4726', //non-default args
-				'--selendroid-port', '8081', //non-default args
-				'--chromedriver-port', '9516', //non-default args
-				'--webkit-debug-proxy-port', '27754', //non-default args
+				//'-p','4725', //non-default args
+				//'-cp','4725', //non-default args
+				//'-bp','4726', //non-default args
+				//'--selendroid-port', '8081', //non-default args
+				//'--chromedriver-port', '9516', //non-default args
+				//'--webkit-debug-proxy-port', '27754', //non-default args
 				'--session-override',
 				'--log-level', 'debug',
 				'--debug-log-spacing',
