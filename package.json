@@ -20,6 +20,7 @@
     "fs-extra": "^1.0.0",
     "image-size": "^0.5.1",
     "moment-timezone": "^0.5.11",
+    "mute": "^2.0.6",
     "resize-img": "^1.1.2"
   }
 }

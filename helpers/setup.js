@@ -18,6 +18,8 @@ wd.addPromiseChainMethod('endTotalAndLogTime',commons.endTotalAndLogTime);
 wd.addPromiseChainMethod('loginQuick',commons.loginQuick);
 wd.addPromiseChainMethod('fullLogin',commons.fullLogin);
 wd.addPromiseChainMethod('pry',commons.pry);
+wd.addPromiseChainMethod('mute',commons.mute);
+wd.addPromiseChainMethod('unmute',commons.unmute);
 
 exports.should = should;
 exports.expect = expect;

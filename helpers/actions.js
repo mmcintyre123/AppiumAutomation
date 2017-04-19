@@ -79,14 +79,22 @@ exports.zoom = function (el) {
 //     })
 // };
 
-
 exports.takeScreenshotMethod = function(name) {
-  return this
-    // base64 screeshot
-    .takeScreenshot()
-    .should.eventually.exist
+  var context = this;
+  var unmute;
+  return context
+    .sleep(1)
+    // base64 screeshot without printing output!
+    .then(function () {
+      var mute = require('mute');
+      unmute = mute();
+      return context
+        .takeScreenshot()
+        .should.eventually.exist;
+    })
     // save screenshot to local file
     .then(function() {
+      unmute();
       try {
         fs.unlinkSync('screenShots/' + name + '.png');
       } catch (ign) {}

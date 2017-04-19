@@ -21,6 +21,22 @@ function Commons () {
 //    			CONFIG METHODS              \\
 // **************************************** \\
 
+/*
+var stdout_write = process.stdout.write;
+var stderr_write = process.stderr.write;
+
+Commons.prototype.mute = function mute() {
+    process.stderr.write = process.stdout.write = function(chunk, encoding, callback) {
+        callback();
+    };
+};
+
+Commons.prototype.unmute = function unmute() {
+    process.stdout.write = stdout_write;
+    process.stderr.write = stderr_write;
+};
+*/
+
 let convertDate = function(ms) {
 	//this is not used for anything that you will need! it is used for logging date/time and already set up
 	let total = parseInt(ms);

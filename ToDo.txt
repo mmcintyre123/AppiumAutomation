@@ -1,6 +1,6 @@
 // To do:
 
-// write a function that finds the first house in a list which is not started.  Use in the icon_colors.js test case.
+// test icon_colors.js
 
 // determine a way to return element IDs of all people in a house, step through the array, and act accordingly depending on the test case - proceed? Or exit and try another house?
 
