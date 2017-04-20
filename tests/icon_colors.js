@@ -28,7 +28,7 @@ module.exports = function () {
 
 			this.timeout(3000000);
 			let allPassed = true;
-			console.log(('RUNNING ' + __filename.slice(__dirname.length + 1) + ' for iOS').green.bold.underline);
+			console.log(('RUNNING ' + __filename.slice(__dirname.length + 1) + ' for android').green.bold.underline);
 
 
 		it('Should perform a full login', function () {
@@ -41,7 +41,8 @@ module.exports = function () {
 				.loginQuick()
 		});
 
-		it('Should go to household page', function () {
+		// passing 4-20-17 4:30pm
+		it.only('Should go to household page', function () {
 			return driver
 				.elementById(elements.homeScreen.walkbooks)
 				.click()
@@ -56,25 +57,26 @@ module.exports = function () {
 			    .waitForElementById(elements.survey.popoverOpenBook, 10000)
 			    .click()
 			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
-			    .elementByXPath(elements.walkbook.houseHold10)
-			    .getLocation()
-			    .then(function(loc){
-			    	 return driver
-			    		.swipe({
-			    			startX: loc.x,
-			    			startY: loc.y,
-			    			offsetX: 0, // this is an offset!
-			    			offsetY: -550, // this is an offset!
-			    		})
-			    }) // scrolls down a full screen
+			    // .elementByXPath(elements.walkbook.houseHold10)
+			    // .getLocation()
+			    // .then(function(loc){
+			    // 	 return driver
+			    // 		.swipe({
+			    // 			startX: loc.x,
+			    // 			startY: loc.y,
+			    // 			offsetX: 0,
+			    // 			offsetY: -550,
+			    // 		})
+			    // }) // scrolls down a full screen
 		});
 
 		// passing 4-20-17 1:30pm
-		it.only('Should turn the house blue: one primary target not home', function () {
+		it('Should turn the house blue: one primary target not home', function () {
 			console.log('Should turn the house blue: one primary target not home'.green.bold.underline);
 			store.set('houseHolds', {});
-			// Not home 1 primary target turns house blue
+
 			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+
 			return driver
 				.startTime('Home Page to Household')
 				.elementById(elements.homeScreen.walkbooks)
@@ -145,11 +147,11 @@ module.exports = function () {
 			    })
 		});
 
-		it.only('Should turn the house blue: household not home', function () {
+		// passing 4-20-17 4:30pm
+		it('Should turn the house blue: household not home', function () {
 			console.log('Should turn the house blue: household not home'.green.bold.underline);
 			store.set('houseHolds', {});
 
-			// Not home household turns house blue
 			// Survey: DO NOT USE: Mobile Automation Survey 1.0
 
 			return driver
@@ -196,37 +198,74 @@ module.exports = function () {
 				})
 		});
 
-//		it('Should turn the house blue: xxxxxxxxxxx', function () {
-//			console.log('Should turn the house blue: xxxxxxxxxxx'.green.bold.underline);
-//
-//			// xxxxxxxxx turns house blue
-//			// Survey: DO NOT USE: Mobile Automation Survey 1.0
-//
-//			return driver
-//
-//
-//		});
-//		it('Should turn the house blue: xxxxxxxxxxx', function () {
-//			console.log('Should turn the house blue: xxxxxxxxxxx'.green.bold.underline);
-//
-//			// xxxxxxxxx turns house blue
-//			// Survey: DO NOT USE: Mobile Automation Survey 1.0
-//
-//			return driver
-//
-//
-//		});
-//		it('Should turn the house blue: xxxxxxxxxxx', function () {
-//			console.log('Should turn the house blue: xxxxxxxxxxx'.green.bold.underline);
-//
-//			// xxxxxxxxx turns house blue
-//			// Survey: DO NOT USE: Mobile Automation Survey 1.0
-//
-//			return driver
-//
-//
-//		});
+		// passing 4-20-17 4:30pm
+		it.only('Should turn the house from blue to red: restricted access household', function () {
+			console.log('Should turn the house blue: restricted access household'.green.bold.underline);
+				store.set('houseHolds', {});
 
+			// Survey: DO NOT USE: Mobile Automation Survey 1.0
 
+			return driver
+				// save household IDs:
+				.elementByClassName('XCUIElementTypeTable')
+				.elementsByClassName('>','XCUIElementTypeCell')
+				.then(_p.saveHouseNames)
+				.execute('mobile: scroll', {direction: 'up'}) // ensure at the top
+				.then(function () {
+
+			    	let houseHolds = store.get('houseHolds');
+
+				    // pick the first attempted household then continue
+			    	for (let key in houseHolds) {
+
+			    		let regexp = /.*attempted.*/i;
+			    		let this_value = houseHolds[key];
+
+			    		if (regexp.test(this_value) === true) {
+
+			    			console.log('Using ' + houseHolds[key]);
+			    			let thisHousehold = this_value;
+			    			let thisHouseholdAfter = this_value.replace('attempted','reject');
+			    			let houseNum = Number(thisHousehold.match(/\d+/)[0]) + 1;
+
+					    	return driver
+					    		.scrollHouseList(houseNum)
+						    	.elementById(thisHousehold)
+						    	.click()
+								.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
+								.elementById(elements.walkbook.popoverOpenHouse)
+								.click()
+								.waitForElementById(elements.houseHold.restricted, 10000)
+								.click()
+								.waitForElementByClassName('XCUIElementTypeTable', 10000) // wait for the house list
+								.waitForElementById(thisHouseholdAfter, 10000) // verify house is blue
+								.then(function () {
+									houseHolds[key] = thisHouseholdAfter;
+								}) // if previous passes, set the value in store to the new value.
+			    			break;
+						}
+					}
+				})
+		});
+//		it('Should turn the house blue: xxxxxxxxxxx', function () {
+//			console.log('Should turn the house blue: xxxxxxxxxxx'.green.bold.underline);
+//
+//			// xxxxxxxxx turns house blue
+//			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+//
+//			return driver
+//
+//
+//		});
+//		it('Should turn the house blue: xxxxxxxxxxx', function () {
+//			console.log('Should turn the house blue: xxxxxxxxxxx'.green.bold.underline);
+//
+//			// xxxxxxxxx turns house blue
+//			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+//
+//			return driver
+//
+//
+//		});
 	});
 };
