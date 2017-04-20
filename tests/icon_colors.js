@@ -252,25 +252,12 @@ module.exports = function () {
 				})
 		});
 
-<<<<<<< HEAD
 //************************************************//
-CHANGES IN ANDROID
+// CHANGES IN ANDROID
 //************************************************//
 
-
-
-
-
-
-
-
-
-
-
-=======
 
 Here are a bunch of changes in ios.
->>>>>>> ios
 
 
 //		it('Should turn the house blue: xxxxxxxxxxx', function () {
