@@ -198,6 +198,10 @@ module.exports = function () {
 				})
 		});
 
+//************************************************//
+// CHANGES IN ANDROID
+//************************************************//
+
 		// passing 4-20-17 4:30pm
 		it.only('Should turn the house from blue to red: restricted access household', function () {
 			console.log('Should turn the house blue: restricted access household'.green.bold.underline);
@@ -247,6 +251,23 @@ module.exports = function () {
 					}
 				})
 		});
+
+//************************************************//
+CHANGES IN ANDROID
+//************************************************//
+
+
+
+
+
+
+
+
+
+
+
+
+
 //		it('Should turn the house blue: xxxxxxxxxxx', function () {
 //			console.log('Should turn the house blue: xxxxxxxxxxx'.green.bold.underline);
 //
