@@ -200,6 +200,9 @@ module.exports = function () {
 
 //************************************************//
 // CHANGES IN ANDROID
+
+
+// lah dee dah more work in Android - this should stay
 //************************************************//
 
 		// passing 4-20-17 4:30pm
@@ -254,6 +257,8 @@ module.exports = function () {
 
 //************************************************//
 // CHANGES IN ANDROID
+
+//lah dee dah more work in Android - this should stay
 //************************************************//
 
 
