@@ -251,6 +251,12 @@ module.exports = function () {
 
 Here are a bunch of changes in ios.
 
+Here is some new work in ios.  
+
+New tests, etc.
+
+This should stay, no android should appear, and these should move to Android after merging.
+
 
 //		it('Should turn the house blue: xxxxxxxxxxx', function () {
 //			console.log('Should turn the house blue: xxxxxxxxxxx'.green.bold.underline);
