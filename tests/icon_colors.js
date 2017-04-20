@@ -198,12 +198,6 @@ module.exports = function () {
 				})
 		});
 
-//************************************************//
-// CHANGES IN ANDROID
-
-
-// lah dee dah more work in Android - this should stay
-//************************************************//
 
 		// passing 4-20-17 4:30pm
 		it.only('Should turn the house from blue to red: restricted access household', function () {
@@ -255,20 +249,6 @@ module.exports = function () {
 				})
 		});
 
-//************************************************//
-// CHANGES IN ANDROID
-
-//lah dee dah more work in Android - this should stay
-//************************************************//
-
-
-Here are a bunch of changes in ios.
-
-Here is some new work in ios.  
-
-New tests, etc.
-
-This should stay, no android should appear, and these should move to Android after merging.
 
 
 //		it('Should turn the house blue: xxxxxxxxxxx', function () {
