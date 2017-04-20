@@ -41,106 +41,105 @@ module.exports = function () {
 				.loginQuick()
 		});
 
+		it('Should go to household page', function () {
+			return driver
+				.elementById(elements.homeScreen.walkbooks)
+				.click()
+				.waitForElementById(elements.surveys.survey1, 10000)
+				.elementById('DO NOT USE: Mobile Automation Survey 1.0')
+				.click()
+				.waitForElementById(elements.survey.start, 10000) 
+				.elementById(elements.survey.start)
+				.click() // not working
+				.waitForElementById('Walkbook 201', 10000)
+			    .click()
+			    .waitForElementById(elements.survey.popoverOpenBook, 10000)
+			    .click()
+			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
+			    .elementByXPath(elements.walkbook.houseHold10)
+			    .getLocation()
+			    .then(function(loc){
+			    	 return driver
+			    		.swipe({
+			    			startX: loc.x,
+			    			startY: loc.y,
+			    			offsetX: 0, // this is an offset!
+			    			offsetY: -550, // this is an offset!
+			    		})
+			    }) // scrolls down a full screen
+		});
+
+		// passing 4-20-17 1:30pm
 		it.only('Should turn the house blue: one primary target not home', function () {
 			console.log('Should turn the house blue: one primary target not home'.green.bold.underline);
-			store.set('houseHolds', {})
+			store.set('houseHolds', {});
 			// Not home 1 primary target turns house blue
 			// Survey: DO NOT USE: Mobile Automation Survey 1.0
 			return driver
-				// .startTime('Home Page to Household')
+				.startTime('Home Page to Household')
 				.elementById(elements.homeScreen.walkbooks)
 				.click()
-				// .startTime('Load Survey List')
+				.startTime('Load Survey List')
 				.waitForElementById(elements.surveys.survey1, 10000)
-				// .endTotalAndLogTime('Load Survey List')
+				.endTotalAndLogTime('Load Survey List')
 				.elementById('DO NOT USE: Mobile Automation Survey 1.0')
 				.click()
 				.waitForElementById(elements.survey.start, 10000)
 				.sleep(1000)
 				.elementById(elements.survey.start)
 				.click()
-				// .startTime('Load Survey')
+				.startTime('Load Survey')
 				.waitForElementById('Select Walkbook', 13000)
-			    // .endTotalAndLogTime('Load Survey')
+			    .endTotalAndLogTime('Load Survey')
 			    .elementByXPath(elements.survey.walkbook1)
 			    .click()
 			    .waitForElementById(elements.survey.popoverOpenBook, 13000)
 			    .elementById(elements.survey.popoverOpenBook)
 			    .click()
-			    // .startTime('Load Walkbook')
+			    .startTime('Load Walkbook')
 			    .waitForElementByClassName('XCUIElementTypeTable', 13000)
 			    // save household IDs:
 			    .elementByClassName('XCUIElementTypeTable')
 			    .elementsByClassName('>','XCUIElementTypeCell')
 			    .then(_p.saveHouseNames)
-			    // pick the first notstarted household then continue:
+			    // pick the first notstarted household then continue - handles scrolling assuming 25 households to a walkbook - todo make this 20 in the future:
 			    .then(function () {
-			    	var houseHolds = store.get('houseHolds');
-			    	// eval(require('pryjs').it)
-			    	for (var key in houseHolds){
-			    		var regexp = /.*notstarted.*/i;
-			    		var this_value = houseHolds[key];
+
+			    	let houseHolds = store.get('houseHolds');
+
+			    	for (let key in houseHolds) {
+
+			    		let regexp = /.*notstarted.*/i;
+			    		let this_value = houseHolds[key];
+			    		
 			    		if (regexp.test(this_value) === true) {
+
 			    			console.log('Using ' + houseHolds[key]);
-			    			config.thisHousehold = this_value;
-			    			config.thisHouseholdAfter = this_value.replace('notstarted','attempted');
-			    			let houseNum = Number(this_value.match(/\d+/)[0])
-			    			// If all the houses in the inital view are used, scroll down:
-			    			if (houseNum > 9) {
-			    				return driver
-				    				.execute('mobile: scroll', {direction: 'down'}) // scrolls to bottom
-			    					.elementByXPath(elements.walkbook.houseHold20) // hopefully in view todo, make this more programmatic
-			    					.getLocation()
-			    					.then(function(loc){
-			    						 return driver
-			    							.swipe({
-			    								startX: loc.x,
-			    								startY: loc.y,
-			    								endX: loc.x,
-			    								endY: loc.y + 200,
-			    								duration: 300
-			    							})
-			    					}) // scrolls back up a little
-	    					    	.elementById(config.thisHousehold)
-	    					    	.click()
-	    							.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
-	    							.elementById(elements.walkbook.popoverOpenHouse)
-	    							.click()
-	    							.waitForElementById(elements.houseHold.notHome, 10000)
-	    							.endTotalAndLogTime('Home Page to Household')
-	    							.elementById(elements.houseHold.primTarget1)
-	    							.click()
-	    							.waitForElementById(elements.target.takeSurvey, 10000)
-	    							.elementById(elements.target.notHome)
-	    							.click()
-	    							.waitForElementById(elements.houseHold.finished)
-	    							.click()
-	    							.waitForElementById(config.thisHouseholdAfter) // verify the house is blue
-	    							.then(function () {
-	    								houseHolds[key] = config.thisHouseholdAfter;
-	    							}) // if previous passes, set the value in store to the new value.
-			    			} else {
-						    	return driver
-							    	.elementById(config.thisHousehold)
-							    	.click()
-									.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
-									.elementById(elements.walkbook.popoverOpenHouse)
-									.click()
-									.waitForElementById(elements.houseHold.notHome, 10000)
-									.endTotalAndLogTime('Home Page to Household')
-									.elementById(elements.houseHold.primTarget1)
-									.click()
-									.waitForElementById(elements.target.takeSurvey, 10000)
-									.elementById(elements.target.notHome)
-									.click()
-									.waitForElementById(elements.houseHold.finished)
-									.click()
-									.waitForElementById(config.thisHouseholdAfter) // verify the house is blue
-									.then(function () {
-										houseHolds[key] = config.thisHouseholdAfter;
-									}) // if previous passes, set the value in store to the new value.
+			    			let thisHousehold = this_value;
+			    			let thisHouseholdAfter = this_value.replace('notstarted','attempted');
+			    			let houseNum = Number(thisHousehold.match(/\d+/)[0]) + 1;
+
+			    			return driver
+			    				.scrollHouseList(houseNum) // custom method
+    					    	.elementById(thisHousehold)
+    					    	.click()
+    							.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
+    							.elementById(elements.walkbook.popoverOpenHouse)
+    							.click()
+    							.waitForElementById(elements.houseHold.notHome, 10000)
+    							.endTotalAndLogTime('Home Page to Household')
+    							.elementById(elements.houseHold.primTarget1)
+    							.click()
+    							.waitForElementById(elements.target.takeSurvey, 10000)
+    							.elementById(elements.target.notHome)
+    							.click()
+    							.waitForElementById(elements.houseHold.finished, 10000)
+    							.click()
+    							.waitForElementById(thisHouseholdAfter, 10000) // verify the house is blue
+    							.then(function () {
+    								houseHolds[key] = thisHouseholdAfter;
+    							}) // if previous passes, set the value in store to the new value.
 				    			break;
-			    			}
 			    		}
 			    	}
 			    })
@@ -148,40 +147,53 @@ module.exports = function () {
 
 		it.only('Should turn the house blue: household not home', function () {
 			console.log('Should turn the house blue: household not home'.green.bold.underline);
-			store.set('houseHolds', {})
+			store.set('houseHolds', {});
+
 			// Not home household turns house blue
 			// Survey: DO NOT USE: Mobile Automation Survey 1.0
 
-	    	var houseHolds = store.get('houseHolds');
-    		var regexp = /.*notstarted.*/i;
-    		var this_value = houseHolds[key];
+			return driver
+				// save household IDs:
+				.elementByClassName('XCUIElementTypeTable')
+				.elementsByClassName('>','XCUIElementTypeCell')
+				.then(_p.saveHouseNames)
+				.execute('mobile: scroll', {direction: 'up'}) // ensure at the top
+				.then(function () {
 
-		    // pick the first notstarted household then continue
-	    	for (var key in houseHolds) {
-	    		if (regexp.test(this_value) === true) {
-	    			console.log('Using ' + houseHolds[key]);
-	    			config.thisHousehold = this_value;
-	    			config.thisHouseholdAfter = this_value.replace('notstarted','attempted');
-			    	return driver
-				    	.elementById(config.thisHousehold)
-				    	.click()
-						.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
-						.elementById(elements.walkbook.popoverOpenHouse)
-						.click()
-						.waitForElementById(elements.houseHold.notHome, 10000)
-						.endTotalAndLogTime('Home Page to Household')
-						.elementById(elements.houseHold.notHome)
-						.click()
-						.waitForElementByClassName('XCUIElementTypeTable', 13000) // wait for the house list
-						.waitForElementById(config.thisHouseholdAfter) // verify house is blue
-						.then(function () {
-							houseHolds[key] = config.thisHouseholdAfter;
-						}) // if previous passes, set the value in store to the new value.
-	    			break;
-				} else {
-					console.log('All the houses in this walkbook have been started!'.red.bold.underline)
-				}
-			}
+			    	let houseHolds = store.get('houseHolds');
+
+				    // pick the first notstarted household then continue
+			    	for (let key in houseHolds) {
+
+			    		let regexp = /.*notstarted.*/i;
+			    		let this_value = houseHolds[key];
+
+			    		if (regexp.test(this_value) === true) {
+
+			    			console.log('Using ' + houseHolds[key]);
+			    			let thisHousehold = this_value;
+			    			let thisHouseholdAfter = this_value.replace('notstarted','attempted');
+			    			let houseNum = Number(thisHousehold.match(/\d+/)[0]) + 1;
+
+					    	return driver
+					    		.scrollHouseList(houseNum)
+						    	.elementById(thisHousehold)
+						    	.click()
+								.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
+								.elementById(elements.walkbook.popoverOpenHouse)
+								.click()
+								.waitForElementById(elements.houseHold.notHome, 10000)
+								.elementById(elements.houseHold.notHome)
+								.click()
+								.waitForElementByClassName('XCUIElementTypeTable', 10000) // wait for the house list
+								.waitForElementById(thisHouseholdAfter, 10000) // verify house is blue
+								.then(function () {
+									houseHolds[key] = thisHouseholdAfter;
+								}) // if previous passes, set the value in store to the new value.
+			    			break;
+						}
+					}
+				})
 		});
 
 //		it('Should turn the house blue: xxxxxxxxxxx', function () {

@@ -20,6 +20,7 @@ wd.addPromiseChainMethod('fullLogin',commons.fullLogin);
 wd.addPromiseChainMethod('pry',commons.pry);
 wd.addPromiseChainMethod('mute',commons.mute);
 wd.addPromiseChainMethod('unmute',commons.unmute);
+wd.addPromiseChainMethod('scrollHouseList',commons.scrollHouseList);
 
 exports.should = should;
 exports.expect = expect;

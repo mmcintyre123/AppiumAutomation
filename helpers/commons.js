@@ -10,6 +10,7 @@ let config    =  require('./config');
 let store     =  require('./Store');
 let pry       =  require('pryjs');
 let elements  =  require('./elements');
+let driver    =  config.driver;
 
 // todo this.os doesn't seem to be working.
 function Commons () {
@@ -87,7 +88,6 @@ Commons.prototype.beforeAll = function(){
 	before(function() {
 
 		let elements = config.elements;
-		let driver   = config.driver;
 		let desired  = config.desired;
 
 		require("./logging").configure(driver);
@@ -140,8 +140,8 @@ Commons.prototype.afterAll = function(){
 	after(function() {
 
 		config.wStreamLogTimeFile.end();
-		return config.driver
-			.sleep(3000)
+		return driver
+			.sleep(1005)
 			.quit()
 			.finally(function() {
 				if (process.env.SAUCE) {
@@ -156,7 +156,7 @@ Commons.prototype.afterEach = function(){
 		// let allPassed = allPassed && this.currentTest.state === 'passed';
 		if (this.currentTest.state !== 'passed') {
 			let thisTest = this.currentTest.title;
-			return config.driver
+			return driver
 				.takeScreenshotMethod(thisTest);
 		  }
     });
@@ -195,7 +195,7 @@ Commons.prototype.endTotalAndLogTime = function(startName){
 
 Commons.prototype.loginQuick = function(){
 	console.log('LOGIN QUICK'.green.bold.underline);
-	return config.driver
+	return driver
 		.elementById(elements.loginLogout.logIn) // LogIn Button
 		.click()
 		.startTime('Log In')
@@ -206,13 +206,13 @@ Commons.prototype.loginQuick = function(){
 // todo press "Allow" button
 Commons.prototype.fullLogin = function(){
 	console.log('FULL LOGIN'.green.bold.underline);
-	return config.driver
+	return driver
 		.sleep(2000)
 		.then(function () {
-			if (config.driver.elementByClassNameIfExists('XCUIElementTypeAlert')) {
-				config.driver.acceptAlert()
+			if (driver.elementByClassNameIfExists('XCUIElementTypeAlert')) {
+				driver.acceptAlert()
 			} else {
-				return config.driver
+				return driver
 			}
 		})
 		.waitForElementById('etLoginUsername') // UserName
@@ -227,7 +227,7 @@ Commons.prototype.fullLogin = function(){
 		// Click away if we're in iOS:
 		.then(function () {
 			if(config.desired.platformName == 'iOS') {
-				return config.driver
+				return driver
 					.elementByClassName('XCUIElementTypeImage')
 					.click()
 			}
@@ -235,18 +235,18 @@ Commons.prototype.fullLogin = function(){
 		// check if "remember me" is already checked.
 		.then(function () {
 			if (config.desired.platformName == 'Android') {
-				return config.driver
+				return driver
 						     .elementById(elements.loginLogout.rememberMe)
 						     .getAttribute('checked')
 			} else if (config.desired.platformName == 'iOS') {
-				return config.driver
+				return driver
 						     .elementById(elements.loginLogout.rememberMe)
 						     .getAttribute('value')
 			}
 		})
 		.then(function (attr) {
 			if (attr == false || attr == 'false') { // if remember me not checked do:
-				return config.driver
+				return driver
 						     .elementById(elements.loginLogout.rememberMe)
 						     .click()
 			}
@@ -268,10 +268,10 @@ Commons.prototype.clickAndClose = function(scope, elemArray){
 			.startTime(currentPage + ' load time')
 			.then(function () {
 				if (config.desired.platformName == 'Android'){
-					return config.driver
+					return driver
 								 .waitForElementById('up').should.eventually.exist
 				} else {
-					return config.driver
+					return driver
 								 .waitForElementById('Close').should.eventually.exist
 				}
 			})
@@ -280,8 +280,8 @@ Commons.prototype.clickAndClose = function(scope, elemArray){
 				//check for message popups in Android:
 				if (config.desired.platformName == 'Android') {
 					if (currentPage == elements.homeScreen.voterCheckIn) {
-						if (config.driver.elementById('message')) {
-							config.driver
+						if (driver.elementById('message')) {
+							driver
 								  .elementById('message')
 								  .source()
 								  .then(function (source) {
@@ -294,8 +294,8 @@ Commons.prototype.clickAndClose = function(scope, elemArray){
 							return
 						}
 					} else if (currentPage == elements.homeScreen.eventCheckIn) {
-						if (config.driver.elementById('message')) {
-							config.driver
+						if (driver.elementById('message')) {
+							driver
 								  .elementById('message')
 								  .source()
 								  .then(function (source) {
@@ -306,12 +306,12 @@ Commons.prototype.clickAndClose = function(scope, elemArray){
 							config.alreadyHome = true;
 						}
 					} else if (config.alreadyHome == false) {
-						config.driver
+						driver
 							  .elementById('up')
 							  .click();
 					}
 				} else if (config.desired.platformName == 'iOS') {
-					config.driver
+					driver
 						  .elementById('Close')
 						  .click();
 				} else {
@@ -321,6 +321,58 @@ Commons.prototype.clickAndClose = function(scope, elemArray){
 			.sleep(750);
 	}
 	return scope;
+};
+
+Commons.prototype.scrollHouseList = function(houseNum) {
+	// If all the houses in the inital view are used, scroll down:
+
+	if (houseNum > 10 && houseNum <= 20) {
+		return driver
+			// .execute('mobile: scroll', {direction: 'up'}) // ensure at the top
+			.elementByXPath(elements.walkbook.houseHold10)
+			.getLocation()
+			.then(function(loc){
+				 return driver
+					.swipe({
+						startX: loc.x,
+						startY: loc.y,
+						offsetX: 0,
+						offsetY: -550,
+					})
+			}) // scrolls down a full screen
+	} else if (houseNum > 20 && houseNum <= 30) {
+		return driver
+			// .execute('mobile: scroll', {direction: 'up'}) // ensure at the top
+			.elementByXPath(elements.walkbook.houseHold10)
+			.getLocation()
+			.then(function(loc){
+				 return driver
+					.swipe({
+						startX: loc.x,
+						startY: loc.y,
+						offsetX: 0,
+						offsetY: -1100,
+					})
+			}) // scrolls down a full 2 screens
+	} else if (houseNum > 30 && houseNum <= 40) {
+		return driver
+			// .execute('mobile: scroll', {direction: 'up'}) // ensure at the top
+			.elementByXPath(elements.walkbook.houseHold10)
+			.getLocation()
+			.then(function(loc){
+				 return driver
+					.swipe({
+						startX: loc.x,
+						startY: loc.y,
+						offsetX: 0,
+						offsetY: -1650,
+					})
+			}) // scrolls down a full 3 screens
+	} else if (houseNum > 40) {
+		console.log('Don\'t use such large Walkbooks!'.red.bold.underline)
+		return driver
+			.execute('mobile: scroll', {direction: 'down'}) // scrolls to bottom
+	}
 };
 
 
