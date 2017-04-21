@@ -148,7 +148,7 @@ module.exports = function () {
 		});
 
 		// passing 4-20-17 4:30pm
-		it('Should turn the house blue: household not home', function () {
+		it.only('Should turn the house blue: household not home', function () {
 			console.log('Should turn the house blue: household not home'.green.bold.underline);
 			store.set('houseHolds', {});
 

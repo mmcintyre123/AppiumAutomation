@@ -35,11 +35,6 @@ exports.filter = function (fn) {
   };
 };
 
-
-
-
-
-
 exports.printNames = exports.each(function (el, i) {
   return el.getAttribute('name').print(i + "--> ");
 });
@@ -52,8 +47,6 @@ exports.saveHouseNames = exports.each(function(el, i) {
     store.get('houseHolds')[this_key] = this_value;
   })
 });
-
-
 
 // creating a function to pick the first "not started" household without saving the whole list.
 // exports.pickFirstNotStarted = function () {
@@ -80,10 +73,6 @@ exports.saveHouseNames = exports.each(function(el, i) {
 // }
 
 
-
-
-
-
 exports.filterDisplayed = exports.filter(function (el) {
   return el.isDisplayed();
 });
@@ -95,8 +84,6 @@ exports.filterWithName = function (name) {
     });
   });
 };
-
-
 
 
 //todo figure this out
