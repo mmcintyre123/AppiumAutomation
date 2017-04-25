@@ -7,6 +7,7 @@ let expect               = chai.expect;
 let assert               = chai.assert;
 let actions              = require('./actions');
 let commons              = require('./commons');
+let promiseUtils         = require('./promise-utils');
 chai.config.includeStack = true;
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
 chai.use(chaiAsPromised);
@@ -21,6 +22,7 @@ wd.addPromiseChainMethod('pry',commons.pry);
 wd.addPromiseChainMethod('mute',commons.mute);
 wd.addPromiseChainMethod('unmute',commons.unmute);
 wd.addPromiseChainMethod('scrollHouseList',commons.scrollHouseList);
+wd.addPromiseChainMethod('clickFirstListItemByIdPart',promiseUtils.clickFirstListItemByIdPart);
 
 exports.should = should;
 exports.expect = expect;

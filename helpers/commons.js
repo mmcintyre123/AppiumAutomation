@@ -228,20 +228,20 @@ Commons.prototype.fullLogin = function(){
 		.then(function () {
 			if(config.desired.platformName == 'iOS') {
 				return driver
-					.elementByClassName('XCUIElementTypeImage')
-					.click()
+						.elementByClassName('XCUIElementTypeImage')
+						.click()
 			}
 		})
 		// check if "remember me" is already checked.
 		.then(function () {
 			if (config.desired.platformName == 'Android') {
 				return driver
-						     .elementById(elements.loginLogout.rememberMe)
-						     .getAttribute('checked')
+					     .elementById(elements.loginLogout.rememberMe)
+					     .getAttribute('checked')
 			} else if (config.desired.platformName == 'iOS') {
 				return driver
-						     .elementById(elements.loginLogout.rememberMe)
-						     .getAttribute('value')
+					     .elementById(elements.loginLogout.rememberMe)
+					     .getAttribute('value')
 			}
 		})
 		.then(function (attr) {
@@ -351,7 +351,7 @@ Commons.prototype.scrollHouseList = function(houseNum) {
 						startX: loc.x,
 						startY: loc.y,
 						offsetX: 0,
-						offsetY: -1100,
+						offsetY: -1120,
 					})
 			}) // scrolls down a full 2 screens
 	} else if (houseNum > 30 && houseNum <= 40) {

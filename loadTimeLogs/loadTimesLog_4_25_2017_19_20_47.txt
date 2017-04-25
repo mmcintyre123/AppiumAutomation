@@ -1,0 +1,4 @@
+Log In: 0 hours, 0 minutes, 1.247 seconds.
+Load Survey List: 0 hours, 0 minutes, 0.831 seconds.
+Load Survey: 0 hours, 0 minutes, 4.77 seconds.
+Home Page to Household: 0 hours, 0 minutes, 40.952 seconds.

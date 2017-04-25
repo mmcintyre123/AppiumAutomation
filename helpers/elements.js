@@ -2,6 +2,10 @@ let apps = require('./apps.js');
 
 //iOS
 
+	exports.general = {
+		'spinner'  : 'In Progress'
+	}
+
 	// Updating from top down with accessibility IDs in Android - compare later to iOS
 	//By ID
 	exports.actionBar = {
@@ -186,3 +190,4 @@ let apps = require('./apps.js');
 		'remainingSecondaryTarget' :  'sec_btnRemaining_3',			  //Formerly: '//UIAApplication[1]/UIAWindow[1]/UIAScrollView[1]/UIAButton[2]',
 		'finish'	      :  'btnEpilogueFinished' 			 //Formerly: 'Finish with Household'
 	}
+
