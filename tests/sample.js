@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function () {
-	
+
 	require('colors');
 	let wd            = require("wd");
 	let    assert  	  = require('assert');
@@ -18,9 +18,12 @@ module.exports = function () {
 	let	serverConfig  = process.env.SAUCE ? serverConfigs.sauce : serverConfigs.local;
 	let	args  		  = process.argv.slice( 2 );
 	let	simulator     = false;
+	let driver        = config.driver;
+	let	commons       = require('../helpers/commons'); // this must be after the desired and driver are set
+	const sql         = require('mssql');
+	let creds         = require('../credentials');
 	let	desired;
-	let driver = config.driver;
-	let	commons = require('../helpers/commons'); // this must be after the desired and driver are set
+
 
 	describe("Visiting all pages in Walk", function() {
 
@@ -45,9 +48,75 @@ module.exports = function () {
 				.fullLogin()
 		});
 
-		it.only('Quick Login', function () {
+		it('Quick Login', function () {
 			return driver
 				.loginQuick()
+		});
+
+		//working 4-28-17 5:59pm --- for connecting to a single server in a test case (it statement)
+		it('Should query sql', function () {
+			return sql
+				.connect(creds.SQLconfigMD1)
+				.then(pool => {
+
+				    // Query
+					return pool
+						.request()
+						// .input('input_parameter', sql.Int, value)
+						.query("\
+							declare @surveyID BigInt=187164;\
+							declare @helperBooks table(Value INT);INSERT INTO @helperBooks select s.booknum from i360_app_canvass.surveys.surveywalkbookassignments s(nolock)INNER JOIN i360portal.dbo.helper h(nolock)on h.helperID=s.idhelper\
+							where s.idsurvey='187164'and h.LogID='1654wseward'\
+							order by s.booknum asc;with Locations_CTE as(select distinct ta.locationID from I360_App_Canvass.Surveys.TargetsAssc ta(nolock)INNER JOIN I360_App_Canvass.Surveys.TargetWalkbookMap map(nolock)on map.IdSurveyTarget=ta.targetID where ta.surveyID= @surveyID and map.BookNum in(select value from @helperBooks)),Count_CTE as(select cte.locationID,SUM(ta.primaryContact)as PrimaryTargetCount,SUM(1-ta.primaryContact)as NonPrimaryTargetCount from Locations_CTE cte INNER JOIN I360_App_Canvass.Surveys.TargetsAssc ta(nolock)on ta.locationID=cte.locationID where ta.surveyID=@surveyID group by cte.locationID)select map.BookNum as'BookNum',f.seq as'HouseNum'from Count_CTE cte INNER JOIN I360_App_Canvass.Surveys.TargetsAssc ta(nolock)on ta.locationID=cte.locationID INNER JOIN I360_App_Canvass.Surveys.TargetLocations tl(nolock)on tl.targetLocationsID=ta.targetLocationsID INNER JOIN I360_App_Canvass.Surveys.Surveys s(nolock)on s.ID=ta.surveyID INNER JOIN I360_App_Canvass.Surveys.WalkBookRoutesStops f(nolock)on f.IDSurveyTarget=ta.targetID INNER JOIN I360_App_Canvass.Surveys.TargetWalkbookMap map(nolock)on map.IdSurveyTarget=ta.targetID INNER JOIN MD_Shield.dbo.Contacts c(nolock)on c.id=ta.contactID where ta.surveyID=@surveyID and map.BookNum in(select value from @helperBooks)and cte.PrimaryTargetCount>1order by map.BookNum asc,f.seq asc option(maxdop 3);return;\
+						")
+				})
+				.then(result => {
+			    	console.dir(result.recordset)
+				})
+
+				//.catch(err => {
+				//	console.log('Something went wrong'.red.bold)
+				//})
+		});
+
+
+		//passing - for if we need to check data on different servers in the same test case (it statement)
+		it.only('Should create a sql connection pool to query two different servers in the same test case', function () {
+
+			const pool1 = new sql.ConnectionPool(creds.SQLconfigMD1, err => {
+			    // error checks can go here
+			 
+			    pool1.request() // or: new sql.Request(pool1) 
+			    .query("declare @surveyID BigInt=187164;\
+						declare @helperBooks table(Value INT);INSERT INTO @helperBooks select s.booknum from i360_app_canvass.surveys.surveywalkbookassignments s(nolock)INNER JOIN i360portal.dbo.helper h(nolock)on h.helperID=s.idhelper\
+						where s.idsurvey='187164'and h.LogID='1654wseward'\
+						order by s.booknum asc;with Locations_CTE as(select distinct ta.locationID from I360_App_Canvass.Surveys.TargetsAssc ta(nolock)INNER JOIN I360_App_Canvass.Surveys.TargetWalkbookMap map(nolock)on map.IdSurveyTarget=ta.targetID where ta.surveyID= @surveyID and map.BookNum in(select value from @helperBooks)),Count_CTE as(select cte.locationID,SUM(ta.primaryContact)as PrimaryTargetCount,SUM(1-ta.primaryContact)as NonPrimaryTargetCount from Locations_CTE cte INNER JOIN I360_App_Canvass.Surveys.TargetsAssc ta(nolock)on ta.locationID=cte.locationID where ta.surveyID=@surveyID group by cte.locationID)select map.BookNum as'BookNum',f.seq as'HouseNum'from Count_CTE cte INNER JOIN I360_App_Canvass.Surveys.TargetsAssc ta(nolock)on ta.locationID=cte.locationID INNER JOIN I360_App_Canvass.Surveys.TargetLocations tl(nolock)on tl.targetLocationsID=ta.targetLocationsID INNER JOIN I360_App_Canvass.Surveys.Surveys s(nolock)on s.ID=ta.surveyID INNER JOIN I360_App_Canvass.Surveys.WalkBookRoutesStops f(nolock)on f.IDSurveyTarget=ta.targetID INNER JOIN I360_App_Canvass.Surveys.TargetWalkbookMap map(nolock)on map.IdSurveyTarget=ta.targetID INNER JOIN MD_Shield.dbo.Contacts c(nolock)on c.id=ta.contactID where ta.surveyID=@surveyID and map.BookNum in(select value from @helperBooks)and cte.PrimaryTargetCount>1order by map.BookNum asc,f.seq asc option(maxdop 3);return;"
+						, (err, result) => {
+			        //error checks can go here
+			        console.dir(result.recordset)
+			    })
+			 
+			})
+			 
+			//pool1.on('error', err => {
+			//    // ... error handler 
+			//})
+			 
+			const pool2 = new sql.ConnectionPool(creds.SQLconfigREPORT, err => {
+				// error checks can go here
+			 
+			    pool2.request() // or: new sql.Request(pool2) 
+			    .query('SEleCt Top 1 fsr.SA_ID froM i360Reporting.Reporting.FACT_SurveyReturns fsr(nolock) inner jOin i360Reporting.Reporting.DIM_Surveys ds(nolock) On ds.SurveyKey=fsr.SurveyKey lEfT OUTeR JOIN i360Reporting.Reporting.FACT_SurveyTargets fst(nolock) ON fst.ClientOrgID=fsr.ClientOrgID and fst.IDSurvey=fsr.SV_ID And fst.IDContact=fsr.Responder_Contact_ID lefT oUTeR joIn i360Reporting.Reporting.Helper h(nolock) On h.HelperID=fsr.IDHelper wHeRE fsr.SV_ID=187764 oRDeR by fsr.ReceivedTStampGMT DEsC,fst.namegiven DEsC oPTIOn(MAxdOp 1);'
+			    	    , (err, result) => {
+			        //error checks can go here
+			        console.dir(result.recordset)
+			    })
+			})
+
+			//pool2.on('error', err => {
+			//    // ... error handler 
+			//})
+			
 		});
 
 		//tested and works
