@@ -72,43 +72,49 @@ let apps = require('./apps.js');
 		'map' 				 :  'walkbook_map', //in iOS effectively, label "dismiss popup"
 		'mapSettings'		 :  'i ipad', // in Android this is in the mnOverflow - text = "Icon Legend"
 		'list' 				 :  'walkbook_list', // in iOS effectively, label 'menuButton', if on map view
-		'walkbook1'     	 :  '//*[contains(@label,\'cellWalkbook_0\')]',
-		'walkbook2'     	 :  '//*[contains(@label,\'cellWalkbook_1\')]',
-		'walkbook3'     	 :  '//*[contains(@label,\'cellWalkbook_2\')]',
-		'walkbook4'     	 :  '//*[contains(@label,\'cellWalkbook_3\')]',
-		'walkbook5'     	 :  '//*[contains(@label,\'cellWalkbook_4\')]',
-		'walkbook6'     	 :  '//*[contains(@label,\'cellWalkbook_5\')]',
-		'walkbook7'     	 :  '//*[contains(@label,\'cellWalkbook_6\')]',
-		'walkbook8'     	 :  '//*[contains(@label,\'cellWalkbook_7\')]',
+
+		//use clickFirstListItemByIdPart
+		// alternative way - with XPath: '//*[contains(@label,\'cellWalkbook_1\')]',
+		'walkbook1'     	 :  'cellWalkbook_0',
+		'walkbook2'     	 :  'cellWalkbook_1',
+		'walkbook3'     	 :  'cellWalkbook_2',
+		'walkbook4'     	 :  'cellWalkbook_3',
+		'walkbook5'     	 :  'cellWalkbook_4',
+		'walkbook6'     	 :  'cellWalkbook_5',
+		'walkbook7'     	 :  'cellWalkbook_6',
+		'walkbook8'     	 :  'cellWalkbook_7',
 		'popoverOpenBook'	 :  'More Info'
 	}
 
 
-	//Use elementByXPath
+	//Use clickFirstListItemByIdPart
 	exports.walkbook = {
-		'houseHold1'       : "//*[contains(@label,'cellHouse_0')]",
-		'houseHold2'       : "//*[contains(@label,'cellHouse_1')]",
-		'houseHold3'       : "//*[contains(@label,'cellHouse_2')]",
-		'houseHold4'       : "//*[contains(@label,'cellHouse_3')]",
-		'houseHold5'       : "//*[contains(@label,'cellHouse_4')]",
-		'houseHold6'       : "//*[contains(@label,'cellHouse_5')]",
-		'houseHold7'       : "//*[contains(@label,'cellHouse_6')]",
-		'houseHold8'       : "//*[contains(@label,'cellHouse_7')]",
-		'houseHold9'       : "//*[contains(@label,'cellHouse_8')]",
-		'houseHold10'      : "//*[contains(@label,'cellHouse_9')]",
-		'houseHold11'      : "//*[contains(@label,'cellHouse_10')]",
-		'houseHold12'      : "//*[contains(@label,'cellHouse_11')]",
-		'houseHold13'      : "//*[contains(@label,'cellHouse_12')]",
-		'houseHold14'      : "//*[contains(@label,'cellHouse_13')]",
-		'houseHold15'      : "//*[contains(@label,'cellHouse_14')]",
-		'houseHold16'      : "//*[contains(@label,'cellHouse_15')]",
-		'houseHold17'      : "//*[contains(@label,'cellHouse_16')]",
-		'houseHold18'      : "//*[contains(@label,'cellHouse_17')]",
-		'houseHold19'      : "//*[contains(@label,'cellHouse_18')]",
-		'houseHold20'      : "//*[contains(@label,'cellHouse_19')]",
+		// 'houseHold1'       : "//*[contains(@label,'cellHouse_0')]",
+		'houseHold1'       : 'cellHouse_0',
+		'houseHold2'       : 'cellHouse_1',
+		'houseHold3'       : 'cellHouse_2',
+		'houseHold4'       : 'cellHouse_3',
+		'houseHold5'       : 'cellHouse_4',
+		'houseHold6'       : 'cellHouse_5',
+		'houseHold7'       : 'cellHouse_6',
+		'houseHold8'       : 'cellHouse_7',
+		'houseHold9'       : 'cellHouse_8',
+		'houseHold10'      : 'cellHouse_9',
+		'houseHold11'      : 'cellHouse_10',
+		'houseHold12'      : 'cellHouse_11',
+		'houseHold13'      : 'cellHouse_12',
+		'houseHold14'      : 'cellHouse_13',
+		'houseHold15'      : 'cellHouse_14',
+		'houseHold16'      : 'cellHouse_15',
+		'houseHold17'      : 'cellHouse_16',
+		'houseHold18'      : 'cellHouse_17',
+		'houseHold19'      : 'cellHouse_18',
+		'houseHold20'      : 'cellHouse_19',
 		'list'             : 'house_list',
-		'popoverOpenHouse' : 'More Info' // only iOS
-		// examples        :
+		'popoverOpenHouse' : 'More Info', // only iOS
+		'close'			   : 'Close',
+		'leaveOpen'		   : 'Leave Open'
+		// house examples
 		// cellHouse_0_sfh_notstarted
 		// cellHouse_0_sfh_attempted
 		// cellHouse_0_sfh_partial
@@ -171,23 +177,21 @@ let apps = require('./apps.js');
 		'requestBallot'  : 'btnAbsentee', 	   // Formerly: 'Request Absentee Ballot'
 	}
 
-	//todo: write a function that gets and stores an array of available targets in a household,
-	//then iterates through them taking surveys.
 	exports.takeSurvey = {
-		'answer1'         :  'btnAnswer_0',  //Formerly: 'btnAnswer_0',
-		'answer2'         :  'btnAnswer_1',  //Formerly: 'btnAnswer_1',
-		'answer3'         :  'btnAnswer_2',  //Formerly: 'btnAnswer_2',
-		'answer4'         :  'btnAnswer_3',  //Formerly: 'btnAnswer_3',
-		'answer5'         :  'btnAnswer_4',  //Formerly: 'btnAnswer_4',
-		'answer6'         :  'btnAnswer_5',  //Formerly: 'btnAnswer_5',
-		'answer7'         :  'btnAnswer_6',  //Formerly: 'btnAnswer_6',
-		'answer8'         :  'btnAnswer_7',  //Formerly: 'btnAnswer_7',
-		'skip'            :  '',  			//Formerly: 'Skip',
-		'prev'            :  'btnSurveyPrevious',  //Formerly: 'Prev', // previous question
-		'submitAnswer'    :  '',			  //Formerly: 'Submit Answer',
-		'remainingTarget' : '//*[(contains(id()\'btnRemaining\')]',
-		'remainingPrimaryTarget' : 'prim_btnRemaining_1',			  //Formerly: '//UIAApplication[1]/UIAWindow[1]/UIAScrollView[1]/UIAButton[2]',
-		'remainingSecondaryTarget' :  'sec_btnRemaining_3',			  //Formerly: '//UIAApplication[1]/UIAWindow[1]/UIAScrollView[1]/UIAButton[2]',
-		'finish'	      :  'btnEpilogueFinished' 			 //Formerly: 'Finish with Household'
+		'answer1'                  : 'btnAnswer_0',  		                   //Formerly : 'btnAnswer_0',
+		'answer2'                  : 'btnAnswer_1',  		                   //Formerly : 'btnAnswer_1',
+		'answer3'                  : 'btnAnswer_2',  		                   //Formerly : 'btnAnswer_2',
+		'answer4'                  : 'btnAnswer_3',  		                   //Formerly : 'btnAnswer_3',
+		'answer5'                  : 'btnAnswer_4',  		                   //Formerly : 'btnAnswer_4',
+		'answer6'                  : 'btnAnswer_5',  		                   //Formerly : 'btnAnswer_5',
+		'answer7'                  : 'btnAnswer_6',  		                   //Formerly : 'btnAnswer_6',
+		'answer8'                  : 'btnAnswer_7',  		                   //Formerly : 'btnAnswer_7',
+		'skip'                     : 'btnSkipQuestion',  			           //Formerly : 'Skip',
+		'prev'                     : 'btnSurveyPrevious', 			           //Formerly : 'Prev', // previous question
+		'submitAnswer'             : 'btnSkipQuestion',			               //Formerly : 'Submit Answer',
+		'remainingTarget'          : '//*[(contains(id()\'btnRemaining\')]',
+		'remainingPrimaryTarget'   : 'prim_btnRemaining_1',			           //Formerly : '//UIAApplication[1]/UIAWindow[1]/UIAScrollView[1]/UIAButton[2]',
+		'remainingSecondaryTarget' : 'sec_btnRemaining_3',			           //Formerly : '//UIAApplication[1]/UIAWindow[1]/UIAScrollView[1]/UIAButton[2]',
+		'finish'	               : 'btnEpilogueFinished' 			           //Formerly : 'Finish with Household'
 	}
 

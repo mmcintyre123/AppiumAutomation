@@ -13,8 +13,7 @@ exports.swipe = function (opts) {
   action
     .press({x: opts.startX, y: opts.startY})
     // .wait(opts.duration)
-    .moveTo({x: opts.offsetX, y: opts.offsetY}) // original
-    // .moveTo(opts.xOffset, opts.yOffset) // modified/updated
+    .moveTo({x: opts.offsetX, y: opts.offsetY})
     .release();
   return this.performTouchAction(action);
 };
@@ -61,25 +60,6 @@ exports.zoom = function (el) {
   }.bind(this));
 };
 
-
-// Close the stupid keyboard. WOW IOS IS ABSURD!
-// exports.hideKeyboard = function() {
-//   return driver
-//     .elementsByXPath('//UIAApplication[1]/UIAWindow[1]')
-//     .then(_p.filterDisplayed).first()
-//     .getLocation()
-//     .then(function(loc) {
-//       return driver
-//         .swipe({
-//           startX: loc.x,
-//           startY: loc.y + 100,
-//           endX: loc.x,
-//           endY: loc.y + 200,
-//           duration: 100
-//         });
-//     })
-// };
-
 exports.takeScreenshotMethod = function(name) {
   var context = this;
   var unmute;
@@ -122,14 +102,3 @@ exports.takeScreenshotMethod = function(name) {
     })
 };
 
-// todo haven't tested
-exports.sendKeysIOS = function(el, keys) {
-  return this
-    .then(function () {
-      return el
-        .click()
-        .clear()
-        .sendKeys(keys)
-    })
-    .hideKeyboard()
-}

@@ -1,17 +1,14 @@
 // To do:
 
-// test icon_colors.js
+// figure out how to dynamically find a house with the right number of primary / secondary contacts.  Query SQL?
 
-// determine a way to return element IDs of all people in a house, step through the array, and act accordingly depending on the test case - proceed? Or exit and try another house?
 
-// need to determine how many primary targets there are in the selected household
 
 // make fullLogin method take parameters for username and password - i.e. so you can log in with whoever you want in the test.
 
 // complete a walkbook and inspect the close/leave open dialogue.  Compare Android and iOS & add to elements file.
 
 // investigate - walkbook list ordering is different in Android - could be due to location?  Figure out how to programmatically simulate location if possible.
-
 
 
 

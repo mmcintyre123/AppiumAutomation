@@ -22,22 +22,6 @@ function Commons () {
 //    			CONFIG METHODS              \\
 // **************************************** \\
 
-/*
-var stdout_write = process.stdout.write;
-var stderr_write = process.stderr.write;
-
-Commons.prototype.mute = function mute() {
-    process.stderr.write = process.stdout.write = function(chunk, encoding, callback) {
-        callback();
-    };
-};
-
-Commons.prototype.unmute = function unmute() {
-    process.stdout.write = stdout_write;
-    process.stderr.write = stderr_write;
-};
-*/
-
 let convertDate = function(ms) {
 	//this is not used for anything that you will need! it is used for logging date/time and already set up
 	let total = parseInt(ms);
@@ -135,6 +119,13 @@ Commons.prototype.beforeAll = function(){
 	});
 };
 
+Commons.prototype.beforeEachIt = function(){
+	beforeEach(function () {
+		console.log(('Running ' + this.currentTest.title).green.bold.underline)
+		config.currentTest = this.currentTest // put the currentTest object on Config in case we want to access it mid-test
+	});
+};
+
 Commons.prototype.afterAll = function(){
 
 	after(function() {
@@ -207,7 +198,7 @@ Commons.prototype.loginQuick = function(){
 Commons.prototype.fullLogin = function(){
 	console.log('FULL LOGIN'.green.bold.underline);
 	return driver
-		.sleep(2000)
+		.sleep(1000)
 		.then(function () {
 			if (driver.elementByClassNameIfExists('XCUIElementTypeAlert')) {
 				driver.acceptAlert()
@@ -351,7 +342,7 @@ Commons.prototype.scrollHouseList = function(houseNum) {
 						startX: loc.x,
 						startY: loc.y,
 						offsetX: 0,
-						offsetY: -1120,
+						offsetY: -1150,
 					})
 			}) // scrolls down a full 2 screens
 	} else if (houseNum > 30 && houseNum <= 40) {
@@ -373,6 +364,40 @@ Commons.prototype.scrollHouseList = function(houseNum) {
 		return driver
 			.execute('mobile: scroll', {direction: 'down'}) // scrolls to bottom
 	}
+};
+
+Commons.prototype.refreshHouseList = function(){
+	return driver
+		.swipe({startX: 10, startY: 136, offsetX: 0, offsetY: 500,})
+		.sleep(1000)
+};
+
+Commons.prototype.consoleLog = function(string){
+	console.log(string)
+	return driver
+};
+
+Commons.prototype.takeSurveyTemp = function(thisTarget){
+	return driver
+		.elementById(thisTarget)
+		.click()
+		.waitForElementById(elements.target.takeSurvey, 10000)
+		.click()
+		.waitForElementById(elements.takeSurvey.answer1, 10000)
+		.click()
+		.waitForElementById(elements.takeSurvey.submitAnswer, 10000)
+		.click()
+		.waitForElementById(elements.takeSurvey.skip, 10000)
+		.click()
+		.sleep(2000) // wait for spinner on the epilogue screen
+		.waitForElementById(elements.takeSurvey.finish, 10000)
+		.elementById(elements.takeSurvey.finish)
+		.click()
+		.waitForElementByClassName('XCUIElementTypeTable',10000)
+		.clickFirstListItemByIdPart(elements.walkbook.houseHold10)
+		.waitForElementById(elements.walkbook.popoverOpenHouse)
+		.click()
+		.waitForElementById(elements.houseHold.notHome);
 };
 
 

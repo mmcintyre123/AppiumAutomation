@@ -88,6 +88,7 @@ describe( 'Automation Test in Progress!'.green, function () {
 	// require( './helpers/logging' ).configure( driver );
 
 	commons.beforeAll();
+	commons.beforeEachIt();
 	commons.afterAll();
 	commons.afterEach();
 
