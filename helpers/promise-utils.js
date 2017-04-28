@@ -41,7 +41,6 @@ exports.printNames = exports.each(function (el, i) {
 });
 
 
-
 exports.saveAllNameAttributes = function (idLike, array_name, regexp) {
   config[array_name] = [];
   return exports.each(function(el, i) {
@@ -56,7 +55,6 @@ exports.saveAllNameAttributes = function (idLike, array_name, regexp) {
     });
   });
 };
-
 
 exports.saveMenuButtonNames = exports.each(function(el, i) {
   return el.getAttribute('name').then(function (attr) {

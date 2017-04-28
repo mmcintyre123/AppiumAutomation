@@ -23,6 +23,9 @@ wd.addPromiseChainMethod('mute',commons.mute);
 wd.addPromiseChainMethod('unmute',commons.unmute);
 wd.addPromiseChainMethod('scrollHouseList',commons.scrollHouseList);
 wd.addPromiseChainMethod('clickFirstListItemByIdPart',promiseUtils.clickFirstListItemByIdPart);
+wd.addPromiseChainMethod('refreshHouseList',commons.refreshHouseList);
+wd.addPromiseChainMethod('consoleLog',commons.consoleLog);
+wd.addPromiseChainMethod('saveAllNameAttributes',promiseUtils.saveAllNameAttributes);
 
 exports.should = should;
 exports.expect = expect;

@@ -60,7 +60,7 @@ module.exports = function () {
 			    //works:
 			    .elementByXPath("//*/XCUIElementTypeScrollView[1]/XCUIElementTypeOther[1]") // target button area
 			    .elementsByClassName('>','XCUIElementTypeButton') // all button elements in the above context
-			    .then(_p.saveAllNameAttributes('cellContact_', 'theseNameAttrs'))
+			    .saveAllNameAttributes('cellContact_', 'theseNameAttrs')
 			    .then(function () {
 
 			    	let regexp = new RegExp('^prim_cellContact_\\d+$', 'i');
