@@ -1,8 +1,14 @@
 // To do:
 
+// Place login credentials in credentials file.
+
+// create methods for querying sql on the fly.
+
+// perhaps create some pre-defined, useful sql queries and put in commons or new file for sql.
+
+// use mssql package to determine which house to use when taking a survey
+
 // figure out how to dynamically find a house with the right number of primary / secondary contacts.  Query SQL?
-
-
 
 // make fullLogin method take parameters for username and password - i.e. so you can log in with whoever you want in the test.
 
@@ -13,7 +19,6 @@
 
 
 	Later:
-	// create a credentials file?  Test creds shouldn't be sensitive.  Place sensitive credentials in file and add to .gitignore.
 
 	// if possible figure out a way to access an element by part of its id - see todo comments in code.  Figure out promise-utils file.
 
