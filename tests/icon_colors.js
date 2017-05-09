@@ -9,13 +9,14 @@ module.exports = function () {
 	let	Q             = require('q');
 	let	fsExtra       = require('fs-extra');
 	let	fs            = require('fs');
+	let	pry  		  = require('pryjs');
 	let	_p            = require('../helpers/promise-utils');
 	let	elements      = require('../helpers/elements');
 	let	actions       = require('../helpers/actions');
 	let store    	  = require('../helpers/store');
-	let	pry  		  = require('pryjs');
 	let	config 		  = require('../helpers/config');
 	let	serverConfigs = require('../helpers/appium-servers');
+	let creds         = require('../credentials');
 	let	serverConfig  = process.env.SAUCE ? serverConfigs.sauce : serverConfigs.local;
 	let	args  		  = process.argv.slice( 2 );
 	let	simulator     = false;
@@ -94,7 +95,7 @@ module.exports = function () {
 
 		it('Should perform a full login', function () {
 			return driver
-				.fullLogin()
+				.fullLogin(creds.testUserName1, creds.testUserPwd1)
 		});
 
 		it('Should login quick', function () {

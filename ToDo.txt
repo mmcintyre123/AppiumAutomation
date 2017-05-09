@@ -1,16 +1,8 @@
 // To do:
 
-// Place login credentials in credentials file.
+// look at tests/sample.js:116
 
-// create methods for querying sql on the fly.
-
-// perhaps create some pre-defined, useful sql queries and put in commons or new file for sql.
-
-// use mssql package to determine which house to use when taking a survey
-
-// figure out how to dynamically find a house with the right number of primary / secondary contacts.  Query SQL?
-
-// make fullLogin method take parameters for username and password - i.e. so you can log in with whoever you want in the test.
+// create more methods for querying sql - make pre-defined queries in queries.js.
 
 // complete a walkbook and inspect the close/leave open dialogue.  Compare Android and iOS & add to elements file.
 

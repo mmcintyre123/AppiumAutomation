@@ -9,17 +9,18 @@ module.exports = function () {
 	let	Q             = require('q');
 	let	fsExtra       = require('fs-extra');
 	let	fs            = require('fs');
+	let	pry  		  = require('pryjs');
 	let	_p            = require('../helpers/promise-utils');
 	let	elements      = require('../helpers/elements');
 	let	actions       = require('../helpers/actions');
-	let	pry  		  = require('pryjs');
 	let	config 		  = require('../helpers/config');
 	let	serverConfigs = require('../helpers/appium-servers');
+	let	commons       = require('../helpers/commons');
+	let sqlQuery      = require('../helpers/queries');
 	let	serverConfig  = process.env.SAUCE ? serverConfigs.sauce : serverConfigs.local;
 	let	args  		  = process.argv.slice( 2 );
 	let	simulator     = false;
 	let driver        = config.driver;
-	let	commons       = require('../helpers/commons'); // this must be after the desired and driver are set
 	const sql         = require('mssql');
 	let creds         = require('../credentials');
 	let	desired;
@@ -45,8 +46,115 @@ module.exports = function () {
 
 		it('Full Login', function () {
 			return driver
-				.fullLogin()
+				.fullLogin(creds.testUserName1, creds.testUserPwd1)
 		});
+
+		it('Should run a query', function () {
+			return driver
+				.sleep(1)
+				.then(sqlQuery.getHousesWithMoreThan1Primary)
+				.then(function () {
+					config.theseHouses = [];
+					for (let i=0;i<config.housesWithMoreThan1Primary.length;i++){
+						if(config.housesWithMoreThan1Primary[i].BookNum == 18) {
+							config.theseHouses.push(config.housesWithMoreThan1Primary[i].HouseNum)
+						}
+					}
+					eval(require('pryjs').it)
+				})
+		});
+
+		it.only('Should query for and select a house that contains multiple targets', function () {
+			config.housesWithMoreThan1Primary = {}
+			config.theseHouses = [];
+
+			return driver
+				.loginQuick()
+				.elementById(elements.homeScreen.walkbooks)
+				.click()
+				.waitForElementById(elements.surveys.survey1, 10000)
+				.elementById('Copy of Copy of Survey with Custom Email and for checking numbers')
+				.click()
+				.waitForElementById(elements.survey.start, 10000)
+				.sleep(1000) // sometimes start won't click - bcs of the spinner?
+				.elementById(elements.survey.start)
+				.click()
+			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
+			    .clickFirstListItemByIdPart(elements.survey.walkbook1)
+			    .waitForElementById(elements.survey.popoverOpenBook, 10000)
+			    .click()
+			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
+			    .then(sqlQuery.getHousesWithMoreThan1Primary) //query sql
+				.elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // should be 'Houses in Walkbook #'
+				//works! 5-9-17
+				.then(function (el) {
+					return el.getAttribute('name').then(function (attr) {
+
+						//get the current walkbook number
+						config.thisWalkbook = Number(attr.match(/\d+/)[0]);
+						config.theseHouses = [];
+
+						for (let i=0; i < config.housesWithMoreThan1Primary.length; i++) {
+							if( config.housesWithMoreThan1Primary[i].BookNum == config.thisWalkbook ) {
+
+								// lookup thisWalkbook in the Query results and save an array of the corresponding houses:
+								let thisHouse = 'cellHouse_' + (config.housesWithMoreThan1Primary[i].HouseNum - 1)
+								config.theseHouses.push(thisHouse)
+							}
+						}
+
+						return driver
+							.clickFirstListItemByIdPart(config.theseHouses.shift()) // works!
+					});
+				})
+
+			    .waitForElementById(elements.walkbook.popoverOpenHouse)
+			    .click()
+			    .waitForElementById(elements.houseHold.notHome)
+			    //works:
+			    .elementByXPath("//*/XCUIElementTypeScrollView[1]/XCUIElementTypeOther[1]") // target button area
+			    .elementsByClassName('>','XCUIElementTypeButton') // all button elements in the above context
+
+			    .saveAllNameAttributes('cellContact_', 'theseNameAttrs') // todo not working 5-9-17
+			    .then(function () {
+
+			    	let regexp = new RegExp('^prim_cellContact_\\d+$', 'i');
+
+			    	var prom;
+			    	for (let i = 0; i < config.theseNameAttrs.length; i++) {
+
+			    		// take survey with all primary targets
+			    		if (regexp.test(config.theseNameAttrs[i])) {
+
+			    			let thisTarget = config.theseNameAttrs[i];
+
+			    			if (i == 0) {
+			    				prom = commons.takeSurveyTemp(thisTarget);
+			    			} else {
+			    				prom = prom.then(function () {
+			    					return commons.takeSurveyTemp(thisTarget)
+			    				})
+			    			}
+			    		}
+			    	}
+			    	return prom;
+			    })
+			    .consoleLog('TEST CASE IS OVER'.red.bold.underline) //surveys should have been taken with all primary targets and no non-primary targets.
+			    .sleep(4000)
+		});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 		it('Quick Login', function () {
 			return driver
@@ -64,6 +172,7 @@ module.exports = function () {
 						.request()
 						// .input('input_parameter', sql.Int, value)
 						.query("\
+							--which houses have more than one primary target\
 							declare @surveyID BigInt=187164;\
 							declare @helperBooks table(Value INT);INSERT INTO @helperBooks select s.booknum from i360_app_canvass.surveys.surveywalkbookassignments s(nolock)INNER JOIN i360portal.dbo.helper h(nolock)on h.helperID=s.idhelper\
 							where s.idsurvey='187164'and h.LogID='1654wseward'\
@@ -81,12 +190,12 @@ module.exports = function () {
 
 
 		//passing - for if we need to check data on different servers in the same test case (it statement)
-		it.only('Should create a sql connection pool to query two different servers in the same test case', function () {
+		it('Should create a sql connection pool to query two different servers in the same test case', function () {
 
 			const pool1 = new sql.ConnectionPool(creds.SQLconfigMD1, err => {
 			    // error checks can go here
-			 
-			    pool1.request() // or: new sql.Request(pool1) 
+
+			    pool1.request() // or: new sql.Request(pool1)
 			    .query("declare @surveyID BigInt=187164;\
 						declare @helperBooks table(Value INT);INSERT INTO @helperBooks select s.booknum from i360_app_canvass.surveys.surveywalkbookassignments s(nolock)INNER JOIN i360portal.dbo.helper h(nolock)on h.helperID=s.idhelper\
 						where s.idsurvey='187164'and h.LogID='1654wseward'\
@@ -95,17 +204,17 @@ module.exports = function () {
 			        //error checks can go here
 			        console.dir(result.recordset)
 			    })
-			 
+
 			})
-			 
+
 			//pool1.on('error', err => {
-			//    // ... error handler 
+			//    // ... error handler
 			//})
-			 
+
 			const pool2 = new sql.ConnectionPool(creds.SQLconfigREPORT, err => {
 				// error checks can go here
-			 
-			    pool2.request() // or: new sql.Request(pool2) 
+
+			    pool2.request() // or: new sql.Request(pool2)
 			    .query('SEleCt Top 1 fsr.SA_ID froM i360Reporting.Reporting.FACT_SurveyReturns fsr(nolock) inner jOin i360Reporting.Reporting.DIM_Surveys ds(nolock) On ds.SurveyKey=fsr.SurveyKey lEfT OUTeR JOIN i360Reporting.Reporting.FACT_SurveyTargets fst(nolock) ON fst.ClientOrgID=fsr.ClientOrgID and fst.IDSurvey=fsr.SV_ID And fst.IDContact=fsr.Responder_Contact_ID lefT oUTeR joIn i360Reporting.Reporting.Helper h(nolock) On h.HelperID=fsr.IDHelper wHeRE fsr.SV_ID=187764 oRDeR by fsr.ReceivedTStampGMT DEsC,fst.namegiven DEsC oPTIOn(MAxdOp 1);'
 			    	    , (err, result) => {
 			        //error checks can go here
@@ -114,9 +223,9 @@ module.exports = function () {
 			})
 
 			//pool2.on('error', err => {
-			//    // ... error handler 
+			//    // ... error handler
 			//})
-			
+
 		});
 
 		//tested and works
@@ -140,7 +249,7 @@ module.exports = function () {
 		it('reset and login', function () {
 			return driver
 				.resetApp()
-				.fullLogin()
+				.fullLogin(creds.testUserName1, creds.testUserPwd1)
 		});
 
 		it('Should fail to take a survey', function () {

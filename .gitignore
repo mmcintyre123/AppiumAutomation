@@ -2,3 +2,4 @@
 apps
 credentials.js
 mssql.js
+queries.js

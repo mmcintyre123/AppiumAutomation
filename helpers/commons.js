@@ -195,7 +195,7 @@ Commons.prototype.loginQuick = function(){
 };
 
 // todo press "Allow" button
-Commons.prototype.fullLogin = function(){
+Commons.prototype.fullLogin = function(uname, pwd){
 	console.log('FULL LOGIN'.green.bold.underline);
 	return driver
 		.sleep(1000)
@@ -208,11 +208,11 @@ Commons.prototype.fullLogin = function(){
 		})
 		.waitForElementById('etLoginUsername') // UserName
 			.clear()
-			.sendKeys('test_1654wseward')
+			.sendKeys(uname)
 		.hideKeyboard()
 		.elementById('etPassword') // password
 			.clear()
-			.sendKeys('asdf')
+			.sendKeys(pwd)
 		.hideKeyboard()
 		.sleep(500)
 		// Click away if we're in iOS:
@@ -399,6 +399,5 @@ Commons.prototype.takeSurveyTemp = function(thisTarget){
 		.click()
 		.waitForElementById(elements.houseHold.notHome);
 };
-
 
 module.exports = new Commons();
