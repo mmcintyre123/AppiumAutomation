@@ -64,7 +64,8 @@ module.exports = function () {
 				})
 		});
 
-		it.only('Should query for and select a house that contains multiple targets', function () {
+		//passing 5-11-17!
+		it.only('Should query for and select a house that contains multiple targets, then take the survey with both primary targets', function () {
 			config.housesWithMoreThan1Primary = {}
 			config.theseHouses = [];
 
@@ -76,6 +77,13 @@ module.exports = function () {
 				.elementById('Copy of Copy of Survey with Custom Email and for checking numbers')
 				.click()
 				.waitForElementById(elements.survey.start, 10000)
+			    //get and store the survey name:
+			    .elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // survey name
+			    .then(function (el) {
+			    	return el.getAttribute('name').then(function (attr) {
+			    		config.thisSurvey = attr;
+			    	})
+			    })
 				.sleep(1000) // sometimes start won't click - bcs of the spinner?
 				.elementById(elements.survey.start)
 				.click()
@@ -84,43 +92,42 @@ module.exports = function () {
 			    .waitForElementById(elements.survey.popoverOpenBook, 10000)
 			    .click()
 			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
-			    .then(sqlQuery.getHousesWithMoreThan1Primary) //query sql
+			    .then(sqlQuery.getHousesWithMoreThan1Primary)
 				.elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // should be 'Houses in Walkbook #'
-				//works! 5-9-17
-				.then(function (el) {
+				.then(function (el) { //use sql to find and click a house with multiple primary targets
 					return el.getAttribute('name').then(function (attr) {
 
 						//get the current walkbook number
 						config.thisWalkbook = Number(attr.match(/\d+/)[0]);
-						config.theseHouses = [];
 
+						//iterate through sql results array (an array of objects)
 						for (let i=0; i < config.housesWithMoreThan1Primary.length; i++) {
+							//if current object in housesWithMoreThan1Primary corresponds to thisWalkbook 
 							if( config.housesWithMoreThan1Primary[i].BookNum == config.thisWalkbook ) {
 
-								// lookup thisWalkbook in the Query results and save an array of the corresponding houses:
+								//push corresponding house to array 'theseHouses':
 								let thisHouse = 'cellHouse_' + (config.housesWithMoreThan1Primary[i].HouseNum - 1)
 								config.theseHouses.push(thisHouse)
 							}
 						}
 
+						config.thisHouse = config.theseHouses.shift()
+
 						return driver
-							.clickFirstListItemByIdPart(config.theseHouses.shift()) // works!
+							.clickFirstListItemByIdPart(config.thisHouse)
 					});
 				})
-
 			    .waitForElementById(elements.walkbook.popoverOpenHouse)
 			    .click()
 			    .waitForElementById(elements.houseHold.notHome)
-			    //works:
 			    .elementByXPath("//*/XCUIElementTypeScrollView[1]/XCUIElementTypeOther[1]") // target button area
-			    .elementsByClassName('>','XCUIElementTypeButton') // all button elements in the above context
-
-			    .saveAllNameAttributes('cellContact_', 'theseNameAttrs') // todo not working 5-9-17
+			    .elementsByClassName('>','XCUIElementTypeButton') // all target button elements in the above context
+			    .then(_p.saveAllNameAttributes('cellContact_', 'theseNameAttrs'))
 			    .then(function () {
 
 			    	let regexp = new RegExp('^prim_cellContact_\\d+$', 'i');
-
 			    	var prom;
+
 			    	for (let i = 0; i < config.theseNameAttrs.length; i++) {
 
 			    		// take survey with all primary targets
@@ -142,11 +149,6 @@ module.exports = function () {
 			    .consoleLog('TEST CASE IS OVER'.red.bold.underline) //surveys should have been taken with all primary targets and no non-primary targets.
 			    .sleep(4000)
 		});
-
-
-
-
-
 
 
 
@@ -354,6 +356,7 @@ module.exports = function () {
 		it('Should take a survey', function () {
 			console.log('SHOULD TAKE A SURVEY'.green.bold.underline);
 			return driver
+				.loginQuick()
 				.elementById(elements.homeScreen.walkbooks)
 				.click()
 				.elementById(elements.surveys.survey1)
@@ -366,13 +369,14 @@ module.exports = function () {
 				.elementById(elements.survey.start)
 				.click()
 				.startTime('Load Survey 2')
-				.waitForelEmentById(elements.survey.walkbook1).should.eventually.exist
+				.waitForElementByClassName('XCUIElementTypeTable', 10000)
 				.endTotalAndLogTime('Load Survey 2')
-				.elementById(elements.survey.walkbook1)
+				.elementById('Walkbook 1')
 				.click()
 				.elementById(elements.survey.popoverOpenBook)
 				.click()
-				.waitForElementById('Select Walkbook') // this is the back button
+				.waitForElementByClassName('XCUIElementTypeTable', 10000)
+				.scrollHouseList(15)
 				.elementById(elements.walkbook.houseHold4)
 				.click()
 				.elementById(elements.walkbook.popoverOpenHouse)

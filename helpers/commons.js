@@ -187,6 +187,12 @@ Commons.prototype.endTotalAndLogTime = function(startName){
 Commons.prototype.loginQuick = function(){
 	console.log('LOGIN QUICK'.green.bold.underline);
 	return driver
+		.elementById(elements.loginLogout.userName)
+		.then(function (el) {
+			return el.getAttribute('value').then(function (value) {
+				config.thisHelper = value;
+			}) //save the username for this test in case we need it.
+		})
 		.elementById(elements.loginLogout.logIn) // LogIn Button
 		.click()
 		.startTime('Log In')
@@ -197,6 +203,7 @@ Commons.prototype.loginQuick = function(){
 // todo press "Allow" button
 Commons.prototype.fullLogin = function(uname, pwd){
 	console.log('FULL LOGIN'.green.bold.underline);
+	config.thisHelper = uname; //should be like test_1654wseward.
 	return driver
 		.sleep(1000)
 		.then(function () {
@@ -319,42 +326,36 @@ Commons.prototype.scrollHouseList = function(houseNum) {
 
 	if (houseNum > 10 && houseNum <= 20) {
 		return driver
-			// .execute('mobile: scroll', {direction: 'up'}) // ensure at the top
-			.elementByXPath(elements.walkbook.houseHold10)
-			.getLocation()
+			.sleep(3)
 			.then(function(loc){
 				 return driver
 					.swipe({
-						startX: loc.x,
-						startY: loc.y,
+						startX: 12,
+						startY: 721,
 						offsetX: 0,
 						offsetY: -550,
 					})
 			}) // scrolls down a full screen
 	} else if (houseNum > 20 && houseNum <= 30) {
 		return driver
-			// .execute('mobile: scroll', {direction: 'up'}) // ensure at the top
-			.elementByXPath(elements.walkbook.houseHold10)
-			.getLocation()
+			.sleep(4)
 			.then(function(loc){
 				 return driver
 					.swipe({
-						startX: loc.x,
-						startY: loc.y,
+						startX: 12,
+						startY: 721,
 						offsetX: 0,
 						offsetY: -1150,
 					})
 			}) // scrolls down a full 2 screens
 	} else if (houseNum > 30 && houseNum <= 40) {
 		return driver
-			// .execute('mobile: scroll', {direction: 'up'}) // ensure at the top
-			.elementByXPath(elements.walkbook.houseHold10)
-			.getLocation()
+			.sleep(5)
 			.then(function(loc){
 				 return driver
 					.swipe({
-						startX: loc.x,
-						startY: loc.y,
+						startX: 12,
+						startY: 721,
 						offsetX: 0,
 						offsetY: -1650,
 					})
@@ -394,7 +395,7 @@ Commons.prototype.takeSurveyTemp = function(thisTarget){
 		.elementById(elements.takeSurvey.finish)
 		.click()
 		.waitForElementByClassName('XCUIElementTypeTable',10000)
-		.clickFirstListItemByIdPart(elements.walkbook.houseHold10)
+		.clickFirstListItemByIdPart(config.thisHouse)
 		.waitForElementById(elements.walkbook.popoverOpenHouse)
 		.click()
 		.waitForElementById(elements.houseHold.notHome);

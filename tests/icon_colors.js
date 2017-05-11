@@ -51,11 +51,10 @@ module.exports = function () {
 			    .waitForElementById(elements.survey.popoverOpenBook, 10000)
 			    .click()
 			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
-			    .elementById('cellHouse_9_sfh_notstarted')
+			    .elementById('cellHouse_6_sfh_notstarted')
 			    .click()
 			    // .clickFirstListItemByIdPart(elements.walkbook.houseHold8)
 			    .waitForElementById(elements.walkbook.popoverOpenHouse)
-
 			    .click()
 			    .waitForElementById(elements.houseHold.notHome)
 			    //works:
@@ -153,7 +152,7 @@ module.exports = function () {
 					    .click()
 					    .waitForElementById(thisHouseholdAfter, 10000) // verify the house is blue
 					    .consoleLog('Household color/status check passed - before refresh - Test: ' + config.currentTest.title)
-					    .swipe({startX: 10, startY: 136, offsetX: 0, offsetY: 400,}) // refresh house list
+					    .swipe({startX: 10, startY: 136, offsetX: 0, offsetY: 400,}) // refresh house list todo create a custom method?
 					    .sleep(1000)
 					    .waitForElementById(thisHouseholdAfter, 10000) // verify the house is blue after refresh
 					    .consoleLog('Household color/status check passed - after refresh - Test: ' + config.currentTest.title)

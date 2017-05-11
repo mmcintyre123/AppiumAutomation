@@ -1,6 +1,6 @@
 // To do:
 
-// look at tests/sample.js:116
+// move test from sample.js to icon colors, add checks that the house turned green, move the 'finding house with multiple primaries' and 'take survey with all primaries' to custom method?
 
 // create more methods for querying sql - make pre-defined queries in queries.js.
 
