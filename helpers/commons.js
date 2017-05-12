@@ -6,10 +6,12 @@ let wd 	  	  =  require('wd');
 let fs        =  require('fs');
 let fsExtra   =  require('fs-extra');
 let assert    =  require('assert');
+let pry       =  require('pryjs');
 let config    =  require('./config');
 let store     =  require('./Store');
-let pry       =  require('pryjs');
 let elements  =  require('./elements');
+let sqlQuery  =  require('./queries');
+let commons   =  require('./commons')
 let driver    =  config.driver;
 
 // todo this.os doesn't seem to be working.
@@ -395,10 +397,72 @@ Commons.prototype.takeSurveyTemp = function(thisTarget){
 		.elementById(elements.takeSurvey.finish)
 		.click()
 		.waitForElementByClassName('XCUIElementTypeTable',10000)
-		.clickFirstListItemByIdPart(config.thisHouse)
+		.clickFirstListItemByIdPart(config.thisHousehold.match(/\w+\_\d+/)[0])
 		.waitForElementById(elements.walkbook.popoverOpenHouse)
 		.click()
 		.waitForElementById(elements.houseHold.notHome);
+};
+
+Commons.prototype.clickHouseWithMultPrimary = function(){
+	return driver
+	.sleep(1)
+	.then(sqlQuery.getHousesWithMoreThan1Primary)
+	.elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // on the house list page - should be 'Houses in Walkbook #'
+	//use sql to find and click a house with multiple primary targets:
+	.then(function (el) {
+		return el.getAttribute('name').then(function (attr) {
+
+			//get the current walkbook number
+			config.thisWalkbook = Number(attr.match(/\d+/)[0]);
+
+			//iterate through sql results array (an array of objects)
+			for (let i=0; i < config.housesWithMoreThan1Primary.length; i++) {
+				//if current object in housesWithMoreThan1Primary corresponds to thisWalkbook
+				if( config.housesWithMoreThan1Primary[i].BookNum == config.thisWalkbook ) {
+
+					//push corresponding house to array 'theseHouses':
+					let thisHouse = 'cellHouse_' + (config.housesWithMoreThan1Primary[i].HouseNum - 1)
+					config.theseHouses.push(thisHouse)
+				}
+			}
+			config.thisHousehold = config.theseHouses.shift()
+
+			return driver
+				.clickFirstListItemByIdPart(config.thisHousehold)
+		});
+	})
+};
+
+Commons.prototype.surveyAllPrimaryTargets = function(){
+
+	console.log('Using ' + config.thisHousehold);
+	config.thisHouseholdAfter = config.thisHousehold.replace('notstarted', 'complete');
+
+	return driver
+	.sleep(2)
+	.then(function () {
+
+		let regexp = new RegExp('^prim_cellContact_\\d+$', 'i');
+		var prom;
+
+		for (let i = 0; i < config.theseNameAttrs.length; i++) {
+
+			// take survey with all primary targets
+			if (regexp.test(config.theseNameAttrs[i])) {
+
+				let thisTarget = config.theseNameAttrs[i];
+
+				if (i == 0) {
+					prom = Commons.prototype.takeSurveyTemp(thisTarget);
+				} else {
+					prom = prom.then(function () {
+						return Commons.prototype.takeSurveyTemp(thisTarget);
+					})
+				}
+			}
+		}
+		return prom;
+	})
 };
 
 module.exports = new Commons();

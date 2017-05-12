@@ -72,6 +72,12 @@ exports.getElementNameAttr = function getElementNameAttr(el) {
 };
 
 exports.clickFirstListItemByIdPart = function (idPart) {
+
+  if (idPart == undefined) {
+    console.log('clickFirstListItemByIdPart failed: The idPart was undefined.'.red.bold)
+    return
+  }
+
   return driver
     .elementByClassName('XCUIElementTypeTable')
     .elementsByClassName('>','XCUIElementTypeCell')

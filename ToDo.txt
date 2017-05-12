@@ -1,6 +1,7 @@
 // To do:
 
-// move test from sample.js to icon colors, add checks that the house turned green, move the 'finding house with multiple primaries' and 'take survey with all primaries' to custom method?
+// move test from sample.js to icon colors
+// make more icon_colors test cases
 
 // create more methods for querying sql - make pre-defined queries in queries.js.
 
@@ -8,11 +9,7 @@
 
 // investigate - walkbook list ordering is different in Android - could be due to location?  Figure out how to programmatically simulate location if possible.
 
-
-
 	Later:
-
-	// if possible figure out a way to access an element by part of its id - see todo comments in code.  Figure out promise-utils file.
 
 	// elementOrNull command - utilize in fullLogin method:
 
@@ -22,10 +19,6 @@
 
 	Ongoing:
 	// Break up tests into folder and subfolders
-
-	Questions for Bruce: 
-		Understanding Promise Utils functions
-
 
 // Miscelaneous
 

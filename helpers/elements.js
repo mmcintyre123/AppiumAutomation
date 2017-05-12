@@ -119,6 +119,7 @@ let apps = require('./apps.js');
 		// cellHouse_0_sfh_attempted
 		// cellHouse_0_sfh_partial
 		// cellHouse_0_sfh_reject
+		// cellHouse_0_sfh_complete
 	}
 
 	exports.houseHold = {

@@ -4,12 +4,13 @@ module.exports = function () {
 
 	require('colors');
 	let wd            = require("wd");
-	let    assert  	  = require('assert');
+	let assert  	  = require('assert');
 	let	_             = require('underscore');
 	let	Q             = require('q');
 	let	fsExtra       = require('fs-extra');
 	let	fs            = require('fs');
 	let	pry  		  = require('pryjs');
+	let stackTrace    = require('stack-trace');
 	let	_p            = require('../helpers/promise-utils');
 	let	elements      = require('../helpers/elements');
 	let	actions       = require('../helpers/actions');
@@ -26,7 +27,7 @@ module.exports = function () {
 	let	desired;
 
 
-	describe("Visiting all pages in Walk", function() {
+	describe("This is a sample script for experimentation and demonstration", function() {
 
 		this.timeout(3000000);
 		let allPassed = true;
@@ -64,99 +65,57 @@ module.exports = function () {
 				})
 		});
 
-		//passing 5-11-17!
-		it.only('Should query for and select a house that contains multiple targets, then take the survey with both primary targets', function () {
+		//passing 5-12-17! todo: add this to icon_colors.js.
+		it.only('Assign walkbooks with multiple primary targets using SQL, select a house matching that condition, take a survey with all primary targets, and verify house is green', function () {
 			config.housesWithMoreThan1Primary = {}
 			config.theseHouses = [];
+			config.thisHouseholdAfter = '';
+			config.thisSurvey = '';
 
 			return driver
 				.loginQuick()
+				// .consoleLog(stackTrace.get()[1].getFileName() + stackTrace.get()[1].getLineNumber()) //todo experiment with this
 				.elementById(elements.homeScreen.walkbooks)
 				.click()
 				.waitForElementById(elements.surveys.survey1, 10000)
 				.elementById('Copy of Copy of Survey with Custom Email and for checking numbers')
 				.click()
 				.waitForElementById(elements.survey.start, 10000)
-			    //get and store the survey name:
 			    .elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // survey name
 			    .then(function (el) {
 			    	return el.getAttribute('name').then(function (attr) {
 			    		config.thisSurvey = attr;
 			    	})
 			    })
+				.then(sqlQuery.assignBooksWithMultiplePrimaries) //requires config.thisSurvey to be defined
 				.sleep(1000) // sometimes start won't click - bcs of the spinner?
 				.elementById(elements.survey.start)
 				.click()
 			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
-			    .clickFirstListItemByIdPart(elements.survey.walkbook1)
+			    .clickFirstListItemByIdPart(elements.survey.walkbook1) // choose the first walkbook in the list
 			    .waitForElementById(elements.survey.popoverOpenBook, 10000)
 			    .click()
 			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
-			    .then(sqlQuery.getHousesWithMoreThan1Primary)
-				.elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // should be 'Houses in Walkbook #'
-				.then(function (el) { //use sql to find and click a house with multiple primary targets
-					return el.getAttribute('name').then(function (attr) {
-
-						//get the current walkbook number
-						config.thisWalkbook = Number(attr.match(/\d+/)[0]);
-
-						//iterate through sql results array (an array of objects)
-						for (let i=0; i < config.housesWithMoreThan1Primary.length; i++) {
-							//if current object in housesWithMoreThan1Primary corresponds to thisWalkbook 
-							if( config.housesWithMoreThan1Primary[i].BookNum == config.thisWalkbook ) {
-
-								//push corresponding house to array 'theseHouses':
-								let thisHouse = 'cellHouse_' + (config.housesWithMoreThan1Primary[i].HouseNum - 1)
-								config.theseHouses.push(thisHouse)
-							}
-						}
-
-						config.thisHouse = config.theseHouses.shift()
-
-						return driver
-							.clickFirstListItemByIdPart(config.thisHouse)
-					});
-				})
+				.clickHouseWithMultPrimary() //sqlQuery
 			    .waitForElementById(elements.walkbook.popoverOpenHouse)
 			    .click()
 			    .waitForElementById(elements.houseHold.notHome)
 			    .elementByXPath("//*/XCUIElementTypeScrollView[1]/XCUIElementTypeOther[1]") // target button area
 			    .elementsByClassName('>','XCUIElementTypeButton') // all target button elements in the above context
-			    .then(_p.saveAllNameAttributes('cellContact_', 'theseNameAttrs'))
-			    .then(function () {
-
-			    	let regexp = new RegExp('^prim_cellContact_\\d+$', 'i');
-			    	var prom;
-
-			    	for (let i = 0; i < config.theseNameAttrs.length; i++) {
-
-			    		// take survey with all primary targets
-			    		if (regexp.test(config.theseNameAttrs[i])) {
-
-			    			let thisTarget = config.theseNameAttrs[i];
-
-			    			if (i == 0) {
-			    				prom = commons.takeSurveyTemp(thisTarget);
-			    			} else {
-			    				prom = prom.then(function () {
-			    					return commons.takeSurveyTemp(thisTarget)
-			    				})
-			    			}
-			    		}
-			    	}
-			    	return prom;
-			    })
-			    .consoleLog('TEST CASE IS OVER'.red.bold.underline) //surveys should have been taken with all primary targets and no non-primary targets.
-			    .sleep(4000)
+			    .then(_p.saveAllNameAttributes('cellContact_', 'theseNameAttrs')) // todo takes too long use XPath instead
+			    .surveyAllPrimaryTargets()
+			    .elementById(elements.houseHold.finished)
+			    .click()
+			    .waitForElementById(config.thisHouseholdAfter, 10000) // should verify the house is green before refresh
+			    .consoleLog(('Household color/status check passed - before refresh.  config.thisHouseholdAfter = '
+			    			    			 + config.thisHouseholdAfter + '\nTest: ' + config.currentTest.title).green.bold)
+			    .refreshHouseList()
+			    .sleep(1000)
+			    .waitForElementById(config.thisHouseholdAfter, 10000) // verify the house is green after refresh
+			    .consoleLog(('Household color/status check passed - after refresh.  config.thisHouseholdAfter = '
+			    			    			 + config.thisHouseholdAfter + '\nTest: ' + config.currentTest.title).green.bold)
+			    .consoleLog('TEST CASE IS OVER'.green.bold.underline)
 		});
-
-
-
-
-
-
-
-
 
 		it('Quick Login', function () {
 			return driver

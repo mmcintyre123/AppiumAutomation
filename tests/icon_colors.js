@@ -129,7 +129,6 @@ module.exports = function () {
 			    .click()
 			    .startTime('Load Walkbook')
 			    .waitForElementByClassName('XCUIElementTypeTable', 13000)
-
 			    .clickFirstListItemByIdPart('notstarted')
 			    .then(function () {
 
