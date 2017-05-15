@@ -9,8 +9,9 @@ module.exports = function () {
 	let	Q             = require('q');
 	let	fsExtra       = require('fs-extra');
 	let	fs            = require('fs');
-	let	pry  		  = require('pryjs');
 	let stackTrace    = require('stack-trace');
+	let	pry  		  = require('pryjs');
+	const sql         = require('mssql');
 	let	_p            = require('../helpers/promise-utils');
 	let	elements      = require('../helpers/elements');
 	let	actions       = require('../helpers/actions');
@@ -18,12 +19,11 @@ module.exports = function () {
 	let	serverConfigs = require('../helpers/appium-servers');
 	let	commons       = require('../helpers/commons');
 	let sqlQuery      = require('../helpers/queries');
+	let creds         = require('../credentials');
 	let	serverConfig  = process.env.SAUCE ? serverConfigs.sauce : serverConfigs.local;
 	let	args  		  = process.argv.slice( 2 );
 	let	simulator     = false;
 	let driver        = config.driver;
-	const sql         = require('mssql');
-	let creds         = require('../credentials');
 	let	desired;
 
 
@@ -40,7 +40,8 @@ module.exports = function () {
 		        .elementByClassName('XCUIElementTypeTable')
 		        .elementsByClassName('>','XCUIElementTypeCell')
 		        .then(_p.filterWithName(name)).first();
-		    }).click();
+		    })
+		    .click();
 		}
 
 		console.log('THIS IS sample.js, A SANDBOX TEST SCRIPT FOR EXPERIMENTATION AND DEMONSTRATION'.green.bold.underline)
@@ -63,58 +64,6 @@ module.exports = function () {
 					}
 					eval(require('pryjs').it)
 				})
-		});
-
-		//passing 5-12-17! todo: add this to icon_colors.js.
-		it.only('Assign walkbooks with multiple primary targets using SQL, select a house matching that condition, take a survey with all primary targets, and verify house is green', function () {
-			config.housesWithMoreThan1Primary = {}
-			config.theseHouses = [];
-			config.thisHouseholdAfter = '';
-			config.thisSurvey = '';
-
-			return driver
-				.loginQuick()
-				// .consoleLog(stackTrace.get()[1].getFileName() + stackTrace.get()[1].getLineNumber()) //todo experiment with this
-				.elementById(elements.homeScreen.walkbooks)
-				.click()
-				.waitForElementById(elements.surveys.survey1, 10000)
-				.elementById('Copy of Copy of Survey with Custom Email and for checking numbers')
-				.click()
-				.waitForElementById(elements.survey.start, 10000)
-			    .elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // survey name
-			    .then(function (el) {
-			    	return el.getAttribute('name').then(function (attr) {
-			    		config.thisSurvey = attr;
-			    	})
-			    })
-				.then(sqlQuery.assignBooksWithMultiplePrimaries) //requires config.thisSurvey to be defined
-				.sleep(1000) // sometimes start won't click - bcs of the spinner?
-				.elementById(elements.survey.start)
-				.click()
-			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
-			    .clickFirstListItemByIdPart(elements.survey.walkbook1) // choose the first walkbook in the list
-			    .waitForElementById(elements.survey.popoverOpenBook, 10000)
-			    .click()
-			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
-				.clickHouseWithMultPrimary() //sqlQuery
-			    .waitForElementById(elements.walkbook.popoverOpenHouse)
-			    .click()
-			    .waitForElementById(elements.houseHold.notHome)
-			    .elementByXPath("//*/XCUIElementTypeScrollView[1]/XCUIElementTypeOther[1]") // target button area
-			    .elementsByClassName('>','XCUIElementTypeButton') // all target button elements in the above context
-			    .then(_p.saveAllNameAttributes('cellContact_', 'theseNameAttrs')) // todo takes too long use XPath instead
-			    .surveyAllPrimaryTargets()
-			    .elementById(elements.houseHold.finished)
-			    .click()
-			    .waitForElementById(config.thisHouseholdAfter, 10000) // should verify the house is green before refresh
-			    .consoleLog(('Household color/status check passed - before refresh.  config.thisHouseholdAfter = '
-			    			    			 + config.thisHouseholdAfter + '\nTest: ' + config.currentTest.title).green.bold)
-			    .refreshHouseList()
-			    .sleep(1000)
-			    .waitForElementById(config.thisHouseholdAfter, 10000) // verify the house is green after refresh
-			    .consoleLog(('Household color/status check passed - after refresh.  config.thisHouseholdAfter = '
-			    			    			 + config.thisHouseholdAfter + '\nTest: ' + config.currentTest.title).green.bold)
-			    .consoleLog('TEST CASE IS OVER'.green.bold.underline)
 		});
 
 		it('Quick Login', function () {

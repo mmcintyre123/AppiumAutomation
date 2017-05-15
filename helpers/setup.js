@@ -26,6 +26,7 @@ wd.addPromiseChainMethod('clickFirstListItemByIdPart',promiseUtils.clickFirstLis
 wd.addPromiseChainMethod('refreshHouseList',commons.refreshHouseList);
 wd.addPromiseChainMethod('consoleLog',commons.consoleLog);
 wd.addPromiseChainMethod('saveAllNameAttributes',promiseUtils.saveAllNameAttributes);
+wd.addPromiseChainMethod('saveFirstNameAttributes',promiseUtils.saveFirstNameAttributes);
 wd.addPromiseChainMethod('clickHouseWithMultPrimary',commons.clickHouseWithMultPrimary);
 wd.addPromiseChainMethod('surveyAllPrimaryTargets',commons.surveyAllPrimaryTargets);
 

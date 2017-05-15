@@ -11,7 +11,8 @@ let config    =  require('./config');
 let store     =  require('./Store');
 let elements  =  require('./elements');
 let sqlQuery  =  require('./queries');
-let commons   =  require('./commons')
+let commons   =  require('./commons');
+let _p        =  require('./promise-utils');
 let driver    =  config.driver;
 
 // todo this.os doesn't seem to be working.
@@ -335,7 +336,7 @@ Commons.prototype.scrollHouseList = function(houseNum) {
 						startX: 12,
 						startY: 721,
 						offsetX: 0,
-						offsetY: -550,
+						offsetY: -665,
 					})
 			}) // scrolls down a full screen
 	} else if (houseNum > 20 && houseNum <= 30) {
@@ -347,7 +348,7 @@ Commons.prototype.scrollHouseList = function(houseNum) {
 						startX: 12,
 						startY: 721,
 						offsetX: 0,
-						offsetY: -1150,
+						offsetY: -1330,
 					})
 			}) // scrolls down a full 2 screens
 	} else if (houseNum > 30 && houseNum <= 40) {
@@ -359,7 +360,7 @@ Commons.prototype.scrollHouseList = function(houseNum) {
 						startX: 12,
 						startY: 721,
 						offsetX: 0,
-						offsetY: -1650,
+						offsetY: -1995,
 					})
 			}) // scrolls down a full 3 screens
 	} else if (houseNum > 40) {
@@ -371,7 +372,9 @@ Commons.prototype.scrollHouseList = function(houseNum) {
 
 Commons.prototype.refreshHouseList = function(){
 	return driver
-		.swipe({startX: 10, startY: 136, offsetX: 0, offsetY: 500,})
+		.sleep(1)
+		.execute('mobile: scroll', {direction: 'up'}) // scrolls to top - refreshes if already there
+		.swipe({startX: 10, startY: 136, offsetX: 0, offsetY: 500,}) // makes sure to refresh if previously at bottom
 		.sleep(1000)
 };
 
@@ -404,6 +407,9 @@ Commons.prototype.takeSurveyTemp = function(thisTarget){
 };
 
 Commons.prototype.clickHouseWithMultPrimary = function(){
+
+	config.theseHouses = [];
+
 	return driver
 	.sleep(1)
 	.then(sqlQuery.getHousesWithMoreThan1Primary)
@@ -426,6 +432,7 @@ Commons.prototype.clickHouseWithMultPrimary = function(){
 				}
 			}
 			config.thisHousehold = config.theseHouses.shift()
+			console.log(('Using ' + config.thisHousehold).white.bold)
 
 			return driver
 				.clickFirstListItemByIdPart(config.thisHousehold)
@@ -433,6 +440,7 @@ Commons.prototype.clickHouseWithMultPrimary = function(){
 	})
 };
 
+//works!
 Commons.prototype.surveyAllPrimaryTargets = function(){
 
 	console.log('Using ' + config.thisHousehold);
@@ -440,6 +448,13 @@ Commons.prototype.surveyAllPrimaryTargets = function(){
 
 	return driver
 	.sleep(2)
+	.elementByXPath("//*/XCUIElementTypeScrollView[1]/XCUIElementTypeOther[1]") // > find and store all primary targets then survey all ...
+	.elementsByClassName('>','XCUIElementTypeButton')
+	// .saveFirstNameAttributes('prim_cellContact_', 'theseNameAttrs')
+	.then(function (els) {
+		console.log('starting')
+		return _p.saveFirstNameAttributes('prim_cellContact_', 'theseNameAttrs',undefined,els)
+	})
 	.then(function () {
 
 		let regexp = new RegExp('^prim_cellContact_\\d+$', 'i');

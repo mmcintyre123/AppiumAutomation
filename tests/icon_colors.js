@@ -10,6 +10,7 @@ module.exports = function () {
 	let	fsExtra       = require('fs-extra');
 	let	fs            = require('fs');
 	let	pry  		  = require('pryjs');
+	const sql         = require('mssql');
 	let	_p            = require('../helpers/promise-utils');
 	let	elements      = require('../helpers/elements');
 	let	actions       = require('../helpers/actions');
@@ -17,6 +18,7 @@ module.exports = function () {
 	let	config 		  = require('../helpers/config');
 	let	serverConfigs = require('../helpers/appium-servers');
 	let creds         = require('../credentials');
+	let sqlQuery      = require('../helpers/queries');
 	let	serverConfig  = process.env.SAUCE ? serverConfigs.sauce : serverConfigs.local;
 	let	args  		  = process.argv.slice( 2 );
 	let	simulator     = false;
@@ -31,7 +33,7 @@ module.exports = function () {
 		let allPassed = true;
 		console.log(('RUNNING ' + __filename.slice(__dirname.length + 1) + ' for iOS').green.bold.underline);
 
-		it.only('For debugging', function () {
+		it('For debugging', function () {
 			// config.theseNameAttrs = [];
 
 			return driver
@@ -46,17 +48,18 @@ module.exports = function () {
 				.elementById(elements.survey.start)
 				.click()
 			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
-				.elementById('Walkbook 1')
+				.elementById('Walkbook 7')
 				.click()
 			    .waitForElementById(elements.survey.popoverOpenBook, 10000)
 			    .click()
 			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
-			    .elementById('cellHouse_6_sfh_notstarted')
+			    .scrollHouseList(20)
+			    .elementById('cellHouse_19_sfh_notstarted')
 			    .click()
-			    // .clickFirstListItemByIdPart(elements.walkbook.houseHold8)
 			    .waitForElementById(elements.walkbook.popoverOpenHouse)
 			    .click()
 			    .waitForElementById(elements.houseHold.notHome)
+
 			    //works:
 			    .elementByXPath("//*/XCUIElementTypeScrollView[1]/XCUIElementTypeOther[1]") // target button area
 			    .elementsByClassName('>','XCUIElementTypeButton') // all button elements in the above context
@@ -88,18 +91,71 @@ module.exports = function () {
 			    .sleep(4000)
 		});
 
-
-
-
-
 		it('Should perform a full login', function () {
 			return driver
 				.fullLogin(creds.testUserName1, creds.testUserPwd1)
 		});
 
-		it('Should login quick', function () {
+		it.only('Should login quick', function () {
 			return driver
 				.loginQuick()
+		});
+
+		//passing 5-12-17! todo: add this to icon_colors.js.
+		it.only('Should turn the house green: survey both primary targets.', function () {
+			config.housesWithMoreThan1Primary = {}
+			config.theseHouses = [];
+			config.thisHouseholdAfter = '';
+			config.thisSurvey = '';
+
+			/* 
+				Abstract: 
+					Use SQL to unassign all walkbooks for the helper, then reassign walkbooks in the current survey that contain multiple primary targets 
+					Use SQL to create an array of walkbook-household object pairs, of houses in walkbooks that have multiple primary targets
+					Select a house from the list we created and survey all primary targets
+					Verify house is green
+			*/
+
+			return driver
+				// .consoleLog(stackTrace.get()[1].getFileName() + stackTrace.get()[1].getLineNumber()) // todo experiment with this
+				.elementById(elements.homeScreen.walkbooks)
+				.click()
+				.waitForElementById(elements.surveys.survey1, 10000)
+				.elementById('Copy of Copy of Survey with Custom Email and for checking numbers')
+				.click()
+				.waitForElementById(elements.survey.start, 10000)
+			    .elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // > get and store the survey name ...
+			    .then(function (el) {
+			    	return el.getAttribute('name').then(function (attr) {
+			    		config.thisSurvey = attr;
+			    	})
+			    })
+				.then(sqlQuery.assignBooksWithMultiplePrimaries) // > unassign and reassign walkbooks with multiple primary targets ... 
+				.sleep(1000)
+				.elementById(elements.survey.start)
+				.click()
+			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
+			    .clickFirstListItemByIdPart(elements.survey.walkbook1) // > choose first walkbook in the list ...
+			    .waitForElementById(elements.survey.popoverOpenBook, 10000)
+			    .click()
+			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
+				.clickHouseWithMultPrimary() // > find and click the first house in the list that contains multiple primary targets ...
+
+			    .waitForElementById(elements.walkbook.popoverOpenHouse)
+			    .click()
+			    .waitForElementById(elements.houseHold.notHome)
+			    .surveyAllPrimaryTargets() // > survey all primary targets
+			    .elementById(elements.houseHold.finished)
+			    .click()
+			    .waitForElementById(config.thisHouseholdAfter, 10000) // > verify the house is green before refresh
+			    .consoleLog(('Household color/status check passed - before refresh.  config.thisHouseholdAfter = '
+			    			    			 + config.thisHouseholdAfter + '\nTest: ' + config.currentTest.title).green.bold)
+			    .refreshHouseList()
+			    .sleep(1000)
+			    .waitForElementById(config.thisHouseholdAfter, 10000) // > verify the house is green after refresh
+			    .consoleLog(('Household color/status check passed - after refresh.  config.thisHouseholdAfter = '
+			    			    			 + config.thisHouseholdAfter + '\nTest: ' + config.currentTest.title).green.bold)
+			    .consoleLog('TEST CASE IS OVER'.green.bold.underline)
 		});
 
 		it('Should turn the house blue: one primary target not home', function () {

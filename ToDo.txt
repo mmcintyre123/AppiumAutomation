@@ -1,6 +1,7 @@
 // To do:
 
-// move test from sample.js to icon colors
+// in Commons.prototype.surveyAllPrimaryTargets use and test the promise chain method.  Still need to pass in els?
+
 // make more icon_colors test cases
 
 // create more methods for querying sql - make pre-defined queries in queries.js.
