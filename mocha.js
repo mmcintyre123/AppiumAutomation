@@ -10,7 +10,7 @@ let config        = require( './helpers/config' );
 let	_             = require('underscore');
 let actions       = require( './helpers/actions' );
 let elements      = require( './helpers/elements' );
-let timeout       = 180000;
+let timeout       = 9999000;
 let simulator     = false;
 let desired;
 
@@ -27,7 +27,9 @@ let desired;
 					config.set( {
 						'os'      : args[ i + 1 ],
 						'desired' : desired,
-						'sim'     : true
+						'sim'     : true,
+						'newCommandTimeout' : args.includes("debug") ? 1800 : 120, // in seconds - 30 min or 2 min
+						'launchTimeout' : 180000  // in ms - 3 minutes todo add these below
 					} );
 				}
 
@@ -61,7 +63,9 @@ let desired;
 					config.set( {
 						'os'      : args[ i + 1 ],
 						'desired' : desired,
-						'sim'     : false
+						'sim'     : false,
+						'newCommandTimeout' : args.includes("debug") ? 1800 : 120, // in seconds - 30 min or 2 min
+						'launchTimeout' : 180000  // in ms - 3 minutes todo add these below
 					} );
 				} else {
 					throw 'You did not specify a os for -os';
@@ -83,7 +87,7 @@ let commons = require( './helpers/commons' );
 
 describe( 'Automation Test in Progress!'.green, function () {
 
-	this.timeout( timeout );
+	this.timeout( timeout ); // total time limit for all tests to complete
 	let allPassed = true;
 	// require( './helpers/logging' ).configure( driver );
 
