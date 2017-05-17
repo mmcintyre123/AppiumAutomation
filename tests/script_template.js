@@ -25,7 +25,7 @@ module.exports = function () {
 
 	describe("Describe the test category...defines the group of tests specified below", function() {
 
-			this.timeout(3000000);
+			// this.timeout(3000000);
 			let allPassed = true;
 			console.log(('RUNNING ' + __filename.slice(__dirname.length + 1)).green.bold.underline)
 

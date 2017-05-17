@@ -4,6 +4,9 @@
 
 // make more icon_colors test cases
 
+// try to set up visual studio code with sublime shortcuts
+// clean up / figure out where timeouts are defined and which are being applied
+
 // create more methods for querying sql - make pre-defined queries in queries.js.
 
 // complete a walkbook and inspect the close/leave open dialogue.  Compare Android and iOS & add to elements file.

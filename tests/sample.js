@@ -29,7 +29,7 @@ module.exports = function () {
 
 	describe("This is a sample script for experimentation and demonstration", function() {
 
-		this.timeout(3000000);
+		// this.timeout(3000000);
 		let allPassed = true;
 
 		function clickMenuItem(name) {

@@ -29,11 +29,10 @@ module.exports = function () {
 
 	describe("Test all icon colors", function() {
 
-		this.timeout(9000000);
 		let allPassed = true;
 		console.log(('RUNNING ' + __filename.slice(__dirname.length + 1) + ' for iOS').green.bold.underline);
 
-		it('For debugging', function () {
+		it.skip('For debugging', function () {
 			// config.theseNameAttrs = [];
 
 			return driver
@@ -91,7 +90,7 @@ module.exports = function () {
 			    .sleep(4000)
 		});
 
-		it('Should perform a full login', function () {
+		it.skip('Should perform a full login', function () {
 			return driver
 				.fullLogin(creds.testUserName1, creds.testUserPwd1)
 		});
@@ -121,7 +120,7 @@ module.exports = function () {
 				.elementById(elements.homeScreen.walkbooks)
 				.click()
 				.waitForElementById(elements.surveys.survey1, 10000)
-				.elementById('Copy of Copy of Survey with Custom Email and for checking numbers')
+				.elementById('DO NOT USE: Mobile Automation Survey 1.0')
 				.click()
 				.waitForElementById(elements.survey.start, 10000)
 			    .elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // > get and store the survey name ...
@@ -413,9 +412,6 @@ module.exports = function () {
 				});
 			
 		});
-
-
-
 
 	});
 };

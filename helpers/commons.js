@@ -383,6 +383,7 @@ Commons.prototype.consoleLog = function(string){
 	return driver
 };
 
+//todo Make this work for any survey with any number of questions.
 Commons.prototype.takeSurveyTemp = function(thisTarget){
 	return driver
 		.elementById(thisTarget)
@@ -392,6 +393,8 @@ Commons.prototype.takeSurveyTemp = function(thisTarget){
 		.waitForElementById(elements.takeSurvey.answer1, 10000)
 		.click()
 		.waitForElementById(elements.takeSurvey.submitAnswer, 10000)
+		.click()
+		.waitForElementById(elements.takeSurvey.skip, 10000)
 		.click()
 		.waitForElementById(elements.takeSurvey.skip, 10000)
 		.click()
@@ -443,41 +446,40 @@ Commons.prototype.clickHouseWithMultPrimary = function(){
 //works!
 Commons.prototype.surveyAllPrimaryTargets = function(){
 
-	console.log('Using ' + config.thisHousehold);
+	console.log(('Surveying all primary targets in ' + config.thisHousehold + '.').white.bold);
 	config.thisHouseholdAfter = config.thisHousehold.replace('notstarted', 'complete');
 
 	return driver
-	.sleep(2)
-	.elementByXPath("//*/XCUIElementTypeScrollView[1]/XCUIElementTypeOther[1]") // > find and store all primary targets then survey all ...
-	.elementsByClassName('>','XCUIElementTypeButton')
-	// .saveFirstNameAttributes('prim_cellContact_', 'theseNameAttrs')
-	.then(function (els) {
-		console.log('starting')
-		return _p.saveFirstNameAttributes('prim_cellContact_', 'theseNameAttrs',undefined,els)
-	})
-	.then(function () {
+		.sleep(2)
+		.elementByXPath("//*/XCUIElementTypeScrollView[1]/XCUIElementTypeOther[1]") // > find and store all primary targets then survey all ...
+		.elementsByClassName('>','XCUIElementTypeButton')
+		// .saveFirstNameAttributes('prim_cellContact_', 'theseNameAttrs',undefined)
+		.then(function (els) {
+			return _p.saveFirstNameAttributes('prim_cellContact_', 'theseNameAttrs',undefined,els)
+		})
+		.then(function () {
 
-		let regexp = new RegExp('^prim_cellContact_\\d+$', 'i');
-		var prom;
+			let regexp = new RegExp('^prim_cellContact_\\d+$', 'i');
+			var prom;
 
-		for (let i = 0; i < config.theseNameAttrs.length; i++) {
+			for (let i = 0; i < config.theseNameAttrs.length; i++) {
 
-			// take survey with all primary targets
-			if (regexp.test(config.theseNameAttrs[i])) {
+				// take survey with all primary targets
+				if (regexp.test(config.theseNameAttrs[i])) {
 
-				let thisTarget = config.theseNameAttrs[i];
+					let thisTarget = config.theseNameAttrs[i];
 
-				if (i == 0) {
-					prom = Commons.prototype.takeSurveyTemp(thisTarget);
-				} else {
-					prom = prom.then(function () {
-						return Commons.prototype.takeSurveyTemp(thisTarget);
-					})
+					if (i == 0) {
+						prom = Commons.prototype.takeSurveyTemp(thisTarget);
+					} else {
+						prom = prom.then(function () {
+							return Commons.prototype.takeSurveyTemp(thisTarget);
+						})
+					}
 				}
 			}
-		}
-		return prom;
-	})
+			return prom;
+		})
 };
 
 module.exports = new Commons();

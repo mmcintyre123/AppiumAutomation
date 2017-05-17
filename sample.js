@@ -88,7 +88,7 @@ require("./helpers/setup"); // this MUST come before commons is required
 let	commons = require('./helpers/commons'); // this must be after the desired and driver are set
 
 describe("Visiting all pages in Walk", function() {
-	this.timeout(3000000);
+	// this.timeout(3000000);
 	let allPassed = true;
 
 	commons.beforeAll()

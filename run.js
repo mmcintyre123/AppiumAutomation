@@ -32,13 +32,12 @@ for (var i in args ) {
 				//'--selendroid-port', '8081', //non-default args
 				//'--chromedriver-port', '9516', //non-default args
 				//'--webkit-debug-proxy-port', '27754', //non-default args
+				'--strict-caps',
 				'--session-override',
 				'--log-level', 'debug',
 				'--debug-log-spacing',
-				'--log', '/Users/mliedtka/appium_logs2/appium.log',
+				'--log', '/Users/mliedtka/appium_logs1/appium.log',
 				'--address', "localhost",
-				'--command-timeout', '7200',
-				'--launch-timeout', '90000',
 				'--default-capabilities', '{ \
 						"app":"/Users/mliedtka/Library/Developer/Xcode/DerivedData/i360_Canvass-byzgucvkbseaivggszvazdzohhjo/Build/Products/Debug-iphonesimulator/i360 Canvass.app", \
 						"showIOSLog":"false", \
@@ -64,7 +63,6 @@ for (var i in args ) {
 						'--app', '/Users/mliedtka/AppiumAutomationTestBuiltIO/apps/i360Walk022017.apk',
 						//( config.get( 'reset' ) == true ? '--full-reset' : '--no-reset' ),
 						'--dont-stop-app-on-reset',
-						'--command-timeout', '7200',
 						//'--pre-launch',
 						'--debug-log-spacing',
 						'--automation-name', 'Appium',
@@ -78,7 +76,6 @@ for (var i in args ) {
 						//( config.get( 'reset' ) == true ? '--full-reset' : '--no-reset-' ),
 						'--full-reset',
 						'--dont-stop-app-on-reset',
-						'--command-timeout', '7200',
 						//'--pre-launch',
 						'--udid', 'D7662095-A24B-44B5-A0B1-071A1250DAE9',
 						'--show-ios-log',
@@ -87,7 +84,6 @@ for (var i in args ) {
 						'--automation-name', 'Appium',
 						'--platform-name', 'iOS',
 						'--platform-version', '10.2',
-						'--launch-timeout', '90000',
 						'--native-instruments-lib'
 					] );
 				}

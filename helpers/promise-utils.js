@@ -65,31 +65,35 @@ exports.saveAllNameAttributes = function (idLike, array_name, regexp) {
 exports.saveFirstNameAttributes = function (idLike, array_name, regexp, els) {
 
   config[array_name] = [];
-
-  console.log('in saveFirstNameAttributes')
+  console.log('Getting and saving current primary target elements'.white.bold)
 
   return Q.Promise(function(resolve, reject, notify) {
-    console.log('line 72')
     let promises = exports.each(function(el, i) {
-      console.log('line 74')
       return el.getAttribute('name').then(function (attr) {
 
-        console.log('line 77')
 
         if (regexp == undefined) {regexp = new RegExp('.*' + idLike + '.*', 'i');}
-        let regexp2 = new RegExp('^sec_cellContact_.*$', 'i');
+        let regexpPlusBtn = new RegExp('^.*cellContactPlus_.*$', 'i');
         
         if (regexp.test(attr)) {
 
           config[array_name].push(attr);
 
-        } else if (regexp2.test(attr)) {
+        } else if ((regexp.test(attr) == false) && (regexpPlusBtn.test(attr) == false)) {
 
-          resolve() // resolve after encountering the first secondary contact element
+          // resolve after encountering the first element that is not a primary target or a plus button
+          resolve(); 
 
-        } else if ((els.length - 1) == i) {
-          // if all elements tested and none match
+        } else if ((els.length - 1) == i && config[array_name].length == 0) {
+
+          // reject if all elements tested and none match
           reject(new Error('Could not find a list item id containing ' + idLike + '.'));
+
+        } else if ((els.length - 1) == i && config[array_name].length != 0) {
+
+          //resolve if we're at the end of the elements list and we saved some primaries
+          resolve();
+
         }
       })
     })(els);
