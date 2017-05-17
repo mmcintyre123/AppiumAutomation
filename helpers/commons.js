@@ -38,7 +38,7 @@ let convertDate = function(ms) {
 	let seconds = Math.floor(total / 1000);
 	total = total - (seconds * 1000);
 
-	return {hrs: hours, mins: minutes, seconds: seconds, ms: total };
+	return { hrs: hours, mins: minutes, seconds: seconds, ms: total };
 };
 
 // todo this.os doesn't seem to be working.

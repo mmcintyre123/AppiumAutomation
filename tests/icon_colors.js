@@ -95,13 +95,13 @@ module.exports = function () {
 				.fullLogin(creds.testUserName1, creds.testUserPwd1)
 		});
 
-		it.only('Should login quick', function () {
+		it('Should login quick', function () {
 			return driver
 				.loginQuick()
 		});
 
 		//passing 5-12-17! todo: add this to icon_colors.js.
-		it.only('Should turn the house green: survey both primary targets.', function () {
+		it('Should turn the house green: survey both primary targets.', function () {
 			config.housesWithMoreThan1Primary = {}
 			config.theseHouses = [];
 			config.thisHouseholdAfter = '';
@@ -119,7 +119,10 @@ module.exports = function () {
 				// .consoleLog(stackTrace.get()[1].getFileName() + stackTrace.get()[1].getLineNumber()) // todo experiment with this
 				.elementById(elements.homeScreen.walkbooks)
 				.click()
+				.startTime('Home Page to Household')
+				.startTime('Load Survey List')
 				.waitForElementById(elements.surveys.survey1, 10000)
+				.endTotalAndLogTime('Load Survey List')
 				.elementById('DO NOT USE: Mobile Automation Survey 1.0')
 				.click()
 				.waitForElementById(elements.survey.start, 10000)
@@ -133,16 +136,20 @@ module.exports = function () {
 				.sleep(1000)
 				.elementById(elements.survey.start)
 				.click()
+				.startTime('Load Survey')
 			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
+			    .endTotalAndLogTime('Load Survey')
 			    .clickFirstListItemByIdPart(elements.survey.walkbook1) // > choose first walkbook in the list ...
 			    .waitForElementById(elements.survey.popoverOpenBook, 10000)
 			    .click()
+			    .startTime('Load Walkbook')
 			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
+			    .endTotalAndLogTime('Load Walkbook')
 				.clickHouseWithMultPrimary() // > find and click the first house in the list that contains multiple primary targets ...
-
 			    .waitForElementById(elements.walkbook.popoverOpenHouse)
 			    .click()
 			    .waitForElementById(elements.houseHold.notHome)
+    			.endTotalAndLogTime('Home Page to Household')
 			    .surveyAllPrimaryTargets() // > survey all primary targets
 			    .elementById(elements.houseHold.finished)
 			    .click()
@@ -162,28 +169,29 @@ module.exports = function () {
 			// Survey: DO NOT USE: Mobile Automation Survey 1.0
 
 			return driver
-				.startTime('Home Page to Household')
-				.elementById(elements.homeScreen.walkbooks)
-				.click()
-				.startTime('Load Survey List')
-				.waitForElementById(elements.surveys.survey1, 10000)
-				.endTotalAndLogTime('Load Survey List')
-				.elementById('DO NOT USE: Mobile Automation Survey 1.0')
-				.click()
-				.waitForElementById(elements.survey.start, 10000)
-				.sleep(1000)
-				.elementById(elements.survey.start)
-				.click()
-				.startTime('Load Survey')
-				.waitForElementById('Select Walkbook', 13000)
-			    .endTotalAndLogTime('Load Survey')
-			    .elementByXPath(elements.survey.walkbook1)
-			    .click()
-			    .waitForElementById(elements.survey.popoverOpenBook, 13000)
-			    .elementById(elements.survey.popoverOpenBook)
-			    .click()
-			    .startTime('Load Walkbook')
-			    .waitForElementByClassName('XCUIElementTypeTable', 13000)
+			//	.startTime('Home Page to Household')
+			//	.elementById(elements.homeScreen.walkbooks)
+			//	.click()
+			//	.startTime('Load Survey List')
+			//	.waitForElementById(elements.surveys.survey1, 10000)
+			//	.endTotalAndLogTime('Load Survey List')
+			//	.elementById('DO NOT USE: Mobile Automation Survey 1.0')
+			//	.click()
+			//	.waitForElementById(elements.survey.start, 10000)
+			//	.sleep(1000)
+			//	.elementById(elements.survey.start)
+			//	.click()
+			//	.startTime('Load Survey')
+			//	.waitForElementById('Select Walkbook', 13000)
+			//  .endTotalAndLogTime('Load Survey')
+			//  .elementByXPath(elements.survey.walkbook1)
+			//  .click()
+			//  .waitForElementById(elements.survey.popoverOpenBook, 13000)
+			//  .elementById(elements.survey.popoverOpenBook)
+			//  .click()
+			//  .startTime('Load Walkbook')
+			//  .waitForElementByClassName('XCUIElementTypeTable', 13000)
+			//  .endTotalAndLogTime('Load Walkbook')
 			    .clickFirstListItemByIdPart('notstarted')
 			    .then(function () {
 
@@ -211,6 +219,89 @@ module.exports = function () {
 					    .waitForElementById(thisHouseholdAfter, 10000) // verify the house is blue after refresh
 					    .consoleLog('Household color/status check passed - after refresh - Test: ' + config.currentTest.title)
 			    });
+		});
+
+		it('Should turn the house red: wrong address house', function () {
+
+			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+
+			return driver
+				// save household IDs:
+				.clickFirstListItemByIdPart('notstarted')
+				.then(function () {
+					console.log('Using ' + config.thisHousehold + ', houseNum ' + config.houseNum);
+					let thisHouseholdAfter = config.thisHousehold.replace('notstarted','reject');
+
+					return driver
+
+						.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
+						.elementById(elements.walkbook.popoverOpenHouse)
+						.click()
+						.waitForElementById(elements.houseHold.wrongAddress, 10000)
+						.elementById(elements.houseHold.wrongAddress)
+						.click()
+						.waitForElementByClassName('XCUIElementTypeTable', 10000) // wait for the house list
+						.waitForElementById(thisHouseholdAfter, 10000) // verify house
+						.consoleLog('Household color/status check passed - before refresh - Test: ' + config.currentTest.title)
+						.refreshHouseList()
+						.waitForElementById(thisHouseholdAfter, 10000) // verify house after refresh
+						.consoleLog('Household color/status check passed - after refresh - Test: ' + config.currentTest.title)
+				});
+		});
+
+		it('Should turn the house red: refused house', function () {
+
+			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+
+			return driver
+				// save household IDs:
+				.clickFirstListItemByIdPart('notstarted')
+				.then(function () {
+					console.log('Using ' + config.thisHousehold + ', houseNum ' + config.houseNum);
+					let thisHouseholdAfter = config.thisHousehold.replace('notstarted','reject');
+
+					return driver
+
+						.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
+						.elementById(elements.walkbook.popoverOpenHouse)
+						.click()
+						.waitForElementById(elements.houseHold.refused, 10000)
+						.elementById(elements.houseHold.refused)
+						.click()
+						.waitForElementByClassName('XCUIElementTypeTable', 10000) // wait for the house list
+						.waitForElementById(thisHouseholdAfter, 10000) // verify house
+						.consoleLog('Household color/status check passed - before refresh - Test: ' + config.currentTest.title)
+						.refreshHouseList()
+						.waitForElementById(thisHouseholdAfter, 10000) // verify house after refresh
+						.consoleLog('Household color/status check passed - after refresh - Test: ' + config.currentTest.title)
+				});
+		});
+
+		it('Should turn the house blue: not home house', function () {
+
+			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+
+			return driver
+				.clickFirstListItemByIdPart('notstarted')
+				.then(function () {
+					console.log('Using ' + config.thisHousehold + ', houseNum ' + config.houseNum);
+					let thisHouseholdAfter = config.thisHousehold.replace('notstarted','attempted');
+
+					return driver
+
+						.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
+						.elementById(elements.walkbook.popoverOpenHouse)
+						.click()
+						.waitForElementById(elements.houseHold.notHome, 10000)
+						.elementById(elements.houseHold.notHome)
+						.click()
+						.waitForElementByClassName('XCUIElementTypeTable', 10000) // wait for the house list
+						.waitForElementById(thisHouseholdAfter, 10000) // verify house is blue
+						.consoleLog('Household color/status check passed - before refresh - Test: ' + config.currentTest.title)
+						.refreshHouseList()
+						.waitForElementById(thisHouseholdAfter, 10000) // verify house after refresh
+						.consoleLog('Household color/status check passed - after refresh - Test: ' + config.currentTest.title)
+				});
 		});
 
 		it('TRANSITION: blue to red: one primary not home --> restricted access house', function () {
@@ -270,8 +361,11 @@ module.exports = function () {
 				});
 		});
 
-		//todo finish this
 		it('TRANSITION: blue to green: not home house --> take survey all primary', function () {
+			config.housesWithMoreThan1Primary = {}
+			config.theseHouses = [];
+			config.thisHouseholdAfter = '';
+			config.thisSurvey = '';
 
 			return driver
 				.clickFirstListItemByIdPart('attempted')
@@ -285,83 +379,30 @@ module.exports = function () {
 					    .elementById(elements.walkbook.popoverOpenHouse)
 					    .click()
 					    .waitForElementById(elements.houseHold.notHome, 10000)
-					    .elementById(elements.houseHold.primTarget1)
+					    .surveyAllPrimaryTargets()
+					    .elementById(elements.houseHold.finished)
 					    .click()
-					    .waitForElementById(elements.target.takeSurvey, 10000)
-
+					    .waitForElementById(config.thisHouseholdAfter, 10000) // > verify the house is green before refresh
+					    .consoleLog(('Household color/status check passed - before refresh.  config.thisHouseholdAfter = '
+					    			    			 + config.thisHouseholdAfter + '\nTest: ' + config.currentTest.title).green.bold)
+					    .refreshHouseList()
+					    .sleep(1000)
+					    .waitForElementById(config.thisHouseholdAfter, 10000) // > verify the house is green after refresh
+					    .consoleLog(('Household color/status check passed - after refresh.  config.thisHouseholdAfter = '
+					    			    			 + config.thisHouseholdAfter + '\nTest: ' + config.currentTest.title).green.bold)
+					    .consoleLog('TEST CASE IS OVER'.green.bold.underline)
 				})
-
-			
 		});
 
 
 
-
-		it('Should turn the house red: wrong address house', function () {
-
-			// Survey: DO NOT USE: Mobile Automation Survey 1.0
-
-			return driver
-				// save household IDs:
-				.clickFirstListItemByIdPart('notstarted')
-				.then(function () {
-					console.log('Using ' + config.thisHousehold + ', houseNum ' + config.houseNum);
-					let thisHouseholdAfter = config.thisHousehold.replace('notstarted','reject');
-
-					return driver
-
-						.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
-						.elementById(elements.walkbook.popoverOpenHouse)
-						.click()
-						.waitForElementById(elements.houseHold.wrongAddress, 10000)
-						.elementById(elements.houseHold.wrongAddress)
-						.click()
-						.waitForElementByClassName('XCUIElementTypeTable', 10000) // wait for the house list
-						.waitForElementById(thisHouseholdAfter, 10000) // verify house
-						.consoleLog('Household color/status check passed - before refresh - Test: ' + config.currentTest.title)
-						.refreshHouseList()
-						.waitForElementById(thisHouseholdAfter, 10000) // verify house after refresh
-						.consoleLog('Household color/status check passed - after refresh - Test: ' + config.currentTest.title)
-				});
-			
-		});
-
-
-		it('Should turn the house red: refused house', function () {
-
-			// Survey: DO NOT USE: Mobile Automation Survey 1.0
-
-			return driver
-				// save household IDs:
-				.clickFirstListItemByIdPart('notstarted')
-				.then(function () {
-					console.log('Using ' + config.thisHousehold + ', houseNum ' + config.houseNum);
-					let thisHouseholdAfter = config.thisHousehold.replace('notstarted','reject');
-
-					return driver
-
-						.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
-						.elementById(elements.walkbook.popoverOpenHouse)
-						.click()
-						.waitForElementById(elements.houseHold.refused, 10000)
-						.elementById(elements.houseHold.refused)
-						.click()
-						.waitForElementByClassName('XCUIElementTypeTable', 10000) // wait for the house list
-						.waitForElementById(thisHouseholdAfter, 10000) // verify house
-						.consoleLog('Household color/status check passed - before refresh - Test: ' + config.currentTest.title)
-						.refreshHouseList()
-						.waitForElementById(thisHouseholdAfter, 10000) // verify house after refresh
-						.consoleLog('Household color/status check passed - after refresh - Test: ' + config.currentTest.title)
-				});
-			
-		});
-
-		it('Should turn the house blue: not home house', function () {
+		it('TRANSITION: blue to red: not home house --> refused house', function () {
 
 			// Survey: DO NOT USE: Mobile Automation Survey 1.0
 
 			return driver
 				.clickFirstListItemByIdPart('notstarted')
+				// generate a "not home house"
 				.then(function () {
 					console.log('Using ' + config.thisHousehold + ', houseNum ' + config.houseNum);
 					let thisHouseholdAfter = config.thisHousehold.replace('notstarted','attempted');
@@ -380,17 +421,9 @@ module.exports = function () {
 						.refreshHouseList()
 						.waitForElementById(thisHouseholdAfter, 10000) // verify house after refresh
 						.consoleLog('Household color/status check passed - after refresh - Test: ' + config.currentTest.title)
-				});
-		});
-
-
-		it('TRANSITION: blue to red: not home house --> refused house', function () {
-
-			// Survey: DO NOT USE: Mobile Automation Survey 1.0
-
-			return driver
-				// save household IDs:
+				})
 				.clickFirstListItemByIdPart('attempted')
+				// from not home => refused
 				.then(function () {
 					console.log('Using ' + config.thisHousehold + ', houseNum ' + config.houseNum);
 					let thisHouseholdAfter = config.thisHousehold.replace('attempted','reject');
@@ -410,8 +443,6 @@ module.exports = function () {
 						.waitForElementById(thisHouseholdAfter, 10000) // verify house after refresh
 						.consoleLog('Household color/status check passed - after refresh - Test: ' + config.currentTest.title)
 				});
-			
 		});
-
 	});
 };

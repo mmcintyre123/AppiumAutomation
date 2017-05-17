@@ -1,30 +1,28 @@
-// To do:
+To do:
 
-// in Commons.prototype.surveyAllPrimaryTargets use and test the promise chain method.  Still need to pass in els?
+	// make all tests independent, except for transition color tests.
+	// execute straight (non-transition) tests first, then do the transition test cases.
+	// in Commons.prototype.surveyAllPrimaryTargets use and test the promise chain method.  Still need to pass in els?
+	// make more icon_colors test cases
 
-// make more icon_colors test cases
+	// try to set up visual studio code with sublime shortcuts
+	// clean up / figure out where timeouts are defined and which are being applied
 
-// try to set up visual studio code with sublime shortcuts
-// clean up / figure out where timeouts are defined and which are being applied
 
-// create more methods for querying sql - make pre-defined queries in queries.js.
 
-// complete a walkbook and inspect the close/leave open dialogue.  Compare Android and iOS & add to elements file.
 
-// investigate - walkbook list ordering is different in Android - could be due to location?  Figure out how to programmatically simulate location if possible.
 
-	Later:
+
+
+Later
 
 	// elementOrNull command - utilize in fullLogin method:
 
 		Retrieve an element avoiding not found exception and returning null instead:
 		elementOrNull(using, value, cb) -> cb(err, element)
-		TRY THIS IN fullLogin instead of the nested functions to check if rememberMe is checked.
+		May try this in fullLogin instead of the nested functions to check if rememberMe is checked.
 
-	Ongoing:
-	// Break up tests into folder and subfolders
-
-// Miscelaneous
+Miscelaneous
 
 	// try these for finding elements by a part of their id:
 
