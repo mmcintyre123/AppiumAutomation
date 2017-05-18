@@ -1,5 +1,6 @@
 To do:
 
+	// figure out why clickHouseWithMultPrimary did not click an untouched house.
 	// make all tests independent, except for transition color tests.
 	// execute straight (non-transition) tests first, then do the transition test cases.
 	// in Commons.prototype.surveyAllPrimaryTargets use and test the promise chain method.  Still need to pass in els?

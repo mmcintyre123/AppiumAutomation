@@ -133,7 +133,7 @@ exports.clickFirstListItemByIdPart = function (idPart) {
             return el.getAttribute('name').then(function (attr) {
 
               let regexp = new RegExp('.*' + idPart + '.*', 'i');
-              let regexpIsHouse = new RegExp('.*cellHouse.*', 'i')
+              let regexpIsHouse = new RegExp('.*cellHouse_.*', 'i')
 
               if (regexp.test(attr)) {
                 if (regexpIsHouse.test(attr)) { // for walkbook house list
@@ -147,9 +147,9 @@ exports.clickFirstListItemByIdPart = function (idPart) {
                     .elementById(attr)
                     .click()
                     .then(function () {
+                      console.log('line 150 about to resolve clickFirstListItemByIdPart')
                       resolve();
                     })
-
                 } else {
                   return driver
                     .elementById(attr)

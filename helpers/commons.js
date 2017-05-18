@@ -326,12 +326,13 @@ Commons.prototype.clickAndClose = function(scope, elemArray){
 
 Commons.prototype.scrollHouseList = function(houseNum) {
 	// If all the houses in the inital view are used, scroll down:
-
+	console.log('Scrolling House List'.white.bold)
 	if (houseNum > 10 && houseNum <= 20) {
 		return driver
 			.sleep(3)
 			.then(function(loc){
 				 return driver
+				 	.elementByClassName('XCUIElementTypeTable') // ensure the house list is actually open
 					.swipe({
 						startX: 12,
 						startY: 721,
@@ -344,6 +345,7 @@ Commons.prototype.scrollHouseList = function(houseNum) {
 			.sleep(4)
 			.then(function(loc){
 				 return driver
+				 	.elementByClassName('XCUIElementTypeTable') // ensure the house list is actually open
 					.swipe({
 						startX: 12,
 						startY: 721,
@@ -356,6 +358,7 @@ Commons.prototype.scrollHouseList = function(houseNum) {
 			.sleep(5)
 			.then(function(loc){
 				 return driver
+				 	.elementByClassName('XCUIElementTypeTable') // ensure the house list is actually open
 					.swipe({
 						startX: 12,
 						startY: 721,

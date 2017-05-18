@@ -29,6 +29,7 @@ module.exports = function () {
 
 	describe("Test all icon colors", function() {
 
+		this.timeout(999999999)
 		let allPassed = true;
 		console.log(('RUNNING ' + __filename.slice(__dirname.length + 1) + ' for iOS').green.bold.underline);
 
@@ -169,6 +170,7 @@ module.exports = function () {
 			// Survey: DO NOT USE: Mobile Automation Survey 1.0
 
 			return driver
+			//	.loginQuick()
 			//	.startTime('Home Page to Household')
 			//	.elementById(elements.homeScreen.walkbooks)
 			//	.click()
@@ -182,18 +184,16 @@ module.exports = function () {
 			//	.elementById(elements.survey.start)
 			//	.click()
 			//	.startTime('Load Survey')
-			//	.waitForElementById('Select Walkbook', 13000)
-			//  .endTotalAndLogTime('Load Survey')
-			//  .elementByXPath(elements.survey.walkbook1)
-			//  .click()
-			//  .waitForElementById(elements.survey.popoverOpenBook, 13000)
-			//  .elementById(elements.survey.popoverOpenBook)
-			//  .click()
-			//  .startTime('Load Walkbook')
-			//  .waitForElementByClassName('XCUIElementTypeTable', 13000)
-			//  .endTotalAndLogTime('Load Walkbook')
-			    .clickFirstListItemByIdPart('notstarted')
-			    .then(function () {
+			//  .waitForElementByClassName('XCUIElementTypeTable', 10000)
+			//	.endTotalAndLogTime('Load Survey')
+			//	.clickFirstListItemByIdPart(elements.survey.walkbook1)
+			//	.waitForElementById(elements.survey.popoverOpenBook, 13000)
+			//	.click()
+			//	.startTime('Load Walkbook')
+			//	.waitForElementByClassName('XCUIElementTypeTable', 13000)
+			//	.endTotalAndLogTime('Load Walkbook')
+				.clickFirstListItemByIdPart('notstarted')
+				.then(function () {
 
 			    	console.log('Using ' + config.thisHousehold + ', houseNum ' + config.houseNum);
 			    	let thisHouseholdAfter = config.thisHousehold.replace('notstarted','attempted');
@@ -214,7 +214,7 @@ module.exports = function () {
 					    .click()
 					    .waitForElementById(thisHouseholdAfter, 10000) // verify the house is blue
 					    .consoleLog('Household color/status check passed - before refresh - Test: ' + config.currentTest.title)
-					    .swipe({startX: 10, startY: 136, offsetX: 0, offsetY: 400,}) // refresh house list todo create a custom method?
+					    .refreshHouseList()
 					    .sleep(1000)
 					    .waitForElementById(thisHouseholdAfter, 10000) // verify the house is blue after refresh
 					    .consoleLog('Household color/status check passed - after refresh - Test: ' + config.currentTest.title)
@@ -393,8 +393,6 @@ module.exports = function () {
 					    .consoleLog('TEST CASE IS OVER'.green.bold.underline)
 				})
 		});
-
-
 
 		it('TRANSITION: blue to red: not home house --> refused house', function () {
 
