@@ -71,7 +71,6 @@ exports.saveFirstNameAttributes = function (idLike, array_name, regexp, els) {
     let promises = exports.each(function(el, i) {
       return el.getAttribute('name').then(function (attr) {
 
-
         if (regexp == undefined) {regexp = new RegExp('.*' + idLike + '.*', 'i');}
         let regexpPlusBtn = new RegExp('^.*cellContactPlus_.*$', 'i');
         
@@ -115,15 +114,15 @@ exports.getElementNameAttr = function getElementNameAttr(el) {
   });
 };
 
-exports.clickFirstListItemByIdPart = function (idPart) {
+exports.getFirstListItemByIdPart = function (idPart) {
 
   if (idPart == undefined) {
-    console.log('clickFirstListItemByIdPart failed: The idPart was undefined.'.red.bold)
+    console.log('getFirstListItemByIdPart failed: The idPart was undefined.'.red.bold)
     return
   }
 
   return driver
-    .elementByClassName('XCUIElementTypeTable')
+    .waitForElementByClassName('XCUIElementTypeTable', 10000)
     .elementsByClassName('>','XCUIElementTypeCell')
     .then(function (els) {
 
@@ -143,20 +142,27 @@ exports.clickFirstListItemByIdPart = function (idPart) {
 
                   return driver
                     .scrollHouseList(config.houseNum)
-                    .sleep(1500)
-                    .elementById(attr)
-                    .click()
+                    // .sleep(1500)
+                    // .elementById(attr)
+                    // .click()
                     .then(function () {
-                      console.log('line 150 about to resolve clickFirstListItemByIdPart')
+                      console.log('line 150 about to resolve getFirstListItemByIdPart')
                       resolve();
                     })
                 } else {
+
                   return driver
-                    .elementById(attr)
-                    .click()
+                    .sleep(1)
                     .then(function () {
+                      config.thisElem = attr;
+                      console.log(('thisElem = ' + config.thisElem).white.bold.underline);
                       resolve();
                     })
+                  //  .elementById(attr)
+                  //  .click()
+                  //  .then(function () {
+                  //    resolve();
+                  //  })
                 }
               } else if ((els.length - 1) == i) {
                 // if all elements tested and none match

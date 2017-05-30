@@ -1,8 +1,32 @@
 To do:
 
-	// figure out why clickHouseWithMultPrimary did not click an untouched house.
-	// make all tests independent, except for transition color tests.
-	// execute straight (non-transition) tests first, then do the transition test cases.
+	Automation flow for Continuous Integration:
+
+		Change is checked into repo on bitbucket
+		Shippable or Jenkins detects the change and queues a build and automation run =>	
+			
+			1. Run a shell script that pulls the latest code from bitbucket, then builds the app locally:
+
+cd ~/i360 && \
+xcrun simctl uninstall D7662095-A24B-44B5-A0B1-071A1250DAE9 com.i360.i360Walk && \
+git pull && \
+cd ~/i360/iOS/i360\ Canvass && \
+xcodebuild -scheme i360\ Canvass -target i360\ Canvass -destination 'platform=iOS Simulator,id=D7662095-A24B-44B5-A0B1-071A1250DAE9' -configuration Debug -derivedDataPath build clean && \
+xcrun xcodebuild -scheme i360\ Canvass -target i360\ Canvass -destination 'platform=iOS Simulator,id=D7662095-A24B-44B5-A0B1-071A1250DAE9' -configuration Debug -derivedDataPath build
+
+			2. Push the app to testflight (does it need to be an ipa?  Look into this.  See tutorial on Test Flight integration with Jenkins, research for Shippable).
+
+			*3. Kick off appium tests
+
+cd ~/AppiumAutomation && node run.js -sim iosSim2
+
+
+
+	// continue debugging last icon colors test.
+	// todo declare config.thisElem = ''; at the beginning of every test case - or in beforeEach?
+	// declare variables in before each function - e.g. config.thisHousehold = ''; etc.
+
+	// figure out why getHouseWithMultPrimary did not click an untouched house.
 	// in Commons.prototype.surveyAllPrimaryTargets use and test the promise chain method.  Still need to pass in els?
 	// make more icon_colors test cases
 

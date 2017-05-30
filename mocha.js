@@ -28,7 +28,7 @@ let desired;
 						'os'      : args[ i + 1 ],
 						'desired' : desired,
 						'sim'     : true,
-						'newCommandTimeout' : args.includes("debug") ? 1800 : 120, // in seconds - 30 min or 2 min
+						'newCommandTimeout' : args.includes("dbg") ? 1800 : 120, // in seconds - 30 min or 2 min
 						'launchTimeout' : 180000  // in ms - 3 minutes todo add these below
 					} );
 				}
@@ -64,7 +64,7 @@ let desired;
 						'os'      : args[ i + 1 ],
 						'desired' : desired,
 						'sim'     : false,
-						'newCommandTimeout' : args.includes("debug") ? 1800 : 120, // in seconds - 30 min or 2 min
+						'newCommandTimeout' : args.includes("dbg") ? 1800 : 120, // in seconds - 30 min or 2 min
 						'launchTimeout' : 180000  // in ms - 3 minutes todo add these below
 					} );
 				} else {

@@ -73,7 +73,7 @@ let apps = require('./apps.js');
 		'mapSettings'		 :  'i ipad', // in Android this is in the mnOverflow - text = "Icon Legend"
 		'list' 				 :  'walkbook_list', // in iOS effectively, label 'menuButton', if on map view
 
-		//use clickFirstListItemByIdPart
+		//use getFirstListItemByIdPart
 		// alternative way - with XPath: '//*[contains(@label,\'cellWalkbook_1\')]',
 		'walkbook1'     	 :  'cellWalkbook_0',
 		'walkbook2'     	 :  'cellWalkbook_1',
@@ -87,7 +87,7 @@ let apps = require('./apps.js');
 	}
 
 
-	//Use clickFirstListItemByIdPart
+	//Use getFirstListItemByIdPart
 	exports.walkbook = {
 		// 'houseHold1'       : "//*[contains(@label,'cellHouse_0')]",
 		'houseHold1'       : 'cellHouse_0',

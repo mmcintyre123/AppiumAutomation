@@ -22,13 +22,14 @@ wd.addPromiseChainMethod('pry',commons.pry);
 wd.addPromiseChainMethod('mute',commons.mute);
 wd.addPromiseChainMethod('unmute',commons.unmute);
 wd.addPromiseChainMethod('scrollHouseList',commons.scrollHouseList);
-wd.addPromiseChainMethod('clickFirstListItemByIdPart',promiseUtils.clickFirstListItemByIdPart);
+wd.addPromiseChainMethod('getFirstListItemByIdPart',promiseUtils.getFirstListItemByIdPart);
 wd.addPromiseChainMethod('refreshHouseList',commons.refreshHouseList);
 wd.addPromiseChainMethod('consoleLog',commons.consoleLog);
 wd.addPromiseChainMethod('saveAllNameAttributes',promiseUtils.saveAllNameAttributes);
 wd.addPromiseChainMethod('saveFirstNameAttributes',promiseUtils.saveFirstNameAttributes);
-wd.addPromiseChainMethod('clickHouseWithMultPrimary',commons.clickHouseWithMultPrimary);
+wd.addPromiseChainMethod('getHouseWithMultPrimary',commons.getHouseWithMultPrimary);
 wd.addPromiseChainMethod('surveyAllPrimaryTargets',commons.surveyAllPrimaryTargets);
+wd.addPromiseChainMethod('homeToHouseList',commons.homeToHouseList);
 
 exports.should = should;
 exports.expect = expect;

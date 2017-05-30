@@ -2,6 +2,7 @@
 
 require('colors');
 require('./setup');
+let _         =  require('underscore');
 let wd 	  	  =  require('wd');
 let fs        =  require('fs');
 let fsExtra   =  require('fs-extra');
@@ -326,51 +327,62 @@ Commons.prototype.clickAndClose = function(scope, elemArray){
 
 Commons.prototype.scrollHouseList = function(houseNum) {
 	// If all the houses in the inital view are used, scroll down:
-	console.log('Scrolling House List'.white.bold)
-	if (houseNum > 10 && houseNum <= 20) {
-		return driver
-			.sleep(3)
-			.then(function(loc){
-				 return driver
-				 	.elementByClassName('XCUIElementTypeTable') // ensure the house list is actually open
-					.swipe({
-						startX: 12,
-						startY: 721,
-						offsetX: 0,
-						offsetY: -665,
-					})
-			}) // scrolls down a full screen
-	} else if (houseNum > 20 && houseNum <= 30) {
-		return driver
-			.sleep(4)
-			.then(function(loc){
-				 return driver
-				 	.elementByClassName('XCUIElementTypeTable') // ensure the house list is actually open
-					.swipe({
-						startX: 12,
-						startY: 721,
-						offsetX: 0,
-						offsetY: -1330,
-					})
-			}) // scrolls down a full 2 screens
-	} else if (houseNum > 30 && houseNum <= 40) {
-		return driver
-			.sleep(5)
-			.then(function(loc){
-				 return driver
-				 	.elementByClassName('XCUIElementTypeTable') // ensure the house list is actually open
-					.swipe({
-						startX: 12,
-						startY: 721,
-						offsetX: 0,
-						offsetY: -1995,
-					})
-			}) // scrolls down a full 3 screens
-	} else if (houseNum > 40) {
-		console.log('Don\'t use such large Walkbooks!'.red.bold.underline)
-		return driver
-			.execute('mobile: scroll', {direction: 'down'}) // scrolls to bottom
-	}
+	return driver
+		.consoleLog('Scrolling House List'.white.bold)
+		.elementByClassName('XCUIElementTypeTable') // ensure the house list is actually open
+		.then(function () {
+			if (houseNum > 10) {
+				return driver
+					.execute('mobile: scroll', {direction: 'up'}) // ensures at top
+					.sleep(1000)
+			}
+		})
+		.then(function () {
+			if (houseNum > 10 && houseNum <= 20) {
+				return driver
+					.sleep(3)
+					.then(function(loc){
+						 return driver
+						 	.elementByClassName('XCUIElementTypeTable') // ensure the house list is actually open
+							.swipe({
+								startX: 12,
+								startY: 721,
+								offsetX: 0,
+								offsetY: -665,
+							})
+					}) // scrolls down a full screen
+			} else if (houseNum > 20 && houseNum <= 30) {
+				return driver
+					.sleep(4)
+					.then(function(loc){
+						 return driver
+						 	.elementByClassName('XCUIElementTypeTable') // ensure the house list is actually open
+							.swipe({
+								startX: 12,
+								startY: 721,
+								offsetX: 0,
+								offsetY: -1450,
+							})
+					}) // scrolls down a full 2 screens
+			} else if (houseNum > 30 && houseNum <= 40) {
+				return driver
+					.sleep(5)
+					.then(function(loc){
+						 return driver
+						 	.elementByClassName('XCUIElementTypeTable') // ensure the house list is actually open
+							.swipe({
+								startX: 12,
+								startY: 721,
+								offsetX: 0,
+								offsetY: -1995,
+							})
+					}) // scrolls down a full 3 screens
+			} else if (houseNum > 40) {
+				console.log('Don\'t use such large Walkbooks!'.red.bold.underline)
+				return driver
+					.execute('mobile: scroll', {direction: 'down'}) // scrolls to bottom
+			}
+		})
 };
 
 Commons.prototype.refreshHouseList = function(){
@@ -389,6 +401,13 @@ Commons.prototype.consoleLog = function(string){
 //todo Make this work for any survey with any number of questions.
 Commons.prototype.takeSurveyTemp = function(thisTarget){
 	return driver
+		.getFirstListItemByIdPart(config.thisHousehold.match(/\w+\_\d+/)[0])
+		.elementById(config.thisHousehold)
+		.click()
+	    .waitForElementById(elements.walkbook.popoverOpenHouse)
+	    .click()
+	    .waitForElementById(elements.houseHold.notHome)
+		.endTotalAndLogTime('Home Page to Household')
 		.elementById(thisTarget)
 		.click()
 		.waitForElementById(elements.target.takeSurvey, 10000)
@@ -406,30 +425,72 @@ Commons.prototype.takeSurveyTemp = function(thisTarget){
 		.elementById(elements.takeSurvey.finish)
 		.click()
 		.waitForElementByClassName('XCUIElementTypeTable',10000)
-		.clickFirstListItemByIdPart(config.thisHousehold.match(/\w+\_\d+/)[0])
-		.waitForElementById(elements.walkbook.popoverOpenHouse)
-		.click()
-		.waitForElementById(elements.houseHold.notHome);
 };
 
-Commons.prototype.clickHouseWithMultPrimary = function(){
+Commons.prototype.homeToHouseList = function(){
+	// config.thisElem = '';
+
+	return driver
+		.startTime('Home Page to Household')
+		.elementById(elements.homeScreen.walkbooks)
+		.click()
+		.startTime('Load Survey List')
+		.waitForElementById(elements.surveys.survey1, 10000)
+		.endTotalAndLogTime('Load Survey List')
+		.elementById('DO NOT USE: Mobile Automation Survey 1.0')
+		.click()
+		.waitForElementById(elements.survey.start, 10000)
+	    .elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // > get and store the survey name ...
+	    .then(function (el) {
+	    	return el.getAttribute('name').then(function (attr) {
+	    		config.thisSurvey = attr;
+	    	})
+	    })
+		.then(sqlQuery.assignBooksWithMultiplePrimaries) // > unassign and reassign walkbooks with multiple primary targets ... 
+		.sleep(1000)
+		.elementById(elements.survey.start)
+		.click()
+		.startTime('Load Survey')
+	    .waitForElementByClassName('XCUIElementTypeTable', 10000)
+	    .endTotalAndLogTime('Load Survey')
+	    .getFirstListItemByIdPart(elements.survey.walkbook1) // > choose first walkbook in the list ...
+	    .then(function () {
+    		return driver
+    			.elementById(config.thisElem)
+    			.click()
+	    })
+	    .waitForElementById(elements.survey.popoverOpenBook, 10000)
+	    .click()
+	    .startTime('Load Walkbook')
+	    .waitForElementByClassName('XCUIElementTypeTable', 10000)
+	    .endTotalAndLogTime('Load Walkbook')
+};
+
+//Commons.prototype.getHousesWithMultipleUntouchedPrimary = function(){
+//
+//};
+
+
+Commons.prototype.getHouseWithMultPrimary = function(){
 
 	config.theseHouses = [];
+	config.surveyedHouses = [];	
 
+	//click the first house which contains multiple primary targets, none of whom have been surveyed already:
 	return driver
 	.sleep(1)
 	.then(sqlQuery.getHousesWithMoreThan1Primary)
+	.then(sqlQuery.housesWithOneOrMoreTakeSurveys)
 	.elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // on the house list page - should be 'Houses in Walkbook #'
-	//use sql to find and click a house with multiple primary targets:
 	.then(function (el) {
 		return el.getAttribute('name').then(function (attr) {
 
 			//get the current walkbook number
 			config.thisWalkbook = Number(attr.match(/\d+/)[0]);
 
-			//iterate through sql results array (an array of objects)
+			//create an array of houses in this walkbook
 			for (let i=0; i < config.housesWithMoreThan1Primary.length; i++) {
-				//if current object in housesWithMoreThan1Primary corresponds to thisWalkbook
+				//if current object corresponds to thisWalkbook
 				if( config.housesWithMoreThan1Primary[i].BookNum == config.thisWalkbook ) {
 
 					//push corresponding house to array 'theseHouses':
@@ -437,11 +498,21 @@ Commons.prototype.clickHouseWithMultPrimary = function(){
 					config.theseHouses.push(thisHouse)
 				}
 			}
+
+			//create an array of houses we DON'T want in this walkbook
+			for (let i=0; i < config.housesWithOneOrMoreTakeSurveys.length; i++) {
+
+				if (config.housesWithOneOrMoreTakeSurveys[i].BookNum == config.thisWalkbook) {
+					let thisHouse = 'cellHouse_' + (config.housesWithOneOrMoreTakeSurveys[i].OrdinalNum - 1)
+					config.surveyedHouses.push(thisHouse)
+				}
+			}
+
+			//remove houses containing one or more targets who have been surveyed from theseHouses
+			config.theseHouses = _.difference(config.theseHouses, config.surveyedHouses)
+
 			config.thisHousehold = config.theseHouses.shift()
 			console.log(('Using ' + config.thisHousehold).white.bold)
-
-			return driver
-				.clickFirstListItemByIdPart(config.thisHousehold)
 		});
 	})
 };
@@ -453,13 +524,19 @@ Commons.prototype.surveyAllPrimaryTargets = function(){
 	config.thisHouseholdAfter = config.thisHousehold.replace('notstarted', 'complete');
 
 	return driver
-		.sleep(2)
+		.elementById(config.thisHousehold)
+		.click()
+	    .waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
+	    .click()
+	    .waitForElementById(elements.houseHold.notHome, 10000)
+		.endTotalAndLogTime('Home Page to Household')
 		.elementByXPath("//*/XCUIElementTypeScrollView[1]/XCUIElementTypeOther[1]") // > find and store all primary targets then survey all ...
 		.elementsByClassName('>','XCUIElementTypeButton')
 		// .saveFirstNameAttributes('prim_cellContact_', 'theseNameAttrs',undefined)
 		.then(function (els) {
 			return _p.saveFirstNameAttributes('prim_cellContact_', 'theseNameAttrs',undefined,els)
 		})
+		.back()
 		.then(function () {
 
 			let regexp = new RegExp('^prim_cellContact_\\d+$', 'i');
