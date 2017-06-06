@@ -7,6 +7,13 @@ let config = require('../helpers/config');
 let commons = require('../helpers/commons')
 let driver = config.driver;
 
+//for re-routing the each function to return/noop when
+//we want to stop further action after some promise has
+//been resolved.  See getFirstListItemByIdPart for example.
+config.counter = 0;
+config.resolvedFlags = {};
+let key = config.counter;
+
 exports.each = function (fn) {
   return function (els) {
     let seq = _(els).map(function (el, i) {
@@ -73,7 +80,7 @@ exports.saveFirstNameAttributes = function (idLike, array_name, regexp, els) {
 
         if (regexp == undefined) {regexp = new RegExp('.*' + idLike + '.*', 'i');}
         let regexpPlusBtn = new RegExp('^.*cellContactPlus_.*$', 'i');
-        
+
         if (regexp.test(attr)) {
 
           config[array_name].push(attr);
@@ -81,7 +88,7 @@ exports.saveFirstNameAttributes = function (idLike, array_name, regexp, els) {
         } else if ((regexp.test(attr) == false) && (regexpPlusBtn.test(attr) == false)) {
 
           // resolve after encountering the first element that is not a primary target or a plus button
-          resolve(); 
+          resolve();
 
         } else if ((els.length - 1) == i && config[array_name].length == 0) {
 
@@ -116,8 +123,8 @@ exports.getElementNameAttr = function getElementNameAttr(el) {
 
 exports.getFirstListItemByIdPart = function (idPart) {
 
-  if (idPart == undefined) {
-    console.log('getFirstListItemByIdPart failed: The idPart was undefined.'.red.bold)
+  if (idPart == undefined || idPart == '') {
+    console.log('getFirstListItemByIdPart failed: The idPart was either undefined or blank.'.red.bold)
     return
   }
 
@@ -127,48 +134,67 @@ exports.getFirstListItemByIdPart = function (idPart) {
     .then(function (els) {
 
         return Q.Promise(function(resolve, reject, notify) {
+          config.counter += 1
+          key = config.counter
+
           let promises = exports.each(function(el, i) {
 
-            return el.getAttribute('name').then(function (attr) {
+            if (config.resolvedFlags[key] == true) {
+              return 
+            } else {
 
-              let regexp = new RegExp('.*' + idPart + '.*', 'i');
-              let regexpIsHouse = new RegExp('.*cellHouse_.*', 'i')
+              return el.getAttribute('name').then(function (attr) {
 
-              if (regexp.test(attr)) {
-                if (regexpIsHouse.test(attr)) { // for walkbook house list
+                let regexp = new RegExp('.*' + idPart + '.*', 'i');
+                let regexpIsHouse = new RegExp('.*cellHouse_.*', 'i')
 
-                  config.thisHousehold = attr;
-                  config.houseNum = Number(attr.match(/\d+/)[0]) + 1;
+                if (regexp.test(attr)) {
+                  if (regexpIsHouse.test(attr)) { // for walkbook house list
 
-                  return driver
-                    .scrollHouseList(config.houseNum)
-                    // .sleep(1500)
-                    // .elementById(attr)
-                    // .click()
-                    .then(function () {
-                      console.log('line 150 about to resolve getFirstListItemByIdPart')
-                      resolve();
-                    })
-                } else {
+                    if (config.thisHousehold == '' || config.thisHousehold == null) {
 
-                  return driver
-                    .sleep(1)
-                    .then(function () {
-                      config.thisElem = attr;
-                      console.log(('thisElem = ' + config.thisElem).white.bold.underline);
-                      resolve();
-                    })
-                  //  .elementById(attr)
-                  //  .click()
-                  //  .then(function () {
-                  //    resolve();
-                  //  })
+                        config.thisHousehold = attr;
+                        config.resolvedFlags[key] = true
+
+                    } else {
+
+                        console.log(('config.thisHousehold was already defined as '
+                                      + config.thisHousehold + '.  Redefining as ' + attr).white)
+                        config.thisHousehold = attr;
+                        config.resolvedFlags[key] = true
+
+                    }
+
+                    config.houseNum = Number(attr.match(/\d+/)[0]) + 1;
+                    console.log(('getFirstListItemByIdPart picked ' + attr).white.bold)
+
+                    return driver
+                      .scrollHouseList(config.houseNum)
+                      .then(function () {
+                        console.log('About to resolve getFirstListItemByIdPart; attr was a house.')
+                        resolve();
+                      })
+
+                  } else {
+
+                      config.resolvedFlags[key] = true
+                      return driver
+                        .sleep(1)
+                        .then(function () {
+                          config.thisElem = attr;
+                          console.log(('thisElem = ' + config.thisElem).white.bold.underline);
+                          resolve();
+                        })
+                  }
+
+                } else if ((els.length - 1) == i) {
+                  // if all elements tested and none match
+                  reject(new Error('Could not find a list item id containing ' + idPart + '.'));
                 }
-              } else if ((els.length - 1) == i) {
-                // if all elements tested and none match
-                reject(new Error('Could not find a list item id containing ' + idPart + '.'));
-              }
-            })
+
+              })
+              
+            }
           })(els);
         });
       });

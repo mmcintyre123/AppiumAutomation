@@ -5,6 +5,7 @@ module.exports = function () {
 	require('colors');
 	let wd            = require("wd");
 	let assert  	  = require('assert');
+	let asserters     = wd.asserters;
 	let	_             = require('underscore');
 	let	Q             = require('q');
 	let	fsExtra       = require('fs-extra');
@@ -26,13 +27,12 @@ module.exports = function () {
 	let driver = config.driver;
 	let	commons = require('../helpers/commons'); // this must be after the desired and driver are set
 
-
 	describe("Test all icon colors", function() {
 
 		let allPassed = true;
 		console.log(('RUNNING ' + __filename.slice(__dirname.length + 1) + ' for iOS').green.bold.underline);
 
-		it.skip('For debugging', function () {
+		it.only('For debugging', function () {
 			// config.theseNameAttrs = [];
 
 			return driver
@@ -43,18 +43,56 @@ module.exports = function () {
 				.elementById('Copy of Copy of Survey with Custom Email and for checking numbers')
 				.click()
 				.waitForElementById(elements.survey.start, 10000)
-				.sleep(1000) // sometimes start won't click - bcs of the spinner?
+				.consoleLog('Waiting until spinner is gone to click start'.white.bold)
+				.waitForElementToDisappearByClassName(elements.general.spinner)
+				.consoleLog('All done!'.white.bold)
+
+//				.then(function () {
+//					function recursive() {
+//						return driver.elementByClassNameOrNull(elements.general.spinner)
+//							.then(function(el) {
+//								if (el !== null) {
+//									return recursive()
+//								}
+//							})
+//					}
+//					return recursive()
+//				})
+
 				.elementById(elements.survey.start)
 				.click()
 			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
-				.elementById('Walkbook 7')
-				.click()
+			    .elementById('oopsie')
+
+			    //click walkbook
+			    .getFirstListItemByIdPart('walkbook_notstarted')
+		        .then(function () {
+		        	console.log('about to click thisElem: ' + config.thisElem)
+		        	return driver
+		        		.sleep(15000) // testing to make sure thisElem is not redefined
+		    	    	.elementById(config.thisElem) // should click cellWalkbook_1
+		    	    	.click()
+		        })
+
 			    .waitForElementById(elements.survey.popoverOpenBook, 10000)
 			    .click()
 			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
-			    .scrollHouseList(20)
-			    .elementById('cellHouse_19_sfh_notstarted')
-			    .click()
+
+			    //click house
+			    .getFirstListItemByIdPart('cellHouse_3')
+			    .then(function () {
+			    	console.log('Should click cellHouse_3, actually clicking ' + config.thisHousehold)
+			    	return driver
+			    		.sleep(10000)
+			    		.elementById(config.thisHousehold)
+			    		.click()
+			    })
+			    .then(function () {
+			    	console.log('ALL DONE!'.green.bold.underline)
+			    	return driver
+			    		.elementById('oopsie')
+			    })
+
 			    .waitForElementById(elements.walkbook.popoverOpenHouse)
 			    .click()
 			    .waitForElementById(elements.houseHold.notHome)
@@ -74,7 +112,7 @@ module.exports = function () {
 			    		if (regexp.test(config.theseNameAttrs[i])) {
 
 			    			let thisTarget = config.theseNameAttrs[i];
-			    			
+
 			    			if (i == 0) {
 			    				prom = commons.takeSurveyTemp(thisTarget);
 			    			} else {
@@ -99,7 +137,7 @@ module.exports = function () {
 				.loginQuick()
 		});
 
-		it.skip('Should turn the house green: survey both primary targets.', function () {
+		it('Should turn the house green: survey both primary targets.', function () {
 			config.housesWithMoreThan1Primary = {}
 			config.theseHouses = [];
 			config.thisHouseholdAfter = '';
@@ -107,9 +145,9 @@ module.exports = function () {
 			config.thisHousehold = '';
 			config.thisElem = '';
 
-			/* 
-				Abstract: 
-					Use SQL to unassign all walkbooks for the helper, then reassign walkbooks in the current survey that contain multiple primary targets 
+			/*
+				Abstract:
+					Use SQL to unassign all walkbooks for the helper, then reassign walkbooks in the current survey that contain multiple primary targets
 					Use SQL to create an array of walkbook-household object pairs, of houses in walkbooks that have multiple primary targets
 					Select a house from the list we created and survey all primary targets
 					Verify house is green
@@ -132,8 +170,11 @@ module.exports = function () {
 			    		config.thisSurvey = attr;
 			    	})
 			    })
-				.then(sqlQuery.assignBooksWithMultiplePrimaries) // > unassign and reassign walkbooks with multiple primary targets ... 
+				.then(sqlQuery.assignBooksWithMultiplePrimaries) // > unassign and reassign walkbooks with multiple primary targets ...
 				.sleep(1000)
+				.consoleLog('Making sure spinner is gone before trying to click start'.white.bold)
+				.waitForElementToDisappearByClassName(elements.general.spinner)
+				.consoleLog('Spinner is gone'.white.bold)
 				.elementById(elements.survey.start)
 				.click()
 				.startTime('Load Survey')
@@ -151,7 +192,10 @@ module.exports = function () {
 			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
 			    .endTotalAndLogTime('Load Walkbook')
 				.getHouseWithMultPrimary() // > find the first house in the list that contains multiple primary targets ...
-				.getFirstListItemByIdPart(config.thisHousehold)
+				.then(function () {
+					return driver
+						.getFirstListItemByIdPart(config.thisHousehold)
+				})
 			    .surveyAllPrimaryTargets() // > survey all primary targets - requires config.thisHousehold to be defined.
 			    .waitForElementById(config.thisHouseholdAfter, 10000) // > verify the house is green before refresh
 			    .consoleLog(('Household color/status check passed - before refresh.  config.thisHouseholdAfter = '
@@ -164,7 +208,7 @@ module.exports = function () {
 			    .consoleLog('TEST CASE IS OVER'.green.bold.underline)
 		});
 
-		it.skip('Should turn the house blue: one primary target not home', function () {
+		it('Should turn the house blue: one primary target not home', function () {
 
 			config.thisHousehold = '';
 			// Survey: DO NOT USE: Mobile Automation Survey 1.0
@@ -214,7 +258,7 @@ module.exports = function () {
 			    });
 		});
 
-		it.skip('Should turn the house red: wrong address house', function () {
+		it('Should turn the house red: wrong address house', function () {
 
 			config.thisHousehold = '';
 			// Survey: DO NOT USE: Mobile Automation Survey 1.0
@@ -258,7 +302,7 @@ module.exports = function () {
 				});
 		});
 
-		it.skip('Should turn the house red: refused house', function () {
+		it('Should turn the house red: refused house', function () {
 
 			config.thisHousehold = '';
 			// Survey: DO NOT USE: Mobile Automation Survey 1.0
@@ -302,7 +346,7 @@ module.exports = function () {
 				});
 		});
 
-		it.skip('Should turn the house blue: not home house', function () {
+		it('Should turn the house blue: not home house', function () {
 
 			config.thisHousehold = '';
 			// Survey: DO NOT USE: Mobile Automation Survey 1.0
@@ -344,7 +388,7 @@ module.exports = function () {
 				});
 		});
 
-		it.skip('TRANSITION: blue to red: one primary not home --> restricted access house', function () {
+		it('TRANSITION: blue to red: one primary not home --> restricted access house', function () {
 
 			config.thisHousehold = '';
 			// todo probably make this "any blue"
@@ -390,7 +434,7 @@ module.exports = function () {
 				});
 		});
 
-		it.skip('REPORTING BUSINESS RULE 4 (multiple dispositions) & TRANSITION (red to blue: restricted house --> not home house)', function () {
+		it('REPORTING BUSINESS RULE 4 (multiple dispositions) & TRANSITION (red to blue: restricted house --> not home house)', function () {
 
 			config.thisHousehold = '';
 			// todo probably make this "any red"
@@ -436,7 +480,7 @@ module.exports = function () {
 				});
 		});
 
-		it.skip('TRANSITION: blue to green: not home house --> take survey all primary', function () {
+		it('TRANSITION: blue to green: not home house --> take survey all primary', function () {
 			config.housesWithMoreThan1Primary = {}
 			config.theseHouses = [];
 			config.thisHouseholdAfter = '';
@@ -495,8 +539,10 @@ module.exports = function () {
 					}
 				})
 				.homeToHouseList() // todo remove - temp for debugging
+				.consoleLog('line 498 after homeToHouseList'.white.bold)
 				.getFirstListItemByIdPart('notstarted')
 				.then(function () {
+					console.log('About to attempt clicking a notstarted house to generate a not home'.white.bold)
 					return driver
 						.elementById(config.thisHousehold)
 						.click()
@@ -516,10 +562,12 @@ module.exports = function () {
 						.click()
 						.waitForElementByClassName('XCUIElementTypeTable', 10000) // wait for the house list
 						.waitForElementById(thisHouseholdAfter, 10000) // verify house is blue
-						.consoleLog('Household color/status check passed - before refresh - Test: ' + config.currentTest.title)
-						.refreshHouseList()
-						.waitForElementById(thisHouseholdAfter, 10000) // verify house after refresh
-						.consoleLog('Household color/status check passed - after refresh - Test: ' + config.currentTest.title)
+						.then(function () {
+							if (config.houseNum > 10){
+ 								return driver
+									.execute('mobile: scroll', {direction: 'up'}) // scroll up if we were at the bottom
+							}
+						})
 				})
 				.getFirstListItemByIdPart('attempted')
 				.then(function () {

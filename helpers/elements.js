@@ -2,8 +2,9 @@ let apps = require('./apps.js');
 
 //iOS
 
+	//use elementByClassName
 	exports.general = {
-		'spinner'  : 'In Progress'
+		'spinner'  : 'XCUIElementTypeActivityIndicator'
 	}
 
 	// Updating from top down with accessibility IDs in Android - compare later to iOS

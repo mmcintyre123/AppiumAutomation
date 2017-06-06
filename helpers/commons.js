@@ -200,7 +200,7 @@ Commons.prototype.loginQuick = function(){
 		.elementById(elements.loginLogout.logIn) // LogIn Button
 		.click()
 		.startTime('Log In')
-		.waitForElementById(elements.homeScreen.walkbooks, 10000).should.eventually.exist
+		.waitForElementById(elements.homeScreen.walkbooks, 15000).should.eventually.exist
 		.endTotalAndLogTime('Log In')
 };
 
@@ -357,12 +357,18 @@ Commons.prototype.scrollHouseList = function(houseNum) {
 					.then(function(loc){
 						 return driver
 						 	.elementByClassName('XCUIElementTypeTable') // ensure the house list is actually open
-							.swipe({
-								startX: 12,
-								startY: 721,
-								offsetX: 0,
-								offsetY: -1450,
-							})
+						 	.swipe({
+						 		startX: 12,
+						 		startY: 721,
+						 		offsetX: 0,
+						 		offsetY: -665,
+						 	})
+						 	.swipe({
+						 		startX: 12,
+						 		startY: 721,
+						 		offsetX: 0,
+						 		offsetY: -665,
+						 	})
 					}) // scrolls down a full 2 screens
 			} else if (houseNum > 30 && houseNum <= 40) {
 				return driver
@@ -374,8 +380,20 @@ Commons.prototype.scrollHouseList = function(houseNum) {
 								startX: 12,
 								startY: 721,
 								offsetX: 0,
-								offsetY: -1995,
+								offsetY: -665,
 							})
+						 	.swipe({
+						 		startX: 12,
+						 		startY: 721,
+						 		offsetX: 0,
+						 		offsetY: -665,
+						 	})
+						 	.swipe({
+						 		startX: 12,
+						 		startY: 721,
+						 		offsetX: 0,
+						 		offsetY: -665,
+						 	})
 					}) // scrolls down a full 3 screens
 			} else if (houseNum > 40) {
 				console.log('Don\'t use such large Walkbooks!'.red.bold.underline)
@@ -448,6 +466,9 @@ Commons.prototype.homeToHouseList = function(){
 	    })
 		.then(sqlQuery.assignBooksWithMultiplePrimaries) // > unassign and reassign walkbooks with multiple primary targets ... 
 		.sleep(1000)
+		.consoleLog('Making sure spinner is gone before trying to click start'.white.bold)
+		.waitForElementToDisappearByClassName(elements.general.spinner)
+		.consoleLog('Spinner is gone'.white.bold)
 		.elementById(elements.survey.start)
 		.click()
 		.startTime('Load Survey')
@@ -553,7 +574,7 @@ Commons.prototype.surveyAllPrimaryTargets = function(){
 						prom = Commons.prototype.takeSurveyTemp(thisTarget);
 					} else {
 						prom = prom.then(function () {
-							return Commons.prototype.takeSurveyTemp(thisTarget);
+							return Commons.prototype.takeSurveyTemp(thisTarget); // todo, make this different, where the house is redefined to in progress and don't use getFirstListItem
 						})
 					}
 				}
@@ -561,5 +582,18 @@ Commons.prototype.surveyAllPrimaryTargets = function(){
 			return prom;
 		})
 };
+
+Commons.prototype.waitForElementToDisappearByClassName = function waitForElementToDisappearByClassName(className){
+	function recursive() {
+		return driver.elementByClassNameOrNull(className)
+			.then(function(el) {
+				if (el !== null) {
+					return recursive()
+				}
+			})
+	}
+	return recursive()
+};
+
 
 module.exports = new Commons();
