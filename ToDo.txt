@@ -22,6 +22,7 @@ cd ~/AppiumAutomation && node run.js -sim iosSim2
 
 
 
+	// create a test result file and email with mailgun - https://www.npmjs.com/package/mailgun-js
 	// continue debugging last icon colors test.
 	// todo declare config.thisElem = ''; at the beginning of every test case - or in beforeEach?
 	// declare variables in before each function - e.g. config.thisHousehold = ''; etc.
