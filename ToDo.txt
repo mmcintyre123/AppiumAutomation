@@ -22,17 +22,17 @@ cd ~/AppiumAutomation && node run.js -sim iosSim2
 
 
 
-	// create a test result file and email with mailgun - https://www.npmjs.com/package/mailgun-js
+	// modify getHouseWithMultPrimary so it only finds untouched houses with multiple primaries.  
+		use same method as when assigning books.
+		
 	// continue debugging last icon colors test.
+
 	// todo declare config.thisElem = ''; at the beginning of every test case - or in beforeEach?
 	// declare variables in before each function - e.g. config.thisHousehold = ''; etc.
 
-	// figure out why getHouseWithMultPrimary did not click an untouched house.
-	// in Commons.prototype.surveyAllPrimaryTargets use and test the promise chain method.  Still need to pass in els?
 	// make more icon_colors test cases
-
-	// try to set up visual studio code with sublime shortcuts
 	// clean up / figure out where timeouts are defined and which are being applied
+	// create a test result file and email with mailgun - https://www.npmjs.com/package/mailgun-js
 
 
 
