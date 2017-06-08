@@ -32,7 +32,7 @@ module.exports = function () {
 		let allPassed = true;
 		console.log(('RUNNING ' + __filename.slice(__dirname.length + 1) + ' for iOS').green.bold.underline);
 
-		it.only('For debugging', function () {
+		it.skip('For debugging', function () {
 			// config.theseNameAttrs = [];
 
 			return driver
@@ -46,19 +46,6 @@ module.exports = function () {
 				.consoleLog('Waiting until spinner is gone to click start'.white.bold)
 				.waitForElementToDisappearByClassName(elements.general.spinner)
 				.consoleLog('All done!'.white.bold)
-
-//				.then(function () {
-//					function recursive() {
-//						return driver.elementByClassNameOrNull(elements.general.spinner)
-//							.then(function(el) {
-//								if (el !== null) {
-//									return recursive()
-//								}
-//							})
-//					}
-//					return recursive()
-//				})
-
 				.elementById(elements.survey.start)
 				.click()
 			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
@@ -127,12 +114,12 @@ module.exports = function () {
 			    .consoleLog('TEST CASE IS OVER'.red.bold.underline) //surveys should have been taken with all primary targets and no non-primary targets.
 		});
 
-		it.skip('Should perform a full login', function () {
+		it('Should perform a full login', function () {
 			return driver
 				.fullLogin(creds.testUserName1, creds.testUserPwd1)
 		});
 
-		it('Should login quick', function () {
+		it.skip('Should login quick', function () {
 			return driver
 				.loginQuick()
 		});

@@ -181,9 +181,6 @@ Commons.prototype.endTotalAndLogTime = function(startName){
 };
 
 
-
-
-
 // **************************************** \\
 // 			GENERAL TEST METHODS 		    \\
 // **************************************** \\
@@ -464,7 +461,7 @@ Commons.prototype.homeToHouseList = function(){
 	    		config.thisSurvey = attr;
 	    	})
 	    })
-		.then(sqlQuery.assignBooksWithMultiplePrimaries) // > unassign and reassign walkbooks with multiple primary targets ... 
+		.then(sqlQuery.assignBooksWithMultiplePrimaries) // > unassign and reassign walkbooks with multiple primary targets ...
 		.sleep(1000)
 		.consoleLog('Making sure spinner is gone before trying to click start'.white.bold)
 		.waitForElementToDisappearByClassName(elements.general.spinner)
@@ -495,13 +492,13 @@ Commons.prototype.homeToHouseList = function(){
 Commons.prototype.getHouseWithMultPrimary = function(){
 
 	config.theseHouses = [];
-	config.surveyedHouses = [];	
+	config.surveyedHouses = [];
 
 	//click the first house which contains multiple primary targets, none of whom have been surveyed already:
 	return driver
 	.sleep(1)
 	.then(sqlQuery.getHousesWithMoreThan1Primary)
-	.then(sqlQuery.housesWithOneOrMoreTakeSurveys)
+	.then(sqlQuery.touchedHouses)
 	.elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // on the house list page - should be 'Houses in Walkbook #'
 	.then(function (el) {
 		return el.getAttribute('name').then(function (attr) {
@@ -521,10 +518,10 @@ Commons.prototype.getHouseWithMultPrimary = function(){
 			}
 
 			//create an array of houses we DON'T want in this walkbook
-			for (let i=0; i < config.housesWithOneOrMoreTakeSurveys.length; i++) {
+			for (let i=0; i < config.touchedHouses.length; i++) {
 
-				if (config.housesWithOneOrMoreTakeSurveys[i].BookNum == config.thisWalkbook) {
-					let thisHouse = 'cellHouse_' + (config.housesWithOneOrMoreTakeSurveys[i].OrdinalNum - 1)
+				if (config.touchedHouses[i].BookNum == config.thisWalkbook) {
+					let thisHouse = 'cellHouse_' + (config.touchedHouses[i].HouseNum - 1)
 					config.surveyedHouses.push(thisHouse)
 				}
 			}
@@ -532,13 +529,14 @@ Commons.prototype.getHouseWithMultPrimary = function(){
 			//remove houses containing one or more targets who have been surveyed from theseHouses
 			config.theseHouses = _.difference(config.theseHouses, config.surveyedHouses)
 
+			//todo handle the case of theseHouses being empty - e.g. all houses touched.  When there are less than 2 untouched houses, don't assign the walkbook.
+
 			config.thisHousehold = config.theseHouses.shift()
 			console.log(('Using ' + config.thisHousehold).white.bold)
 		});
 	})
 };
 
-//works!
 Commons.prototype.surveyAllPrimaryTargets = function(){
 
 	console.log(('Surveying all primary targets in ' + config.thisHousehold + '.').white.bold);
