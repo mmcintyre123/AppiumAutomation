@@ -417,8 +417,12 @@ Commons.prototype.consoleLog = function(string){
 Commons.prototype.takeSurveyTemp = function(thisTarget){
 	return driver
 		.getFirstListItemByIdPart(config.thisHousehold.match(/\w+\_\d+/)[0])
-		.elementById(config.thisHousehold)
-		.click()
+		.then(function () {
+			console.log(('In takeSurveyTemp, config.thisHousehold is ' + config.thisHousehold).white.bold)
+			return driver
+				.elementById(config.thisHousehold)
+				.click()
+		})
 	    .waitForElementById(elements.walkbook.popoverOpenHouse)
 	    .click()
 	    .waitForElementById(elements.houseHold.notHome)
@@ -559,7 +563,7 @@ Commons.prototype.surveyAllPrimaryTargets = function(){
 		.then(function () {
 
 			let regexp = new RegExp('^prim_cellContact_\\d+$', 'i');
-			var prom;
+			let prom;
 
 			for (let i = 0; i < config.theseNameAttrs.length; i++) {
 

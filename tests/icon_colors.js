@@ -49,6 +49,7 @@ module.exports = function () {
 				.elementById(elements.survey.start)
 				.click()
 			    .waitForElementByClassName('XCUIElementTypeTable', 10000)
+				.then(sqlQuery.touchedHouses)
 			    .elementById('oopsie')
 
 			    //click walkbook
@@ -114,12 +115,12 @@ module.exports = function () {
 			    .consoleLog('TEST CASE IS OVER'.red.bold.underline) //surveys should have been taken with all primary targets and no non-primary targets.
 		});
 
-		it('Should perform a full login', function () {
+		it.skip('Should perform a full login', function () {
 			return driver
 				.fullLogin(creds.testUserName1, creds.testUserPwd1)
 		});
 
-		it.skip('Should login quick', function () {
+		it('Should login quick', function () {
 			return driver
 				.loginQuick()
 		});
@@ -151,6 +152,9 @@ module.exports = function () {
 				.elementById('DO NOT USE: Mobile Automation Survey 1.0')
 				.click()
 				.waitForElementById(elements.survey.start, 10000)
+				.consoleLog('Making sure spinner is gone before trying to click start'.white.bold)
+				.waitForElementToDisappearByClassName(elements.general.spinner)
+				.consoleLog('Spinner is gone'.white.bold)
 			    .elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // > get and store the survey name ...
 			    .then(function (el) {
 			    	return el.getAttribute('name').then(function (attr) {
@@ -158,10 +162,6 @@ module.exports = function () {
 			    	})
 			    })
 				.then(sqlQuery.assignBooksWithMultiplePrimaries) // > unassign and reassign walkbooks with multiple primary targets ...
-				.sleep(1000)
-				.consoleLog('Making sure spinner is gone before trying to click start'.white.bold)
-				.waitForElementToDisappearByClassName(elements.general.spinner)
-				.consoleLog('Spinner is gone'.white.bold)
 				.elementById(elements.survey.start)
 				.click()
 				.startTime('Load Survey')
@@ -491,7 +491,7 @@ module.exports = function () {
 				.getFirstListItemByIdPart('attempted') //finds first matching elem and sets config.thisHousehold to that
 				.then(function () {
 					console.log('Using ' + config.thisHousehold + ', houseNum ' + config.houseNum);
-					let thisHouseholdAfter = config.thisHousehold.replace('attempted','complete');
+					let thisHouseholdAfter = config.thisHousehold.replace('partial','complete');
 
 					return driver
 
@@ -510,7 +510,13 @@ module.exports = function () {
 
 		it('TRANSITION: blue to red: not home house --> refused house', function () {
 
+			config.housesWithMoreThan1Primary = {}
+			config.theseHouses = [];
+			config.thisHouseholdAfter = '';
+			config.thisSurvey = '';
 			config.thisHousehold = '';
+			config.thisElem = '';
+
 			// todo probably make this "any blue"
 			// Survey: DO NOT USE: Mobile Automation Survey 1.0
 
@@ -525,8 +531,6 @@ module.exports = function () {
 							.homeToHouseList()
 					}
 				})
-				.homeToHouseList() // todo remove - temp for debugging
-				.consoleLog('line 498 after homeToHouseList'.white.bold)
 				.getFirstListItemByIdPart('notstarted')
 				.then(function () {
 					console.log('About to attempt clicking a notstarted house to generate a not home'.white.bold)

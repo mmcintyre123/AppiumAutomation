@@ -21,10 +21,6 @@ xcrun xcodebuild -scheme i360\ Canvass -target i360\ Canvass -destination 'platf
 cd ~/AppiumAutomation && node run.js -sim iosSim2
 
 
-
-	// modify getHouseWithMultPrimary so it only finds untouched houses with multiple primaries.  
-		use same method as when assigning books.
-		
 	// continue debugging last icon colors test.
 
 	// todo declare config.thisElem = ''; at the beginning of every test case - or in beforeEach?

@@ -127,7 +127,7 @@ exports.getFirstListItemByIdPart = function (idPart) {
     console.log('getFirstListItemByIdPart failed: The idPart was either undefined or blank.'.red.bold)
     return
   }
-
+  console.log(('Running getFirstListItemByIdPart.  idPart is: ' + idPart).white.bold)
   return driver
     .waitForElementByClassName('XCUIElementTypeTable', 10000)
     .elementsByClassName('>','XCUIElementTypeCell')
@@ -171,7 +171,6 @@ exports.getFirstListItemByIdPart = function (idPart) {
                     return driver
                       .scrollHouseList(config.houseNum)
                       .then(function () {
-                        console.log('About to resolve getFirstListItemByIdPart; attr was a house.')
                         resolve();
                       })
 
@@ -197,7 +196,12 @@ exports.getFirstListItemByIdPart = function (idPart) {
             }
           })(els);
         });
-      });
+      })
+      .then(function () {
+        if (config.thisHousehold != '') {
+          console.log('End of getFirstListItemByIdPart, config.thisHousehold is now ' + config.thisHousehold)
+        }
+      })
 };
 
 
