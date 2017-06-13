@@ -50,3 +50,10 @@ exports.androidDevice1 = {
   'platformVersion': '6.0',
   'deviceName': 'G4'
 };
+
+exports.safari = {
+	'platformName'    : 'iOS',
+	'platformVersion' : '10.2',
+	'deviceName'      : 'iPad Air 2',
+	'browserName'     : 'Safari'
+}

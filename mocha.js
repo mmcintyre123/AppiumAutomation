@@ -93,8 +93,8 @@ describe( 'Automation Test in Progress!'.green, function () {
 
 	commons.beforeAll();
 	commons.beforeEachIt();
+	commons.afterEachIt();
 	commons.afterAll();
-	commons.afterEach();
 
 	describe( 'Running automation, please wait for all tests to complete!'.green, function () {
 /*
@@ -117,6 +117,7 @@ describe( 'Automation Test in Progress!'.green, function () {
 
 			let run = require( './TestFiles.js' );
 				// run.sampleTests( 'sample' );
+				// run.sampleTests( 'web_app' );
 				run.sampleTests( 'icon_colors' );
 
 		} );

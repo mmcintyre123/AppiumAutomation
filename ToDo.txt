@@ -20,15 +20,16 @@ xcrun xcodebuild -scheme i360\ Canvass -target i360\ Canvass -destination 'platf
 
 cd ~/AppiumAutomation && node run.js -sim iosSim2
 
+	// run all icon_colors test cases in dbg mode and non-dbg mode and verify they pass.
+	// remove remnants of recorder includeing recorder_test.js.  Save a record in case we want it in the future?
+	// what is package-lock.json?
 
-	// continue debugging last icon colors test.
-
+	// todo update getHousesWithMoreThan1Primary and assignBooksWithMultiplePrimaries with latest saved version!
 	// todo declare config.thisElem = ''; at the beginning of every test case - or in beforeEach?
 	// declare variables in before each function - e.g. config.thisHousehold = ''; etc.
-
 	// make more icon_colors test cases
 	// clean up / figure out where timeouts are defined and which are being applied
-	// create a test result file and email with mailgun - https://www.npmjs.com/package/mailgun-js
+	// create a test result file and email with mailgun? - https://www.npmjs.com/package/mailgun-js
 
 
 

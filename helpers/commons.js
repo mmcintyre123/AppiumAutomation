@@ -14,6 +14,8 @@ let elements  =  require('./elements');
 let sqlQuery  =  require('./queries');
 let commons   =  require('./commons');
 let _p        =  require('./promise-utils');
+let intercept =  require('intercept-stdout');
+let childProcess = require( 'child_process' );
 let driver    =  config.driver;
 
 // todo this.os doesn't seem to be working.
@@ -75,6 +77,10 @@ Commons.prototype.beforeAll = function(){
 
 	before(function() {
 
+		var unhook_intercept = intercept(function (txt) {
+			return txt.replace(/.*(response|call|get|post).*screenshot.*/i, '');
+		})
+
 		let elements = config.elements;
 		let desired  = config.desired;
 
@@ -97,8 +103,11 @@ Commons.prototype.beforeAll = function(){
 			desired.name = 'Automation Code';
 			desired.tags = ['sample'];
 		}
+		//clear and create screenshots, recorder_tmpdir, and loadTimeLogs directories
 		fsExtra.removeSync('./screenShots')
 		fsExtra.mkdirs('./screenShots')
+		fsExtra.removeSync('./video')
+		fsExtra.mkdirs('./video')
 		fsExtra.removeSync('./loadTimeLogs') // to clear out the load time file if necessary
 		fsExtra.mkdirs('./loadTimeLogs')
 
@@ -118,18 +127,58 @@ Commons.prototype.beforeAll = function(){
 		config.myDateTime = (month + '_' + day + '_' + year + '_' + myCurrentTime);
 		config.wStreamLogTimeFile = fs.createWriteStream( 'loadTimeLogs/loadTimesLog_' +
 														  config.myDateTime + '.txt' )
-		config.logTimes = {} // this is where user-defined
+		config.logTimes = {}
+
 		return driver.init(desired)
 	});
 };
 
 Commons.prototype.beforeEachIt = function(){
 	beforeEach(function () {
+
+		config.ticker
+		//test stuff
 		console.log(('Running ' + this.currentTest.title).green.bold.underline)
 		config.currentTest = this.currentTest // put the currentTest object on Config in case we want to access it mid-test
+
+		//record video
+		config.video = childProcess.spawn('xcrun', ['simctl', 'io', 'booted', 'recordVideo', '/Users/mliedtka/AppiumAutomation/video/' + this.currentTest.title.replace(/\s+/ig,'_') + '.mp4']);
+		config.video.on('exit', console.log.bind(console, 'exited'));
+		config.video.on('close', console.log.bind(console, 'closed'));
+
+/*
+		//video recorder stuff
+		config.recorder_output = '/Users/mliedtka/AppiumAutomation/video/' + this.currentTest.title.replace(/\s+/ig,'_') + '.mp4';
+		config.recorder_dir = '/Users/mliedtka/AppiumAutomation/recorder_tmpdir';
+		config.recorder_options = {
+		    fps: 40,
+		    tmpdir: config.recorder_dir
+		};
+		config.recorder = new Recorder(driver,config.recorder_options)
+		config.recorder.start();
+*/
+
+
 	});
 };
 
+Commons.prototype.afterEachIt = function(){
+	afterEach(function() {
+		// let allPassed = allPassed && this.currentTest.state === 'passed';
+
+		config.video.kill('SIGINT');
+/*
+		//video recorder stuff
+		config.recorder.stopSaveAndClear(config.recorder_output, function() {}.bind(this));
+*/
+		//test stuff
+		if (this.currentTest.state !== 'passed') {
+			let thisTest = this.currentTest.title;
+			return driver
+				.takeScreenshotMethod(thisTest);
+		}
+    });
+};
 Commons.prototype.afterAll = function(){
 
 	after(function() {
@@ -146,16 +195,9 @@ Commons.prototype.afterAll = function(){
 	});
 };
 
-Commons.prototype.afterEach = function(){
-	afterEach(function() {
-		// let allPassed = allPassed && this.currentTest.state === 'passed';
-		if (this.currentTest.state !== 'passed') {
-			let thisTest = this.currentTest.title;
-			return driver
-				.takeScreenshotMethod(thisTest);
-		  }
-    });
-};
+
+
+
 
 // Basic flow for writing files:
 // let wstream = fs.createWriteStream('myOutput.txt');
@@ -197,7 +239,7 @@ Commons.prototype.loginQuick = function(){
 		.elementById(elements.loginLogout.logIn) // LogIn Button
 		.click()
 		.startTime('Log In')
-		.waitForElementById(elements.homeScreen.walkbooks, 15000).should.eventually.exist
+		.waitForElementById(elements.homeScreen.walkbooks, 30000).should.eventually.exist
 		.endTotalAndLogTime('Log In')
 };
 
@@ -415,14 +457,12 @@ Commons.prototype.consoleLog = function(string){
 
 //todo Make this work for any survey with any number of questions.
 Commons.prototype.takeSurveyTemp = function(thisTarget){
+
+	console.log(('In takeSurveyTemp, config.thisHousehold is ' + config.thisHousehold).white.bold)
+
 	return driver
-		.getFirstListItemByIdPart(config.thisHousehold.match(/\w+\_\d+/)[0])
-		.then(function () {
-			console.log(('In takeSurveyTemp, config.thisHousehold is ' + config.thisHousehold).white.bold)
-			return driver
-				.elementById(config.thisHousehold)
-				.click()
-		})
+		.elementById(config.thisHousehold)
+		.click()
 	    .waitForElementById(elements.walkbook.popoverOpenHouse)
 	    .click()
 	    .waitForElementById(elements.houseHold.notHome)
@@ -544,7 +584,6 @@ Commons.prototype.getHouseWithMultPrimary = function(){
 Commons.prototype.surveyAllPrimaryTargets = function(){
 
 	console.log(('Surveying all primary targets in ' + config.thisHousehold + '.').white.bold);
-	config.thisHouseholdAfter = config.thisHousehold.replace('notstarted', 'complete');
 
 	return driver
 		.elementById(config.thisHousehold)
@@ -560,6 +599,7 @@ Commons.prototype.surveyAllPrimaryTargets = function(){
 			return _p.saveFirstNameAttributes('prim_cellContact_', 'theseNameAttrs',undefined,els)
 		})
 		.back()
+		.waitForElementByClassName('XCUIElementTypeTable',10000) // wait for the house list to appear
 		.then(function () {
 
 			let regexp = new RegExp('^prim_cellContact_\\d+$', 'i');
@@ -576,7 +616,15 @@ Commons.prototype.surveyAllPrimaryTargets = function(){
 						prom = Commons.prototype.takeSurveyTemp(thisTarget);
 					} else {
 						prom = prom.then(function () {
+
+							if (/notstarted/.test(config.thisHousehold)) {
+								config.thisHousehold = config.thisHousehold.replace('notstarted', 'partial') //trying this
+							} else if (/attempted/.test(config.thisHousehold)) {
+								config.thisHousehold = config.thisHousehold.replace('attempted', 'partial') //trying this
+							}
+
 							return Commons.prototype.takeSurveyTemp(thisTarget); // todo, make this different, where the house is redefined to in progress and don't use getFirstListItem
+							
 						})
 					}
 				}

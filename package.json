@@ -6,21 +6,27 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "chai": "*",
-    "chai-as-promised": "*",
+    "chai": "^4.0.2",
+    "chai-as-promised": "^7.0.0",
     "colors": "*",
-    "mocha": "*",
-    "node-cmd": "*",
-    "q": "*",
+    "mocha": "^3.4.2",
+    "mssql": "^4.0.4",
+    "node-cmd": "^3.0.0",
+    "q": "^2.0.3",
+    "sqlite3": "https://github.com/mapbox/node-sqlite3/tarball/master",
     "underscore": "*",
-    "wd": "*",
+    "wd": "^1.2.0",
     "yiewd": "*"
   },
   "dependencies": {
+    "expect.js": "^0.3.1",
     "fs-extra": "^1.0.0",
-    "image-size": "^0.5.1",
-    "moment-timezone": "^0.5.11",
+    "image-size": "^0.5.5",
+    "intercept-stdout": "^0.1.2",
+    "moment-timezone": "^0.5.13",
     "mute": "^2.0.6",
-    "resize-img": "^1.1.2"
+    "pryjs": "^1.0.3",
+    "resize-img": "^1.1.2",
+    "sinon": "^2.3.4"
   }
 }

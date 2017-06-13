@@ -184,6 +184,9 @@ module.exports = function () {
 						.getFirstListItemByIdPart(config.thisHousehold)
 				})
 			    .surveyAllPrimaryTargets() // > survey all primary targets - requires config.thisHousehold to be defined.
+			    .then(function () {
+					config.thisHouseholdAfter = config.thisHousehold.replace('notstarted', 'complete');
+			    })
 			    .waitForElementById(config.thisHouseholdAfter, 10000) // > verify the house is green before refresh
 			    .consoleLog(('Household color/status check passed - before refresh.  config.thisHouseholdAfter = '
 			    			    			 + config.thisHouseholdAfter + '\nTest: ' + config.currentTest.title).green.bold)
@@ -467,7 +470,7 @@ module.exports = function () {
 				});
 		});
 
-		it('TRANSITION: blue to green: not home house --> take survey all primary', function () {
+		it.only('TRANSITION: blue to green: not home house --> take survey all primary', function () {
 			config.housesWithMoreThan1Primary = {}
 			config.theseHouses = [];
 			config.thisHouseholdAfter = '';
@@ -488,10 +491,42 @@ module.exports = function () {
 							.homeToHouseList()
 					}
 				})
-				.getFirstListItemByIdPart('attempted') //finds first matching elem and sets config.thisHousehold to that
+
+				//generate an 'attempted' house
+				.getFirstListItemByIdPart('notstarted')
+				.then(function () {
+					console.log('About to attempt clicking a notstarted house to generate a not home'.white.bold)
+					return driver
+						.elementById(config.thisHousehold)
+						.click()
+				})
 				.then(function () {
 					console.log('Using ' + config.thisHousehold + ', houseNum ' + config.houseNum);
-					let thisHouseholdAfter = config.thisHousehold.replace('partial','complete');
+					let thisHouseholdAfter = config.thisHousehold.replace('notstarted','attempted');
+
+					return driver
+
+						.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
+						.elementById(elements.walkbook.popoverOpenHouse)
+						.click()
+						.waitForElementById(elements.houseHold.notHome, 10000)
+						.elementById(elements.houseHold.notHome)
+						.click()
+						.waitForElementByClassName('XCUIElementTypeTable', 10000) // wait for the house list
+						.waitForElementById(thisHouseholdAfter, 10000) // verify house is blue
+				})
+
+				//surveying all primary targets in a house that was previously attempted should turn it green.
+				.then(function () {
+					let thisHousehold = config.thisHousehold.replace('notstarted','attempted');
+
+					if (/notstarted/.test(config.thisHousehold)) {
+						config.thisHouseholdAfter = config.thisHousehold.replace('notstarted', 'complete') //trying this
+					} else if (/attempted/.test(config.thisHousehold)) {
+						config.thisHouseholdAfter = config.thisHousehold.replace('attempted', 'complete') //trying this
+					}
+
+					config.thisHousehold = thisHousehold;
 
 					return driver
 
