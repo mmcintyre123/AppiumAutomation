@@ -125,7 +125,7 @@ module.exports = function () {
 				.loginQuick()
 		});
 
-		it('Should turn the house green: survey both primary targets.', function () {
+		it('Should turn the house green: survey both primary targets', function () {
 			config.housesWithMoreThan1Primary = {}
 			config.theseHouses = [];
 			config.thisHouseholdAfter = '';
@@ -187,6 +187,7 @@ module.exports = function () {
 			    .then(function () {
 					config.thisHouseholdAfter = config.thisHousehold.replace('notstarted', 'complete');
 			    })
+			    //todo fix - config.thisHouseholdAfter is empty and returning a positive result regardless
 			    .waitForElementById(config.thisHouseholdAfter, 10000) // > verify the house is green before refresh
 			    .consoleLog(('Household color/status check passed - before refresh.  config.thisHouseholdAfter = '
 			    			    			 + config.thisHouseholdAfter + '\nTest: ' + config.currentTest.title).green.bold)
@@ -202,12 +203,12 @@ module.exports = function () {
 
 			config.thisHousehold = '';
 			// Survey: DO NOT USE: Mobile Automation Survey 1.0
-
+			// todo - test this when there is more than one primary target
 			return driver
 				.sleep(1)
 				.then(function () {
 					//if we're not running in dbg mode, reset the app
-					if( !process.argv.slice(2).includes("dbg") ) {
+					if( !process.argv.slice(2).includes("--dbg") ) {
 						return driver
 							.resetApp()
 							.loginQuick()
@@ -258,7 +259,7 @@ module.exports = function () {
 				.sleep(1)
 				.then(function () {
 					//if we're not running in dbg mode, reset the app and navigate to house list
-					if( !process.argv.slice(2).includes("dbg") ) {
+					if( !process.argv.slice(2).includes("--dbg") ) {
 						return driver
 							.resetApp()
 							.loginQuick()
@@ -302,7 +303,7 @@ module.exports = function () {
 				.sleep(1)
 				.then(function () {
 					//if we're not running in dbg mode, reset the app
-					if( !process.argv.slice(2).includes("dbg") ) {
+					if( !process.argv.slice(2).includes("--dbg") ) {
 						return driver
 							.resetApp()
 							.loginQuick()
@@ -345,7 +346,7 @@ module.exports = function () {
 				.sleep(1)
 				.then(function () {
 					//if we're not running in dbg mode, reset the app
-					if( !process.argv.slice(2).includes("dbg") ) {
+					if( !process.argv.slice(2).includes("--dbg") ) {
 						return driver
 							.resetApp()
 							.loginQuick()
@@ -389,7 +390,7 @@ module.exports = function () {
 				.sleep(1)
 				.then(function () {
 					//if we're not running in dbg mode, reset the app
-					if( !process.argv.slice(2).includes("dbg") ) {
+					if( !process.argv.slice(2).includes("--dbg") ) {
 						return driver
 							.resetApp()
 							.loginQuick()
@@ -436,7 +437,7 @@ module.exports = function () {
 				.sleep(1)
 				.then(function () {
 					//if we're not running in dbg mode, reset the app
-					if( !process.argv.slice(2).includes("dbg") ) {
+					if( !process.argv.slice(2).includes("--dbg") ) {
 						return driver
 							.resetApp()
 							.loginQuick()
@@ -470,7 +471,7 @@ module.exports = function () {
 				});
 		});
 
-		it.only('TRANSITION: blue to green: not home house --> take survey all primary', function () {
+		it('TRANSITION: blue to green: not home house --> take survey all primary', function () {
 			config.housesWithMoreThan1Primary = {}
 			config.theseHouses = [];
 			config.thisHouseholdAfter = '';
@@ -484,7 +485,7 @@ module.exports = function () {
 				.sleep(1)
 				.then(function () {
 					//if we're not running in dbg mode, reset the app
-					if( !process.argv.slice(2).includes("dbg") ) {
+					if( !process.argv.slice(2).includes("--dbg") ) {
 						return driver
 							.resetApp()
 							.loginQuick()
@@ -559,7 +560,7 @@ module.exports = function () {
 				.sleep(1)
 				.then(function () {
 					//if we're not running in dbg mode, reset the app
-					if( !process.argv.slice(2).includes("dbg") ) {
+					if( !process.argv.slice(2).includes("--dbg") ) {
 						return driver
 							.resetApp()
 							.loginQuick()

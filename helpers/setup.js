@@ -9,6 +9,8 @@ let actions              = require('./actions');
 let commons              = require('./commons');
 let promiseUtils         = require('./promise-utils');
 let config    			 = require('./config');
+let sqlQuery             = require('./queries');
+
 
 chai.config.includeStack = true;
 chaiAsPromised.transferPromiseness = wd.transferPromiseness;
@@ -33,6 +35,9 @@ wd.addPromiseChainMethod('getHouseWithMultPrimary',commons.getHouseWithMultPrima
 wd.addPromiseChainMethod('surveyAllPrimaryTargets',commons.surveyAllPrimaryTargets);
 wd.addPromiseChainMethod('homeToHouseList',commons.homeToHouseList);
 wd.addPromiseChainMethod('waitForElementToDisappearByClassName',commons.waitForElementToDisappearByClassName);
+wd.addPromiseChainMethod('getHousesWithMoreThan1Primary',sqlQuery.getHousesWithMoreThan1Primary);
+wd.addPromiseChainMethod('touchedHouses',sqlQuery.touchedHouses);
+
 
 exports.should = should;
 exports.expect = expect;

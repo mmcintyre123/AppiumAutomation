@@ -1,5 +1,8 @@
 let apps = require('./apps.js');
 
+// todo change the file structure here to be more like elements.walkbooks.surveys 
+// rather than elements.surveys -- i.e. grouped by app area.
+
 //iOS
 
 	//use elementByClassName
@@ -40,6 +43,8 @@ let apps = require('./apps.js');
 		'voterCheckIn'   : 'btnVoterCheckIn',
 		'eventCheckIn'   : 'btnEventCheckIn'
 	}
+
+	// ******* WALKBOOKS ******* //
 
 	exports.surveys = {
 		'survey1'	: 'cellSurvey_0',
@@ -195,5 +200,71 @@ let apps = require('./apps.js');
 		'remainingPrimaryTarget'   : 'prim_btnRemaining_1',			           //Formerly : '//UIAApplication[1]/UIAWindow[1]/UIAScrollView[1]/UIAButton[2]',
 		'remainingSecondaryTarget' : 'sec_btnRemaining_3',			           //Formerly : '//UIAApplication[1]/UIAWindow[1]/UIAScrollView[1]/UIAButton[2]',
 		'finish'	               : 'btnEpilogueFinished' 			           //Formerly : 'Finish with Household'
+		}
+
+	// ******* Voter Lookup ******* //
+
+		exports.voterLookup = {
+			'close'       : 'Close',
+			'clear_all'   : 'Clear All',
+			'state'       : 'voterLookupSearch_StateSpinner',
+			'first_name'  : 'First Name',
+			'last_name'   : 'Last Name',
+			'city'        : 'City',
+			'zip_code'    : 'Zip Code',
+			'address_1'   : 'Address 1',
+			'address_2'   : 'Address 2',
+			'phone'       : 'Phone',
+			'email'       : 'Email',
+			'dbtoggle'    : 'cbDatabase',
+			'search'      : 'voterLookupSearch_btnSearch',
+			'add_contact' : {
+								'add_contact' : 'Add Contact',
+								'first_name' : 'Add Contact',
+								'' : 'Add Contact',
+								'' : 'Add Contact',
+								'' : 'Add Contact',
+							}
+
+
+		}
+
+		exports.voterLookupResults = {
+			'table'  : 'voterLookupSearchResults_results',
+			'voter1' : 'cellVoter_0',
+			'voter2' : 'cellVoter_1',
+			'voter3' : 'cellVoter_2',
+			'voter4' : 'cellVoter_3',
+			'voter5' : 'cellVoter_4',
+			'voter6' : 'cellVoter_5',
+			'voter7' : 'cellVoter_6',
+			'voter8' : 'cellVoter_7'
+		}
+
+		exports.voterDetail = {
+			'addTag'    : {
+								'addTag'    : 'btnAddTag',
+								'category1' : 'cellTagCategory_0',
+								'category2' : 'cellTagCategory_1',
+								'category3' : 'cellTagCategory_2',
+								'category4' : 'cellTagCategory_3',
+								'category5' : 'cellTagCategory_4',
+								'category6' : 'cellTagCategory_5',
+								'category7' : 'cellTagCategory_6',
+								'category8' : 'cellTagCategory_7',
+								'tag1'      : 'cellTag_0',
+								'tag2'      : 'cellTag_1',
+								'tag3'      : 'cellTag_2',
+								'tag4'      : 'cellTag_3',
+								'tag5'      : 'cellTag_4',
+								'tag6'      : 'cellTag_5',
+								'done'      : 'Done'
+							},
+			'addVolunteer' : 'voterAddVolunteer',
+			'takeSurvey'   : 'voterLookupDetail_btnTakeSurvey',
 	}
+
+		exports.addContact = {
+
+		}
 

@@ -118,7 +118,11 @@ describe( 'Automation Test in Progress!'.green, function () {
 			let run = require( './TestFiles.js' );
 				// run.sampleTests( 'sample' );
 				// run.sampleTests( 'web_app' );
-				run.sampleTests( 'icon_colors' );
+				// run.sampleTests( 'icon_colors' );
+				run.sampleTests( 'add_note');
+				// run.sampleTests( 'target_page');
+				// run.sampleTests( 'add_contact' );
+				// run.sampleTests( 'walkbooks_smoke_tests' );
 
 		} );
 	} );

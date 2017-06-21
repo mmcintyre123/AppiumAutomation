@@ -16,11 +16,11 @@ exports.iosDevice2 = {
 
 //ios Simulator #1
 exports.iosSim1 = {
-	'appium-version'  : '1.6.3',
+	// 'appium-version'  : '1.6.3',
 	'platformName'    : 'iOS',
-	'platformVersion' : '9.2',
+	'platformVersion' : '10.2',
 	'deviceName'      : 'iPhone 6 Plus',
-	'port'            : 4723
+	// 'port'            : 4723
 	// 'UDID' 	 		  : '816AE1C8-B4D5-492C-B895-C17F65996FC4'
 };
 

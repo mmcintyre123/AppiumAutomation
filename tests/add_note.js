@@ -32,17 +32,33 @@ module.exports = function () {
 		let allPassed = true;
 		console.log(('RUNNING ' + __filename.slice(__dirname.length + 1)).green.bold.underline)
 
-		it('Full Login', function () {
+		it('Quick Login', function () {
 			return driver
-				.fullLogin()
+				.loginQuick()
 		});
 
-		it('Should do what...', function () {
+		it('Add a note to a target', function () {
 			return driver
-
-
-
-
+				.homeToHouseList()
+				.getHouseWithMultPrimary()
+				.then(function () {
+					return driver
+						.getFirstListItemByIdPart(config.thisHousehold)
+				})
+				.then(function () {
+					return driver
+					    .elementById(config.thisHousehold)
+					    .click()
+					    .waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
+					    .click()
+				})
+				.waitForElementById(elements.houseHold.primPlus1)
+				.click()
+				.elementById(elements.target.addNote)
+				.click()
+				.elementById(elements.target.edit)
+				.click()
+				.sendKeys('abcdef')
 		});
 
 

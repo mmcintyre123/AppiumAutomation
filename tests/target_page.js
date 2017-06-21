@@ -1,3 +1,4 @@
+
 "use strict";
 
 module.exports = function () {
@@ -29,19 +30,22 @@ module.exports = function () {
 
 	describe("Describe the test category...defines the group of tests specified below", function() {
 
-		let allPassed = true;
-		console.log(('RUNNING ' + __filename.slice(__dirname.length + 1)).green.bold.underline)
+			// this.timeout(3000000);
+			let allPassed = true;
+			console.log(('RUNNING ' + __filename.slice(__dirname.length + 1)).green.bold.underline)
 
-		it('Full Login', function () {
+		it('Quick Login', function () {
 			return driver
-				.fullLogin()
+				.loginQuick()
 		});
 
-		it('Should do what...', function () {
+		it('Should load survey list', function () {
+			console.log('Describe the test...'.green.bold.underline);
+
 			return driver
-
-
-
+				.elementById(elements.homeScreen.walkbooks)
+				.click()
+				.waitForElementById(elements.surveys.survey1, 10000)
 
 		});
 

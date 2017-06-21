@@ -136,15 +136,14 @@ Commons.prototype.beforeAll = function(){
 Commons.prototype.beforeEachIt = function(){
 	beforeEach(function () {
 
-		config.ticker
 		//test stuff
 		console.log(('Running ' + this.currentTest.title).green.bold.underline)
 		config.currentTest = this.currentTest // put the currentTest object on Config in case we want to access it mid-test
 
 		//record video
 		config.video = childProcess.spawn('xcrun', ['simctl', 'io', 'booted', 'recordVideo', '/Users/mliedtka/AppiumAutomation/video/' + this.currentTest.title.replace(/\s+/ig,'_') + '.mp4']);
-		config.video.on('exit', console.log.bind(console, 'exited'));
-		config.video.on('close', console.log.bind(console, 'closed'));
+		config.video.on('exit', console.log.bind(console, 'video recording exited'));
+		config.video.on('close', console.log.bind(console, 'video recording closed'));
 
 /*
 		//video recorder stuff
@@ -243,7 +242,7 @@ Commons.prototype.loginQuick = function(){
 		.endTotalAndLogTime('Log In')
 };
 
-// todo press "Allow" button
+// todo - this is broken because of WebDriverAgent update?  See issue on github https://github.com/facebook/WebDriverAgent/issues/624
 Commons.prototype.fullLogin = function(uname, pwd){
 	console.log('FULL LOGIN'.green.bold.underline);
 	config.thisHelper = uname; //should be like test_1654wseward.
@@ -260,7 +259,16 @@ Commons.prototype.fullLogin = function(uname, pwd){
 			.clear()
 			.sendKeys(uname)
 		.hideKeyboard()
-		.elementById('etPassword') // password
+		// Click away if we're in iOS:
+		.then(function () {
+			if(config.desired.platformName == 'iOS') {
+				return driver
+						.elementByClassName('XCUIElementTypeImage')
+						.click()
+			}
+		})
+		.waitForElementById('etPassword') // password
+			.click()
 			.clear()
 			.sendKeys(pwd)
 		.hideKeyboard()
@@ -528,10 +536,28 @@ Commons.prototype.homeToHouseList = function(){
 	    .endTotalAndLogTime('Load Walkbook')
 };
 
-//Commons.prototype.getHousesWithMultipleUntouchedPrimary = function(){
-//
-//};
-
+// todo revise sql query naming conventions so as to be able to use this consistently, predicting the name of the object the results are stored in.
+Commons.prototype.wait_for_sql = function(sql_query_name){
+	let counter = 0
+	return new Promise(function(resolve, reject) {
+		(function wait_1() {
+			if (Object.keys(config.housesWithMoreThan1Primary || []).length !== 0 ) {
+				return resolve();
+			} else {
+				counter += 1
+				setTimeout(wait_1, 2000);
+				if (counter === 1) {
+					console.log('Waiting for ' + sql_query_name + ' to return....\n\
+						' + sql_query_name + '.length = ' + (config.housesWithMoreThan1Primary || []).length)
+				} else if (counter > 1 && counter < 30) {
+					console.log('Waiting...')
+				} else if (counter > 30) {
+					reject(new Error('SQL Query ' + sql_query_name + ' did not return within one minute.'))
+				}
+			}
+		})();
+	});
+};
 
 Commons.prototype.getHouseWithMultPrimary = function(){
 
@@ -539,10 +565,59 @@ Commons.prototype.getHouseWithMultPrimary = function(){
 	config.surveyedHouses = [];
 
 	//click the first house which contains multiple primary targets, none of whom have been surveyed already:
+	//todo fix this - currently hangs after sql finishes executing
 	return driver
-	.sleep(1)
-	.then(sqlQuery.getHousesWithMoreThan1Primary)
-	.then(sqlQuery.touchedHouses)
+	.getHousesWithMoreThan1Primary()
+	.touchedHouses()
+	.then(function wait_for_getHousesWithMoreThan1Primary_sql () {
+		let counter = 0
+		return new Promise(function(resolve, reject) {
+			(function wait_1() {
+				if (Object.keys(config.housesWithMoreThan1Primary || []).length !== 0 ) {
+					return resolve();
+				} else {
+
+					counter += 1
+					setTimeout(wait_1, 2000);
+
+					if (counter < 3) {
+						console.log('Waiting for getHousesWithMoreThan1Primary to return....\n' + 
+							'getHousesWithMoreThan1Primary.length = ' + (config.housesWithMoreThan1Primary || []).length)
+					} else if (counter > 3 && counter < 30) {
+						console.log('Waiting...')
+					} else if (counter > 30) {
+						reject(new Error('SQL Query getHousesWithMoreThan1Primary did not return within one minute.'))
+					}
+				}
+			})();
+		});
+
+	})
+	.then(function wait_for_touchedHouses_sql () {
+		let counter = 0
+		return new Promise(function(resolve, reject) {
+			(function wait_2() {
+				console.log(Object.keys(config.touchedHouses || []).length)
+				if (Object.keys(config.touchedHouses || []).length !== 0) {
+					return resolve();
+				} else {
+
+					counter +=1
+					setTimeout(wait_2, 2000)
+
+					if (counter === 1) {
+						console.log('Waiting for touchedHouses to return....\n' + 
+							'touchedHouses.length = ' + (config.housesWithMoreThan1Primary || []).length)
+					} else if (counter > 1 && counter < 30) {
+						console.log('Waiting...')
+					} else if (counter > 30) {
+						reject(new Error('SQL Query touchedHouses did not return within one minute.'))
+					}
+				}
+			})();
+		});
+
+	})
 	.elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // on the house list page - should be 'Houses in Walkbook #'
 	.then(function (el) {
 		return el.getAttribute('name').then(function (attr) {
@@ -553,19 +628,18 @@ Commons.prototype.getHouseWithMultPrimary = function(){
 			//create an array of houses in this walkbook
 			for (let i=0; i < config.housesWithMoreThan1Primary.length; i++) {
 				//if current object corresponds to thisWalkbook
-				if( config.housesWithMoreThan1Primary[i].BookNum == config.thisWalkbook ) {
+				if( config.housesWithMoreThan1Primary[i].booknum == config.thisWalkbook ) {
 
 					//push corresponding house to array 'theseHouses':
-					let thisHouse = 'cellHouse_' + (config.housesWithMoreThan1Primary[i].HouseNum - 1)
+					let thisHouse = 'cellHouse_' + (config.housesWithMoreThan1Primary[i].housenum - 1)
 					config.theseHouses.push(thisHouse)
 				}
 			}
-
 			//create an array of houses we DON'T want in this walkbook
 			for (let i=0; i < config.touchedHouses.length; i++) {
 
-				if (config.touchedHouses[i].BookNum == config.thisWalkbook) {
-					let thisHouse = 'cellHouse_' + (config.touchedHouses[i].HouseNum - 1)
+				if (config.touchedHouses[i].booknum == config.thisWalkbook) {
+					let thisHouse = 'cellHouse_' + (config.touchedHouses[i].housenum - 1)
 					config.surveyedHouses.push(thisHouse)
 				}
 			}
@@ -574,7 +648,6 @@ Commons.prototype.getHouseWithMultPrimary = function(){
 			config.theseHouses = _.difference(config.theseHouses, config.surveyedHouses)
 
 			//todo handle the case of theseHouses being empty - e.g. all houses touched.  When there are less than 2 untouched houses, don't assign the walkbook.
-
 			config.thisHousehold = config.theseHouses.shift()
 			console.log(('Using ' + config.thisHousehold).white.bold)
 		});
@@ -624,7 +697,7 @@ Commons.prototype.surveyAllPrimaryTargets = function(){
 							}
 
 							return Commons.prototype.takeSurveyTemp(thisTarget); // todo, make this different, where the house is redefined to in progress and don't use getFirstListItem
-							
+
 						})
 					}
 				}

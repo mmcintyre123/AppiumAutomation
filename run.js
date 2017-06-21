@@ -2,9 +2,10 @@
 
 require( 'colors' );
 let childProcess = require( 'child_process' );
+let config = require( './helpers/config');
 let loaded  = false;
 let rawArgs = process.argv.slice( 2 );
-let args    = [ 'mocha.js' ]; // eventually make this a test runner file like Mike's Mocha.js
+let args    = [ 'mocha.js' ];
 let appium;
 let homeDir = function () {
 	return process.env[ ( process.platform == 'win32' ) ? 'USERPROFILE' : 'HOME' ];
@@ -52,7 +53,6 @@ for (var i in args ) {
 						"noReset":"true" \
 				}'
 			]);
-
 			break;
 		}
 		case '-os' : {
@@ -94,7 +94,15 @@ for (var i in args ) {
 
 			break;
 		}
+
+		appium.on('exit', function (code, signal) {
+		  console.log('appium process exited with ' + `code ${code} and signal ${signal}`);
+		});
+
 	}
+
+
+
 }
 
 /*
@@ -140,6 +148,12 @@ appium.stdout.on( 'data', function ( data ) {
 
 		loaded = true;
 		let mocha = childProcess.spawn( 'mocha', args, {stdio: "inherit"} ); //the 'inherit' preserves the colors from mocha process
+
+		mocha.on('exit', function (code, signal) {
+		  console.log('mocha process exited with ' + `code ${code} and signal ${signal}`);
+		  appium.kill('SIGINT')
+		});
+
 	}
-	
-} );
+});
+
