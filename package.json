@@ -8,6 +8,7 @@
   "devDependencies": {
     "chai": "^4.0.2",
     "chai-as-promised": "^7.0.0",
+    "cities": "^1.1.2",
     "colors": "*",
     "gradle": "^1.0.7",
     "lodash.mapkeys": "^4.6.0",
@@ -18,6 +19,7 @@
     "q": "^2.0.3",
     "sqlite3": "https://github.com/mapbox/node-sqlite3/tarball/master",
     "underscore": "*",
+    "us-zcta-counties": "0.0.2",
     "wd": "^1.2.0",
     "xregexp": "^3.2.0",
     "xregexp-lookbehind": "^1.0.0",

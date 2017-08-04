@@ -1,5 +1,10 @@
 To do:
 
+	// address fixmes
+	// fix video recording - not working in this project.
+	// write sql & js for adding a tag - figure out what tags are already added to the selected person, eliminate those, then randomly select another tag to add.
+	// take a screenshot at the end of every it - check after test run to make sure nothing failed silently (you don't see any errors or anything strange).
+
 	Automation flow for Continuous Integration:
 
 		Change is checked into repo on bitbucket
@@ -20,25 +25,22 @@ xcrun xcodebuild -scheme i360\ Canvass -target i360\ Canvass -destination 'platf
 
 cd ~/AppiumAutomation && node run.js -sim iosSim2
 
-	// do git diff and commit all changes
-	// finish presentation - make videos
+	// update sql with Rob's points
+	// address todo items in code
 	// run all icon_colors test cases in dbg mode and non-dbg mode and verify they pass.
 	// remove remnants of recorder.  Save a record in case we want it in the future or for Android?
 	// what is package-lock.json?
-	// update sql with Rob's points
-	// address todo items in code
 	// declare config.thisElem = ''; at the beginning of every test case - or in beforeEach?
-	// declare variables in before each function - e.g. config.thisHousehold = ''; etc.
+	// declare variables in beforeEach function - e.g. config.thisHousehold = ''; etc.
 	// clean up / figure out where timeouts are defined and which are being applied
 	// create a test result file and email with mailgun? - https://www.npmjs.com/package/mailgun-js
 
 
 
 
-
-
-
 Later
+
+	// Jenkins location: /Library/Application Support/Jenkins/jenkins-runner.sh
 
 	// elementOrNull command - utilize in fullLogin method:
 

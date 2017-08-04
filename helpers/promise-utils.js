@@ -48,6 +48,7 @@ exports.printNames = exports.each(function (el, i) {
 });
 
 
+//this may not work as expected.  Need to test.  Use saveFirstNameAttributes instead.
 exports.saveAllNameAttributes = function (idLike, array_name, regexp) {
 
   console.log('saveAllNameAttributes', idLike, array_name, regexp)

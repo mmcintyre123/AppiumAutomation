@@ -126,7 +126,7 @@ module.exports = function () {
 		});
 
 		it('Should turn the house green: survey both primary targets', function () {
-			config.housesWithMoreThan1Primary = {}
+			config.housesWithMoreThan1Primary = {};
 			config.theseHouses = [];
 			config.thisHouseholdAfter = '';
 			config.thisSurvey = '';

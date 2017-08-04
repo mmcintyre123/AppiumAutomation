@@ -25,7 +25,7 @@ for (var i in args ) {
 	var i   = Number( i );
 
 	switch ( arg ) {
-		case '-sim' : {
+		case '--sim' : {
 			appium = childProcess.spawn( 'appium', [
 				//'-p','4725', //non-default args
 				//'-cp','4725', //non-default args
@@ -40,22 +40,17 @@ for (var i in args ) {
 				'--log', '/Users/mliedtka/appium_logs1/appium.log',
 				'--address', "localhost",
 				'--default-capabilities', '{ \
-						"app":"/Users/mliedtka/Library/Developer/Xcode/DerivedData/i360_Canvass-byzgucvkbseaivggszvazdzohhjo/Build/Products/Debug-iphonesimulator/i360 Canvass.app", \
 						"showIOSLog":"false", \
 						"autoAcceptAlerts":"true", \
 						"nativeInstrumentsLib":"true", \
-						"platformName":"iOS", \
-						"platformVersion":"10.2", \
 						"automationName":"XCUITest", \
-						"deviceName":"iPad Air 2", \
-						"bundleId":"com.i360.i360Walk", \
 						"fullReset":"false", \
 						"noReset":"true" \
 				}'
 			]);
 			break;
 		}
-		case '-os' : {
+		case '--os' : {
 			if ( args[ i + 1 ] !== undefined ) {
 				if ( args[ i + 1 ].indexOf( 'android' ) != -1 ) {
 					appium = childProcess.spawn( 'appium', [

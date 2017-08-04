@@ -93,14 +93,16 @@ Commons.prototype.beforeAll = function(){
 			desired.app = require("./apps").androidDeviceApp;
 		} else if (config.desired.platformName == 'iOS' && config.sim == false) {
 			desired.app = require("./apps").iosDeviceApp;
-		} else if (config.desired.platformName == 'iOS' && config.sim == true) {
+		} else if (config.desired.platformName == 'iOS' && config.sim == true && config.australia == undefined) {
 			desired.app = require("./apps").iosSimApp;
+		} else if (config.desired.platformName == 'iOS' && config.sim == true && config.australia == true) {
+			desired.app = require("./apps").iosSimAppAus;
 		} else {
 			throw "Commons beforeAll couldn't match device, environment, and args to available apps."
 		}
 
 		if (process.env.SAUCE) {
-			desired.name = 'Automation Code';
+			desired.name = 'i360 Walk Automation';
 			desired.tags = ['sample'];
 		}
 		//clear and create screenshots, recorder_tmpdir, and loadTimeLogs directories
@@ -118,6 +120,8 @@ Commons.prototype.beforeAll = function(){
 		let time = moment().tz(timezone).format();
 		let myCurrentTime = time.slice(11,19).replace(/:/g,'_');
 
+		config.dateTime = time.slice(5,19).replace(/:/g,'_').replace(/-/g,'_'); // like 06_26T01_09_04 (24 hr time)
+
 		// Current date
 		let month = (new Date().getMonth() + 1);
 		let day = new Date().getDate();
@@ -125,8 +129,7 @@ Commons.prototype.beforeAll = function(){
 
 		// Local DateTime
 		config.myDateTime = (month + '_' + day + '_' + year + '_' + myCurrentTime);
-		config.wStreamLogTimeFile = fs.createWriteStream( 'loadTimeLogs/loadTimesLog_' +
-														  config.myDateTime + '.txt' )
+		config.wStreamLogTimeFile = fs.createWriteStream( 'loadTimeLogs/loadTimesLog_' + config.myDateTime + '.txt' )
 		config.logTimes = {}
 
 		return driver.init(desired)
@@ -166,6 +169,7 @@ Commons.prototype.afterEachIt = function(){
 		// let allPassed = allPassed && this.currentTest.state === 'passed';
 
 		config.video.kill('SIGINT');
+
 /*
 		//video recorder stuff
 		config.recorder.stopSaveAndClear(config.recorder_output, function() {}.bind(this));
@@ -706,11 +710,17 @@ Commons.prototype.surveyAllPrimaryTargets = function(){
 		})
 };
 
+//todo add the counter feature to field portal project
 Commons.prototype.waitForElementToDisappearByClassName = function waitForElementToDisappearByClassName(className){
+	let counter = 0
 	function recursive() {
 		return driver.elementByClassNameOrNull(className)
 			.then(function(el) {
 				if (el !== null) {
+					counter += 1
+					if (counter > 30) {
+						throw new Error('Element took too long to disappear.')
+					}
 					return recursive()
 				}
 			})

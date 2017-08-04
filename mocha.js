@@ -19,7 +19,7 @@ let desired;
 		var i   = Number( i );
 
 		switch ( arg ) {
-			case '-sim' : {
+			case '--sim' : {
 				if ( args[ i + 1 ] !== undefined ) {
 					simulator = true;
 					desired   = _.clone(require( './helpers/caps' )[ args[ i + 1 ] ]);
@@ -27,48 +27,82 @@ let desired;
 					config.set( {
 						'os'      : args[ i + 1 ],
 						'desired' : desired,
-						'sim'     : true,
-						'newCommandTimeout' : args.includes("dbg") ? 1800 : 120, // in seconds - 30 min or 2 min
-						'launchTimeout' : 180000  // in ms - 3 minutes todo add these below
+						'sim'     : true
 					} );
+
+					config.desired.newCommandTimeout = args.includes("--dbg") ? 1800 : 120, // in seconds - 30 min or 2 min
+					config.desired.launchTimeout = 180000  // in ms - 3 minutes
+
 				}
 
 				break;
 		}
 
-			case '-time' : {
+			case '--time' : {
 				if ( args[ i + 1 ] !== undefined ) {
 					timeout = args[ i + 1 ];
 				} else {
-					throw 'You did not specify a timeout for -timeout';
+					throw 'You did not specify a timeout for --time';
 				}
 
 				break;
 			}
 
-			case '-reset' : {
+			case '--reset' : {
 				if ( args[ i + 1 ] !== undefined ) {
 					config.set( {
-						'reset' : true
+						'fullReset' : true
 					} );
 				}
 
 				break;
 			}
 
-			case '-os' : {
+			case '--os' : {
 				if ( args[ i + 1 ] !== undefined ) {
 					desired = _.clone(require( './helpers/caps' )[ args[ i + 1 ] ]);
 
 					config.set( {
 						'os'      : args[ i + 1 ],
 						'desired' : desired,
-						'sim'     : false,
-						'newCommandTimeout' : args.includes("dbg") ? 1800 : 120, // in seconds - 30 min or 2 min
-						'launchTimeout' : 180000  // in ms - 3 minutes todo add these below
+						'sim'     : false
 					} );
+
+					config.desired.newCommandTimeout = args.includes("--dbg") ? 1800 : 120, // in seconds - 30 min or 2 min
+					config.desired.launchTimeout = 180000  // in ms - 3 minutes
+
 				} else {
-					throw 'You did not specify a os for -os';
+					throw 'You did not specify a os for --os';
+				}
+
+				break;
+			}
+
+			case '--ENV' : {
+				if ( args[ i + 1 ] !== undefined && args[ i + 1 ].substring(0,2) !== '--') {
+					config.set( {
+						'ENV' : args[ i + 1 ]
+					});
+				} else {
+					throw 'You did not specify an environment, for example, --ENV test';
+				}
+				break;
+			}
+
+			case '--app' : {
+				if ( args[ i + 1 ] !== undefined && args[ i + 1 ].substring(0,2) !== '--') {
+
+					if (args[ i + 1 ] == 'australia') {
+						config.set( {
+							'australia' : true
+						} );
+						config.desired.bundleId = "com.i360.i360WalkAUS"
+					} else {
+						config.desired.bundleId = "com.i360.i360Walk"
+					}
+
+				} else {
+					throw 'This parameter is for specifying the Australia app.  Supply australia: --app australia';
 				}
 
 				break;
@@ -119,9 +153,9 @@ describe( 'Automation Test in Progress!'.green, function () {
 				// run.sampleTests( 'sample' );
 				// run.sampleTests( 'web_app' );
 				// run.sampleTests( 'icon_colors' );
-				run.sampleTests( 'add_note');
+				// run.sampleTests( 'add_note');
 				// run.sampleTests( 'target_page');
-				// run.sampleTests( 'add_contact' );
+				run.sampleTests( 'add_contact' );
 				// run.sampleTests( 'walkbooks_smoke_tests' );
 
 		} );

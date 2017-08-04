@@ -13,14 +13,15 @@ let apps = require('./apps.js');
 	// Updating from top down with accessibility IDs in Android - compare later to iOS
 	//By ID
 	exports.actionBar = {
-		'hamburgerMenu'     :  'mnOverflow',
-		'search'	        :  'Search', // magnifying glass - make sure this works in Android.
-		'clearSearch'       :  'search_close_btn', // 'x' mark inside the search box
-		'searchText'        :  'search_src_text', // active search query
-		'refresh'	        :  'action_refresh',
-		'addContact'	    :  '', // this usually adds a contact or volunteer, depending on the context.
-		'checkConnectivity' :  'Check Connectivity',
-		'logOut' 		    :  'Log Out' // probably use elementByName for Android
+		'hamburgerMenu'    : 'mnOverflow',
+		'search'           : 'Search',               // magnifying glass - make sure this works in Android.
+		'clearSearch'      : 'search_close_btn',     // 'x' mark inside the search box
+		'searchText'       : 'search_src_text',      // active search query
+		'refresh'          : 'action_refresh',
+		'addContact'       : '',                     // this usually adds a contact or volunteer, depending on the context.
+		'checkConnectivity': 'Check Connectivity',
+		'logOut'           : 'Log Out',              // probably use elementByName for Android
+		'back'             : 'Back'
 	}
 
 
@@ -205,28 +206,35 @@ let apps = require('./apps.js');
 	// ******* Voter Lookup ******* //
 
 		exports.voterLookup = {
-			'close'       : 'Close',
-			'clear_all'   : 'Clear All',
-			'state'       : 'voterLookupSearch_StateSpinner',
-			'first_name'  : 'First Name',
-			'last_name'   : 'Last Name',
-			'city'        : 'City',
-			'zip_code'    : 'Zip Code',
-			'address_1'   : 'Address 1',
-			'address_2'   : 'Address 2',
-			'phone'       : 'Phone',
-			'email'       : 'Email',
-			'dbtoggle'    : 'cbDatabase',
-			'search'      : 'voterLookupSearch_btnSearch',
-			'add_contact' : {
-								'add_contact' : 'Add Contact',
-								'first_name' : 'Add Contact',
-								'' : 'Add Contact',
-								'' : 'Add Contact',
-								'' : 'Add Contact',
+			'close'      : 'Close',
+			'clear_all'  : 'Clear All',
+			'state'      : 'voterLookupSearch_StateSpinner',
+			'first_name' : 'First Name',
+			'last_name'  : 'Last Name',
+			'city'       : 'City',
+			'zip_code'   : 'Zip Code',
+			'address_1'  : 'Address 1',
+			'address_2'  : 'Address 2',
+			'phone1'     : 'Phone',
+			'phone2'     : 'Phone',
+			'email'      : 'Email',
+			'dbtoggle'   : 'cbDatabase',
+			'search'     : 'voterLookupSearch_btnSearch',
+			'cancel'     : 'Cancel',
+			'save'       : 'voterLookupAddEdit_btnDone',
+			'add_contact': {
+								'add_contact': 'Add Contact',
+								'first_name' : 'etFirstName',
+								'last_name'  : 'etLastName',
+								'dob'        : 'etDOB',
+								'address_1'  : 'etAddress1',
+								'address_2'  : 'etAddress2',
+								'city'       : 'etCity',
+								'postcode'   : 'etZip',
+								'phone1'     : 'etPhone1',
+								'phone2'     : 'etPhone2',
+								'email'      : 'etEmail'
 							}
-
-
 		}
 
 		exports.voterLookupResults = {
