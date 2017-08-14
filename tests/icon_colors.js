@@ -32,10 +32,23 @@ module.exports = function () {
 		let allPassed = true;
 		console.log(('RUNNING ' + __filename.slice(__dirname.length + 1) + ' for iOS').green.bold.underline);
 
-		it.skip('For debugging', function () {
+		it('For debugging', function () {
 			// config.theseNameAttrs = [];
+			// test sql connection for australia
+			config.thisSurvey = 'stretch testing'
+			config.thisHelper = 'dev_2doesntmatter'
 
 			return driver
+				.sleep(1)
+				.then(function () {
+					sqlQuery.getSurveyId()
+				})
+				.then(function () {
+					console.log('Ran query'.white.bold)
+					return driver
+						.sleep(3000)
+						.pry()
+				})
 				.loginQuick()
 				.elementById(elements.homeScreen.walkbooks)
 				.click()
@@ -115,12 +128,12 @@ module.exports = function () {
 			    .consoleLog('TEST CASE IS OVER'.red.bold.underline) //surveys should have been taken with all primary targets and no non-primary targets.
 		});
 
-		it.skip('Should perform a full login', function () {
+		it('Should perform a full login', function () {
 			return driver
 				.fullLogin(creds.testUserName1, creds.testUserPwd1)
 		});
 
-		it('Should login quick', function () {
+		it.skip('Should login quick', function () {
 			return driver
 				.loginQuick()
 		});
