@@ -1,5 +1,7 @@
 To do:
 
+	// improve sql for assigning walkbooks to prevent walkbook completed scenario after surveying just one house.
+	// see todo in Field Portal project for features to add here, esp mochawesome reporter.
 	// address fixmes
 	// write sql & js for adding a tag - figure out what tags are already added to the selected person, eliminate those, then randomly select another tag to add.
 	// take a screenshot at the end of every it - check after test run to make sure nothing failed silently (you don't see any errors or anything strange).
