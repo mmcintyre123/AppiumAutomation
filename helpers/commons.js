@@ -18,6 +18,10 @@ let intercept =  require('intercept-stdout');
 let childProcess = require( 'child_process' );
 let driver    =  config.driver;
 
+let stripColors = function ( string ) {
+	return string.replace( /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '' );
+};
+
 // todo this.os doesn't seem to be working.
 function Commons () {
 	this.os      = config.desired.platformName;
@@ -77,13 +81,13 @@ Commons.prototype.beforeAll = function(){
 
 	before(function() {
 
-		var unhook_intercept = intercept(function (txt) {
-			return txt.replace(/.*(response|call|get|post).*screenshot.*/i, '');
-		})
+		//var unhook_intercept = intercept(function (txt) {
+		//	return txt.replace(/.*(response|call|get|post).*screenshot.*/i, '');
+		//})
 
 		let elements = config.elements;
 		let desired  = config.desired;
-
+		config.testResults = [];
 		require("./logging").configure(driver);
 
 		// this.os isn't working for some reason.  todo may need to update to account for iOS sim.
@@ -92,6 +96,7 @@ Commons.prototype.beforeAll = function(){
 		} else if (process.env._system_name == 'OSX' && config.desired.platformName == 'Android') {
 			desired.app = require("./apps").androidDeviceApp;
 		} else if (config.desired.platformName == 'iOS' && config.sim == false) {
+			//no additional config necessary (bundle id specified in desired caps)
 			desired.app = require("./apps").iosDeviceApp;
 		} else if (config.desired.platformName == 'iOS' && config.sim == true && config.australia == undefined) {
 			desired.app = require("./apps").iosSimApp;
@@ -100,11 +105,11 @@ Commons.prototype.beforeAll = function(){
 		} else {
 			throw "Commons beforeAll couldn't match device, environment, and args to available apps."
 		}
-
 		if (process.env.SAUCE) {
 			desired.name = 'i360 Walk Automation';
 			desired.tags = ['sample'];
 		}
+
 		//clear and create screenshots, recorder_tmpdir, and loadTimeLogs directories
 		fsExtra.removeSync('./screenShots')
 		fsExtra.mkdirs('./screenShots')
@@ -112,14 +117,14 @@ Commons.prototype.beforeAll = function(){
 		fsExtra.mkdirs('./video')
 		fsExtra.removeSync('./loadTimeLogs') // to clear out the load time file if necessary
 		fsExtra.mkdirs('./loadTimeLogs')
-
+		fsExtra.removeSync('./test_results');
+		fsExtra.mkdirs('./test_results');
 		// Open writeStream for logTime file using current local time
 		require('moment-timezone')
 		let moment = require('moment');
 		let timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 		let time = moment().tz(timezone).format();
 		let myCurrentTime = time.slice(11,19).replace(/:/g,'_');
-
 		config.dateTime = time.slice(5,19).replace(/:/g,'_').replace(/-/g,'_'); // like 06_26T01_09_04 (24 hr time)
 
 		// Current date
@@ -130,6 +135,7 @@ Commons.prototype.beforeAll = function(){
 		// Local DateTime
 		config.myDateTime = (month + '_' + day + '_' + year + '_' + myCurrentTime);
 		config.wStreamLogTimeFile = fs.createWriteStream( 'loadTimeLogs/loadTimesLog_' + config.myDateTime + '.txt' )
+		config.wStreamTestResultFile = fs.createWriteStream('test_results/test_result_' + config.myDateTime + '.txt');
 		config.logTimes = {}
 
 		return driver.init(desired)
@@ -139,16 +145,17 @@ Commons.prototype.beforeAll = function(){
 Commons.prototype.beforeEachIt = function(){
 	beforeEach(function () {
 
-		//test stuff
-		console.log(('Running ' + this.currentTest.title).green.bold.underline)
-		config.currentTest = this.currentTest // put the currentTest object on Config in case we want to access it mid-test
-
 		//record video
+		let thisTest = stripColors(this.currentTest.title);
 		config.video = childProcess.spawn('xcrun', ['simctl', 'io', 'booted', 'recordVideo', '/Users/mliedtka/AppiumAutomation/video/' + this.currentTest.title.replace(/\s+/ig,'_') + '.mp4']);
 		config.video.on('exit', console.log.bind(console, 'video recording exited'));
 		config.video.on('close', console.log.bind(console, 'video recording closed'));
 
-/*
+		//test stuff
+		console.log(('Running ' + this.currentTest.title).green.bold.underline)
+		config.currentTest = this.currentTest // put the currentTest object on Config in case we want to access it mid-test
+		
+	/*
 		//video recorder stuff
 		config.recorder_output = '/Users/mliedtka/AppiumAutomation/video/' + this.currentTest.title.replace(/\s+/ig,'_') + '.mp4';
 		config.recorder_dir = '/Users/mliedtka/AppiumAutomation/recorder_tmpdir';
@@ -158,7 +165,7 @@ Commons.prototype.beforeEachIt = function(){
 		};
 		config.recorder = new Recorder(driver,config.recorder_options)
 		config.recorder.start();
-*/
+	*/
 
 
 	});
@@ -167,40 +174,58 @@ Commons.prototype.beforeEachIt = function(){
 Commons.prototype.afterEachIt = function(){
 	afterEach(function() {
 		// let allPassed = allPassed && this.currentTest.state === 'passed';
-
-		config.video.kill('SIGINT');
-
-/*
-		//video recorder stuff
-		config.recorder.stopSaveAndClear(config.recorder_output, function() {}.bind(this));
-*/
-		//test stuff
-		if (this.currentTest.state !== 'passed') {
-			let thisTest = this.currentTest.title;
+		/* //video recorder stuff config.recorder.stopSaveAndClear(config.recorder_output, function() {}.bind(this)); */
+		let thisTest = stripColors(this.currentTest.title);
+		//test stuff - screenshot on failure, log results to file and store in object to console.log at the end.
+		if (this.currentTest.state == 'failed') {
+			console.log(('\n\t' + this.currentTest.err.message).red + '\n');
+			config.wStreamTestResultFile.write('Test Failed: ' + thisTest + '\n');
+			config.testResults.push('\u2717  '.red + thisTest);
 			return driver
-				.takeScreenshotMethod(thisTest);
+				.takeScreenshotMethod(thisTest)
+				.sleep(1999) //time for action to complete and be captured by video
+				.then(() => {
+					config.video.kill('SIGINT')
+				})
 		}
+		else if (this.currentTest.state == 'passed') {
+			config.wStreamTestResultFile.write('Test Passed: ' + thisTest + '\n');
+			config.testResults.push('\u2713  '.green + thisTest);
+		}
+		else {
+			config.wStreamTestResultFile.write('Test ' + this.currentTest.state + ' :' + thisTest + '\n');
+			config.testResults.push('\u003F  '.yellow + thisTest);
+		}
+
+		return driver
+			.sleep(1998)
+			.then(() => {
+				config.video.kill('SIGINT');
+			})
+		
     });
 };
+
 Commons.prototype.afterAll = function(){
 
 	after(function() {
-
 		config.wStreamLogTimeFile.end();
+		config.wStreamTestResultFile.end();
 		return driver
 			.sleep(1005)
 			.quit()
 			.finally(function() {
+				console.log('\n\n******* TEST RESULTS *******\n'.white);
+				config.testResults.map(function(thisTest) {
+					return console.log(thisTest);
+				});
+				console.log('\n****************************'.white);
 				if (process.env.SAUCE) {
 					return driver.sauceJobStatus(allPassed);
 				}
 			});
 	});
 };
-
-
-
-
 
 // Basic flow for writing files:
 // let wstream = fs.createWriteStream('myOutput.txt');
@@ -233,6 +258,13 @@ Commons.prototype.endTotalAndLogTime = function(startName){
 Commons.prototype.loginQuick = function(){
 	console.log('LOGIN QUICK'.green.bold.underline);
 	return driver
+		.elementByIdOrNull(elements.loginLogout.userName) // ensure we're on the login screen, if not, reset app
+		.then(function (el) {
+			if (el == null) {
+				return driver
+				.resetApp()
+			}
+		})
 		.elementById(elements.loginLogout.userName)
 		.then(function (el) {
 			return el.getAttribute('value').then(function (value) {
@@ -267,8 +299,8 @@ Commons.prototype.fullLogin = function(uname, pwd){
 		.then(function () {
 			if(config.desired.platformName == 'iOS') {
 				return driver
-						.elementByClassName('XCUIElementTypeImage')
-						.click()
+					.elementByClassName('XCUIElementTypeImage')
+					.click()
 			}
 		})
 		.waitForElementById('etPassword') // password
@@ -585,7 +617,7 @@ Commons.prototype.getHouseWithMultPrimary = function(){
 					setTimeout(wait_1, 2000);
 
 					if (counter < 3) {
-						console.log('Waiting for getHousesWithMoreThan1Primary to return....\n' + 
+						console.log('Waiting for getHousesWithMoreThan1Primary to return....\n' +
 							'getHousesWithMoreThan1Primary.length = ' + (config.housesWithMoreThan1Primary || []).length)
 					} else if (counter > 3 && counter < 30) {
 						console.log('Waiting...')
@@ -610,7 +642,7 @@ Commons.prototype.getHouseWithMultPrimary = function(){
 					setTimeout(wait_2, 2000)
 
 					if (counter === 1) {
-						console.log('Waiting for touchedHouses to return....\n' + 
+						console.log('Waiting for touchedHouses to return....\n' +
 							'touchedHouses.length = ' + (config.housesWithMoreThan1Primary || []).length)
 					} else if (counter > 1 && counter < 30) {
 						console.log('Waiting...')
@@ -675,7 +707,7 @@ Commons.prototype.surveyAllPrimaryTargets = function(){
 		.then(function (els) {
 			return _p.saveFirstNameAttributes('prim_cellContact_', 'theseNameAttrs',undefined,els)
 		})
-		.back()
+		.back() // todo after all targets have been surveyed, this goes back to the survey
 		.waitForElementByClassName('XCUIElementTypeTable',10000) // wait for the house list to appear
 		.then(function () {
 
@@ -728,5 +760,27 @@ Commons.prototype.waitForElementToDisappearByClassName = function waitForElement
 	return recursive()
 };
 
-
-module.exports = new Commons();
+Commons.prototype.clickElementWhenInView = function waitForElementToEnterView(el) {
+	let visible = false
+	function recursive() {
+		console.log('got to clickElementWhenInView'.white);
+		console.log('el is: ' + el);
+		return el
+			.getAttribute('visible')
+			.then(function (visible) {
+				console.log('Household visible = ' + visible)
+				if (visible == false) {
+					return driver
+						.sleep(1000)
+						.then(function () {
+							return recursive()
+						})
+				} else if (visible == true) {
+					el.click()
+					return driver
+				}
+			})
+	}
+	return recursive()
+}
+module.exports = new Commons()

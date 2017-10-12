@@ -27,12 +27,6 @@ for (var i in args ) {
 	switch ( arg ) {
 		case '--sim' : {
 			appium = childProcess.spawn( 'appium', [
-				//'-p','4725', //non-default args
-				//'-cp','4725', //non-default args
-				//'-bp','4726', //non-default args
-				//'--selendroid-port', '8081', //non-default args
-				//'--chromedriver-port', '9516', //non-default args
-				//'--webkit-debug-proxy-port', '27754', //non-default args
 				'--strict-caps',
 				'--session-override',
 				'--log-level', 'debug',
@@ -44,6 +38,9 @@ for (var i in args ) {
 						"autoAcceptAlerts":"true", \
 						"nativeInstrumentsLib":"true", \
 						"automationName":"XCUITest", \
+						"clearSystemFiles":"true", \
+						"preventWDAAttachments":"true", \
+						"newCommandTimeout": false, \
 						"fullReset":"false", \
 						"noReset":"true" \
 				}'
@@ -66,21 +63,23 @@ for (var i in args ) {
 					] );
 				} else {
 					appium = childProcess.spawn( 'appium', [
-						'--app-pkg', 'com.i360.i360Walk',
-						'--app', homeDir() + '/AppiumAutomationTestBuiltIO/apps/i360Canvass011817.ipa',
-						//( config.get( 'reset' ) == true ? '--full-reset' : '--no-reset-' ),
-						'--full-reset',
-						'--dont-stop-app-on-reset',
-						//'--pre-launch',
-						'--udid', 'D7662095-A24B-44B5-A0B1-071A1250DAE9',
-						'--show-ios-log',
-						'--show-ios-log',
-						'--default-device',
-						'--automation-name', 'Appium',
-						'--platform-name', 'iOS',
-						'--platform-version', '10.2',
-						'--native-instruments-lib'
-					] );
+						'--strict-caps',
+						'--session-override',
+						'--log-level', 'debug',
+						'--debug-log-spacing',
+						'--log', '/Users/mliedtka/appium_logs1/appium.log',
+						'--address', "localhost"
+					//	'--default-capabilities', '{ \
+					//			"showIOSLog":"false", \
+					//			"nativeInstrumentsLib":"true", \
+					//			"automationName":"XCUITest", \
+					//			"fullReset":"false", \
+					//			"noReset":"true", \
+					//			"clearSystemFiles": true, \
+					//			"preventWDAAttachments": true, \
+					//			"newCommandTimeout": false \
+					//	}'
+					]);
 				}
 
 			} else {
@@ -95,8 +94,6 @@ for (var i in args ) {
 		});
 
 	}
-
-
 
 }
 

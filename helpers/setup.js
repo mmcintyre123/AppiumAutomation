@@ -37,7 +37,7 @@ wd.addPromiseChainMethod('homeToHouseList',commons.homeToHouseList);
 wd.addPromiseChainMethod('waitForElementToDisappearByClassName',commons.waitForElementToDisappearByClassName);
 wd.addPromiseChainMethod('getHousesWithMoreThan1Primary',sqlQuery.getHousesWithMoreThan1Primary);
 wd.addPromiseChainMethod('touchedHouses',sqlQuery.touchedHouses);
-
+wd.addPromiseChainMethod('clickElementWhenInView',commons.clickElementWhenInView)
 
 exports.should = should;
 exports.expect = expect;

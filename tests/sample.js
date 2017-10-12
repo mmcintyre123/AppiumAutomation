@@ -203,18 +203,18 @@ module.exports = function () {
 									 .click()
 					} else {
 						return config.driver
-									 .elementById(elements.survey.walkbook1)
-									 .getLocation()
-									 .then(function(loc){
-									 	 return driver
-									 		.swipe({
-									 			startX: loc.x,
-									 			startY: loc.y,
-									 			endX: loc.x,
-									 			endY: loc.y + 650,
-									 			duration: 500
-									 		})
-						})
+							.elementById(elements.survey.walkbook1)
+							.getLocation()
+							.then(function(loc){
+								return driver
+								.swipe({
+									startX: loc.x,
+									startY: loc.y,
+									endX: loc.x,
+									endY: loc.y + 650,
+									duration: 500
+								})
+							})
 					}
 				})
 				.elementById(elements.survey.walkbook1)

@@ -1,3 +1,4 @@
+
 'use strict';
 
 require('colors');
@@ -12,7 +13,7 @@ let homeDir = function () {
 };
 
 update = childProcess.exec(
-	"cd /Users/mliedtka/i360walk-aus-ios && git pull ",
+	"cd /Users/mliedtka/i360walk-aus-ios && git stash && git pull && git stash pop",
 	{stdio: 'inherit'},
 	function (err,stdout,stderr) {
 	    if (err) {

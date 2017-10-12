@@ -21,7 +21,8 @@ let apps = require('./apps.js');
 		'addContact'       : '',                     // this usually adds a contact or volunteer, depending on the context.
 		'checkConnectivity': 'Check Connectivity',
 		'logOut'           : 'Log Out',              // probably use elementByName for Android
-		'back'             : 'Back'
+		'back'             : 'Back',
+		'done'             : 'Done'
 	}
 
 
@@ -179,9 +180,10 @@ let apps = require('./apps.js');
 		'notHome' 		 : 'btnNotHome', 	   // Formerly: 'Not Home',
 		'refused' 		 : 'btnRefuse', 	   // Formerly: 'Refused',
 		'wrongAddress'   : 'btnWrongAddress',  // Formerly: 'Wrong Address',
-		'addNote' 		 : 'btnNote', 		   // Formerly: 'Add Note',
+		'addNote' 		 : 'Add a Note', 		   // Formerly: 'Add Note',
+		'editNote'		 : 'etNoteEntry',
 		'tag' 		     : 'btnTag', 		   // Formerly: 'Tag',
-		'edit' 		     : 'btnEdit', 		   // Formerly: 'Edit',
+		'editTarget'     : 'btnEdit', 		   // Formerly: 'Edit',
 		'requestBallot'  : 'btnAbsentee', 	   // Formerly: 'Request Absentee Ballot'
 	}
 
@@ -206,23 +208,24 @@ let apps = require('./apps.js');
 	// ******* Voter Lookup ******* //
 
 		exports.voterLookup = {
-			'close'      : 'Close',
-			'clear_all'  : 'Clear All',
-			'state'      : 'voterLookupSearch_StateSpinner',
-			'first_name' : 'First Name',
-			'last_name'  : 'Last Name',
-			'city'       : 'City',
-			'zip_code'   : 'Zip Code',
-			'address_1'  : 'Address 1',
-			'address_2'  : 'Address 2',
-			'phone1'     : 'Phone',
-			'phone2'     : 'Phone',
-			'email'      : 'Email',
-			'dbtoggle'   : 'cbDatabase',
-			'search'     : 'voterLookupSearch_btnSearch',
-			'cancel'     : 'Cancel',
-			'save'       : 'voterLookupAddEdit_btnDone',
-			'add_contact': {
+			'close'              : 'Close',
+			'clear_all'          : 'Clear All',
+			'state'              : 'voterLookupSearch_StateSpinner',
+			'first_name'         : 'First Name',
+			'last_name'          : 'Last Name',
+			'city'               : 'City',
+			'zip_code'           : 'Zip Code',
+			'address_1'          : 'Address 1',
+			'address_2'          : 'Address 2',
+			'phone1'             : 'Phone',
+			'phone2'             : 'Phone',
+			'email'              : 'Email',
+			'dbtoggle'           : 'cbDatabase',
+			'search'             : 'voterLookupSearch_btnSearch',
+			'keyboardPanelSearch': 'Search',
+			'cancel'             : 'Cancel',
+			'save'               : 'voterLookupAddEdit_btnDone',
+			'add_contact'        : {
 								'add_contact': 'Add Contact',
 								'first_name' : 'etFirstName',
 								'last_name'  : 'etLastName',
@@ -252,7 +255,8 @@ let apps = require('./apps.js');
 		exports.voterDetail = {
 			'addTag'    : {
 								'addTag'    : 'btnAddTag',
-								'category1' : 'cellTagCategory_0',
+								// 'category1' : 'cellTagCategory_0',
+								'category1' : '	//XCUIElementTypeCell[@name="cellTagCategory_0"][1]/XCUIElementTypeStaticText[1]', // todo testing - remove if doesn't work
 								'category2' : 'cellTagCategory_1',
 								'category3' : 'cellTagCategory_2',
 								'category4' : 'cellTagCategory_3',

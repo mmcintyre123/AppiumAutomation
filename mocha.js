@@ -119,7 +119,7 @@ config.set({
 require("./helpers/setup");
 let commons = require( './helpers/commons' );
 
-describe( 'Automation Test in Progress!'.green, function () {
+describe( 'Loading beforeAll, beforeEachIt, afterEachIt, afterAll\n'.green, function () {
 
 	this.timeout( timeout ); // total time limit for all tests to complete
 	let allPassed = true;
@@ -130,8 +130,9 @@ describe( 'Automation Test in Progress!'.green, function () {
 	commons.afterEachIt();
 	commons.afterAll();
 
-	describe( 'Running automation, please wait for all tests to complete!'.green, function () {
+	describe( 'Future: running source code check and performing an update & build if necessary\n'.green, function () {
 /*
+		//todo adapt this for Walk
 		describe( 'Running "SourceCode Check and SourceCode updates" Test.'.red, function () {
 
 			let run = require( './TestFiles.js' );
@@ -145,18 +146,33 @@ describe( 'Automation Test in Progress!'.green, function () {
 				run.logins( 'loginSanboxSmokeTest' );
 		} );
 */
-		describe( 'Run icon color tests'.green, function () {
+		describe( 'Running test automation\n'.green, function () {
 
 			let devlopeApp = true; //todo figure out what this is for
-
+			let counter = 0;
 			let run = require( './TestFiles.js' );
-				// run.sampleTests( 'sample' );
-				// run.sampleTests( 'web_app' );
-				run.sampleTests( 'icon_colors' );
-				run.sampleTests( 'add_note');
-				run.sampleTests( 'target_page');
-				run.sampleTests( 'add_contact' );
-				run.sampleTests( 'walkbooks_smoke_tests' );
+
+			console.log('\nDesired Caps are:'.white.bold);
+			console.dir(config.desired);
+			console.log('\n');
+
+		/* TESTS */
+			// run.sampleTests( 'sample' );
+			// run.sampleTests( 'web_app' );
+			// run.sampleTests( 'walkbooks_smoke_tests' );
+			(function repeatTest() {
+				let timesToRun = 1
+				if (counter < timesToRun) {
+					counter+=1
+					run.sampleTests('icon_colors');
+					repeatTest()
+				} else {
+					return
+				}
+			})()
+			// run.sampleTests( 'add_note' );
+			// run.sampleTests( 'target_page' );
+			run.sampleTests( 'add_contact' );
 		} );
 	} );
 

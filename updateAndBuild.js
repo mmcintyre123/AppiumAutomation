@@ -12,7 +12,7 @@ let homeDir = function () {
 };
 
 update = childProcess.exec(
-	"cd /Users/mliedtka/i360 && git pull ",
+	"cd /Users/mliedtka/i360 && git stash && git pull && git stash pop",
 	{stdio: 'inherit'},
 	function (err,stdout,stderr) {
 	    if (err) {

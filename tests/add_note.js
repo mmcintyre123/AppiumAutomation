@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function () {
-	
+
 	require('colors');
 	let wd            = require("wd");
 	let assert  	  = require('assert');
@@ -27,12 +27,12 @@ module.exports = function () {
 	let driver = config.driver;
 	let	commons = require('../helpers/commons'); // this must be after the desired and driver are set
 
-	describe("Describe the test category...defines the group of tests specified below", function() {
+	describe("Test adding notes", function() {
 
 		let allPassed = true;
 		console.log(('RUNNING ' + __filename.slice(__dirname.length + 1)).green.bold.underline)
 
-		it('Quick Login', function () {
+		it('Quick Login add_note.js', function () {
 			return driver
 				.loginQuick()
 		});
@@ -56,7 +56,7 @@ module.exports = function () {
 				.click()
 				.elementById(elements.target.addNote)
 				.click()
-				.elementById(elements.target.edit)
+				.elementById(elements.target.editNote)
 				.click()
 				.sendKeys('abcdef')
 		});

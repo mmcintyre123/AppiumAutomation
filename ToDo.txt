@@ -1,5 +1,7 @@
 To do:
 
+	// set code signing identity and provisioning profile in updateAndBuild.js
+	// turn on and unlock physical device if off?
 	// improve sql for assigning walkbooks to prevent walkbook completed scenario after surveying just one house.
 	// see todo in Field Portal project for features to add here, esp mochawesome reporter.
 	// address fixmes
