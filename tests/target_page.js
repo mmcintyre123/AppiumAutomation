@@ -28,7 +28,7 @@ module.exports = function () {
 	let driver = config.driver;
 	let	commons = require('../helpers/commons'); // this must be after the desired and driver are set
 
-	describe("Describe the test category...defines the group of tests specified below", function() {
+	describe("Test target page UI", function() {
 
 			// this.timeout(3000000);
 			let allPassed = true;

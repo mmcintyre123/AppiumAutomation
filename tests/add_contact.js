@@ -39,14 +39,14 @@ module.exports = function () {
 				.loginQuick()
 				.elementById(elements.homeScreen.voterLookup)
 				.click()
-		//		.waitForElementById(elements.voterLookup.add_contact.add_contact, 10000)
-		//		.click()
-		//		.waitForElementById(elements.voterLookup.save, 10000)
-		//		.click()
-		//		.then(function () {
-		//			eval(require('pryjs').it)
-		//		})
-		//		.waitForElementToDisappearByClassName('XCUIElementTypeTable') // todo fix
+				// .waitForElementById(elements.voterLookup.add_contact.add_contact, 10000)
+				// .click()
+				// .waitForElementById(elements.voterLookup.save, 10000)
+				// .click()
+				// .then(function () {
+				// 	eval(require('pryjs').it)
+				// })
+				// .waitForElementToDisappearByClassName('XCUIElementTypeTable') // todo fix
 		});
 		
 		it('Sets variables for test', function () {
@@ -75,7 +75,7 @@ module.exports = function () {
 						config.thisZip = theseCities[rand].zipcode
 						config.thisCounty = counties.find({zip: config.thisZip}).county
 					} else if (config.australia == true) {
-
+						// todo finish this
 					}
 				})
 		});
@@ -100,18 +100,29 @@ module.exports = function () {
 							.click()
 					} else if (config.australia == undefined) {
 						return driver
-					}
+							.execute('mobile: scroll', {direction: 'down'}) // scrolls to top - refreshes if already there
+							.execute('mobile: scroll', {direction: 'down'}) // scrolls to top - refreshes if already there
+							.waitForElementById('Virginia', 10000)
+							.then((el) => { return commons.clickElementWhenInView(el)})
+							.elementById(elements.actionBar.done)
+							.click()
+						}
 				})
 				.waitForElementById(elements.voterLookup.last_name, 10000)
 				.click()
 				.sendKeys('Smith')
-				.hideKeyboard()
+				.waitForElementById(elements.voterLookup.last_name, 10000)
+				.getLocation()
+				.then((loc) => {
+                    return driver
+						.swipe({ startX: loc.x, startY: loc.y, offsetX: 0, offsetY: 100})
+				})
 				.elementById(elements.voterLookup.search)
 				.click()
 				.waitForElementById(elements.voterLookupResults.table, 20000)
 		});
 
-		//todo make sure not to add a tag that already exists, otherwise we'll get false positives.
+		//todo make sure not to add a tag that already exists, otherwise we'll get false positives.  Debug.
 		it('Should add a tag', function () {
 			let thisCategory = '';
 			let thisTag = '';
@@ -122,16 +133,14 @@ module.exports = function () {
 				.click()
 				.then(function getCategoryName (el) {
 					return driver
-						.waitForElementById(elements.voterDetail.addTag.category4, 10000)
-						.elementByClassName('XCUIElementTypeStaticText')   // fixme use xpath - this is not in the context of the previous element as hoped.
-						.then(function (el) {
-							return el.getAttribute('name').then(function(name) {
-								console.log(('category is ' + name).white.bold) 
-								thisCategory = 'Category: ' + name;
-							})
+						.waitForElementByXPath(elements.voterDetail.addTag.category1, 10000)
+						.getAttribute('name')
+						.then((name) => {
+							console.log(('category is ' + name).white.bold) 
+							thisCategory = 'Category: ' + name;
 						})
 				})
-				.elementById(elements.voterDetail.addTag.category4)
+				.elementByXPath(elements.voterDetail.addTag.category1)
 				.click()
 				.then(function getTagName (el) {
 					return driver
@@ -211,6 +220,5 @@ module.exports = function () {
 				.click()
 				.waitForElementById(elements.voterDetail.addTag.addTag, 10000)
 		});
-
 	});
 };

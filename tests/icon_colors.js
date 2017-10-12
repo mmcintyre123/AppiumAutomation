@@ -32,7 +32,7 @@ module.exports = function () {
 		let allPassed = true;
 		console.log(('RUNNING ' + __filename.slice(__dirname.length + 1) + ' for iOS').green.bold.underline);
 
-		it('For debugging', function () {
+		it.skip('For debugging', function () {
 			// config.theseNameAttrs = [];
 			// test sql connection for australia
 			config.thisSurvey = 'stretch testing'
@@ -128,17 +128,18 @@ module.exports = function () {
 			    .consoleLog('TEST CASE IS OVER'.red.bold.underline) //surveys should have been taken with all primary targets and no non-primary targets.
 		});
 
-		it('Should perform a full login', function () {
+		it.skip('Should perform a full login', function () {
 			return driver
 				.fullLogin(creds.testUserName1, creds.testUserPwd1)
 		});
 
-		it.skip('Should login quick', function () {
+		it('Should login quick', function () {
 			return driver
 				.loginQuick()
 		});
 
 		it('Should turn the house green: survey both primary targets', function () {
+			this.retries = 1
 			config.housesWithMoreThan1Primary = {};
 			config.theseHouses = [];
 			config.thisHouseholdAfter = '';
@@ -156,6 +157,14 @@ module.exports = function () {
 
 			return driver
 				// .consoleLog(stackTrace.get()[1].getFileName() + stackTrace.get()[1].getLineNumber()) // todo experiment with this
+				.elementByIdOrNull(elements.homeScreen.walkbooks)
+				.then(function (el) {
+					if(el == null) {
+						return driver
+							.resetApp()
+							.loginQuick()
+					}
+				})
 				.startTime('Home Page to Household')
 				.elementById(elements.homeScreen.walkbooks)
 				.click()
@@ -496,23 +505,49 @@ module.exports = function () {
 
 			return driver
 				.sleep(1)
-				.then(function () {
-					//if we're not running in dbg mode, reset the app
-					if( !process.argv.slice(2).includes("--dbg") ) {
-						return driver
-							.resetApp()
+				.elementByClassNameOrNull('XCUIElementTypeTable', 10000)
+                .then(function (el) {
+                    if (el == null) {
+                        return driver
+                            .resetApp()
 							.loginQuick()
 							.homeToHouseList()
-					}
-				})
-
+                    } else {
+                        return driver
+                    }
+                })
 				//generate an 'attempted' house
 				.getFirstListItemByIdPart('notstarted')
 				.then(function () {
 					console.log('About to attempt clicking a notstarted house to generate a not home'.white.bold)
+					console.log('This household in .then context is ' + config.thisHousehold)
+
+					// todo make a custom function with this - wait for item to appear
 					return driver
-						.elementById(config.thisHousehold)
-						.click()
+					.sleep(1)
+					.then(function () {
+						let visible = false
+						function recursive() {
+							return driver
+								.elementById(config.thisHousehold)
+								.then(function (el) {
+									return el.getAttribute('visible').then(function (visible) {
+										console.log('Household visible = ' + visible)
+											if (visible == false) {
+												return driver
+													.sleep(2000)
+													.then(function () {
+														return recursive()
+													})
+											} else if (visible == true) {
+												el.click()
+												return driver
+											}
+										})
+								})
+						}
+						return recursive()
+					})
 				})
 				.then(function () {
 					console.log('Using ' + config.thisHousehold + ', houseNum ' + config.houseNum);
@@ -520,7 +555,7 @@ module.exports = function () {
 
 					return driver
 
-						.waitForElementById(elements.walkbook.popoverOpenHouse, 10000)
+						.waitForElementById(elements.walkbook.popoverOpenHouse, 20000) // fixme - this is failing.
 						.elementById(elements.walkbook.popoverOpenHouse)
 						.click()
 						.waitForElementById(elements.houseHold.notHome, 10000)

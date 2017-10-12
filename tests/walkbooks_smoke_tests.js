@@ -42,15 +42,6 @@ module.exports = function () {
 
 		it('Load survey list', function () {
 			return driver
-				.sleep(1)
-				.then(function () {
-					//if we're not running in dbg mode, reset the app
-					if( !process.argv.slice(2).includes("--dbg") ) {
-						return driver
-							.resetApp()
-							.loginQuick()
-					}
-				})
 				.elementById(elements.homeScreen.walkbooks)
 				.click()
 				.startTime('Load Survey List')
