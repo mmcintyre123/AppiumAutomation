@@ -7,6 +7,10 @@ To do:
 	// address fixmes
 	// write sql & js for adding a tag - figure out what tags are already added to the selected person, eliminate those, then randomly select another tag to add.
 	// take a screenshot at the end of every it - check after test run to make sure nothing failed silently (you don't see any errors or anything strange).
+	// always verify disposition and targets are not greyed out before clicking
+	// Figure out how this happens and makes sure all possible promise rejections are handled. 
+		(node:5947) UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 2): ConnectionError: Failed to connect to MD1:undefined in 30000ms
+		(node:5947) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
 
 	Automation flow for Continuous Integration:
 
