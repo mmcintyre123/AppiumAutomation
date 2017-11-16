@@ -159,7 +159,7 @@ describe( 'Loading beforeAll, beforeEachIt, afterEachIt, afterAll\n'.green, func
 		/* TESTS */
 			// run.sampleTests( 'sample' );
 			// run.sampleTests( 'web_app' );
-			// run.sampleTests( 'walkbooks_smoke_tests' );
+			run.sampleTests( 'walkbooks_smoke_tests' );
 			(function repeatTest() {
 				let timesToRun = 1
 				if (counter < timesToRun) {
@@ -170,8 +170,8 @@ describe( 'Loading beforeAll, beforeEachIt, afterEachIt, afterAll\n'.green, func
 					return
 				}
 			})()
-			// run.sampleTests( 'add_note' );
-			// run.sampleTests( 'target_page' );
+			run.sampleTests( 'add_note' );
+			run.sampleTests( 'target_page' );
 			run.sampleTests( 'add_contact' );
 		} );
 	} );

@@ -136,7 +136,7 @@ appium.stdout.on( 'data', function ( data ) {
 		console.log( buff.toString( 'utf8' ).replace( '\n', '' ) );
 	}
 
-	if ( stripColors( buff.toString( 'utf8' ) ) === '[Appium] Welcome to Appium v1.6.5\n' && !loaded ) {
+	if ( stripColors( buff.toString( 'utf8' ) ) === '[Appium] Welcome to Appium v1.7.1\n' && !loaded ) {
 
 		loaded = true;
 		let mocha = childProcess.spawn( 'mocha', args, {stdio: "inherit"} ); //the 'inherit' preserves the colors from mocha process

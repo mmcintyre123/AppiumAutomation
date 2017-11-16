@@ -128,12 +128,12 @@ module.exports = function () {
 			    .consoleLog('TEST CASE IS OVER'.red.bold.underline) //surveys should have been taken with all primary targets and no non-primary targets.
 		});
 
-		it.skip('Should perform a full login', function () {
+		it('Should perform a full login', function () {
 			return driver
 				.fullLogin(creds.testUserName1, creds.testUserPwd1)
 		});
 
-		it('Should login quick', function () {
+		it.skip('Should login quick', function () {
 			return driver
 				.loginQuick()
 		});
@@ -171,7 +171,7 @@ module.exports = function () {
 				.startTime('Load Survey List')
 				.waitForElementById(elements.surveys.survey1, 10000)
 				.endTotalAndLogTime('Load Survey List')
-				.elementById('DO NOT USE: Mobile Automation Survey 1.0')
+				.elementById('DO NOT USE: Mobile Automation Survey 2.1')
 				.click()
 				.waitForElementById(elements.survey.start, 10000)
 				.consoleLog('Making sure spinner is gone before trying to click start'.white.bold)
@@ -224,7 +224,7 @@ module.exports = function () {
 		it('Should turn the house blue: one primary target not home', function () {
 
 			config.thisHousehold = '';
-			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+			// Survey: DO NOT USE: Mobile Automation Survey 2.1
 			// todo - test this when there is more than one primary target
 			return driver
 				.sleep(1)
@@ -274,7 +274,7 @@ module.exports = function () {
 		it('Should turn the house red: wrong address house', function () {
 
 			config.thisHousehold = '';
-			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+			// Survey: DO NOT USE: Mobile Automation Survey 2.1
 
 			return driver
 				// save household IDs:
@@ -318,7 +318,7 @@ module.exports = function () {
 		it('Should turn the house red: refused house', function () {
 
 			config.thisHousehold = '';
-			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+			// Survey: DO NOT USE: Mobile Automation Survey 2.1
 
 			return driver
 				// save household IDs:
@@ -362,7 +362,7 @@ module.exports = function () {
 		it('Should turn the house blue: not home house', function () {
 
 			config.thisHousehold = '';
-			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+			// Survey: DO NOT USE: Mobile Automation Survey 2.1
 
 			return driver
 				.sleep(1)
@@ -405,7 +405,7 @@ module.exports = function () {
 
 			config.thisHousehold = '';
 			// todo probably make this "any blue"
-			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+			// Survey: DO NOT USE: Mobile Automation Survey 2.1
 
 			return driver
 				// save household IDs:
@@ -451,7 +451,7 @@ module.exports = function () {
 
 			config.thisHousehold = '';
 			// todo probably make this "any red"
-			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+			// Survey: DO NOT USE: Mobile Automation Survey 2.1
 
 			return driver
 				// save household IDs:
@@ -602,7 +602,7 @@ module.exports = function () {
 			config.thisElem = '';
 
 			// todo probably make this "any blue"
-			// Survey: DO NOT USE: Mobile Automation Survey 1.0
+			// Survey: DO NOT USE: Mobile Automation Survey 2.1
 
 			return driver
 				.sleep(1)

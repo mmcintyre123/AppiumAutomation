@@ -523,7 +523,8 @@ Commons.prototype.takeSurveyTemp = function(thisTarget){
 		.click()
 		.waitForElementById(elements.takeSurvey.skip, 10000)
 		.click()
-		.sleep(2000) // wait for spinner on the epilogue screen
+		.sleep(2000) // time for spinner to appear
+		.waitForElementToDisappearByClassName(elements.general.spinner)
 		.waitForElementById(elements.takeSurvey.finish, 10000)
 		.elementById(elements.takeSurvey.finish)
 		.click()
@@ -540,7 +541,7 @@ Commons.prototype.homeToHouseList = function(){
 		.startTime('Load Survey List')
 		.waitForElementById(elements.surveys.survey1, 10000)
 		.endTotalAndLogTime('Load Survey List')
-		.elementById('DO NOT USE: Mobile Automation Survey 1.0')
+		.elementById('DO NOT USE: Mobile Automation Survey 2.1')
 		.click()
 		.waitForElementById(elements.survey.start, 10000)
 	    .elementByXPath('//*/XCUIElementTypeNavigationBar[1]/XCUIElementTypeStaticText[1]') // > get and store the survey name ...
